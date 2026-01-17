@@ -1,0 +1,3 @@
+{
+  "extends": "@tiny-till/config/tsconfig.base.json"
+}
