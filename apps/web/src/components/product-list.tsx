@@ -6,6 +6,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { EmptyState } from '@/components/empty-state'
 import { useCatalogStore } from '@/stores/catalog-store'
 import { useKeyboardNavigation } from '@/hooks/use-keyboard-navigation'
+import { useResponsiveGrid } from '@/hooks/useResponsiveGrid'
 import { cn } from '@/lib/utils'
 import type { Product } from '@tiny-till/types'
 
@@ -24,7 +25,7 @@ export const ProductList = React.memo(function ProductList({
 }: ProductListProps) {
   const { products, searchProducts, isLoading, hasHydrated } = useCatalogStore()
   const [searchQuery, setSearchQuery] = React.useState('')
-  const [columnCount, setColumnCount] = React.useState(6)
+  const { columnCount, gridGap, isCompact } = useResponsiveGrid()
 
   const filteredProducts = React.useMemo(
     () => searchProducts(searchQuery),
@@ -57,24 +58,6 @@ export const ProductList = React.memo(function ProductList({
     columnCount,
     enabled: !searchQuery && filteredProducts.length > 0,
   })
-
-  const updateColumnCount = React.useCallback(() => {
-    const width = window.innerWidth
-    if (width >= 1280) setColumnCount(6)
-    else if (width >= 1024) setColumnCount(5)
-    else if (width >= 768) setColumnCount(4)
-    else if (width >= 640) setColumnCount(2)
-    else setColumnCount(1)
-  }, [])
-
-  React.useEffect(() => {
-    updateColumnCount()
-    const handleResize = () => {
-      requestAnimationFrame(updateColumnCount)
-    }
-    window.addEventListener('resize', handleResize, { passive: true })
-    return () => window.removeEventListener('resize', handleResize)
-  }, [updateColumnCount])
 
   const isLoadingState = !hasHydrated || externalLoading || isLoading
 
@@ -146,7 +129,7 @@ export const ProductList = React.memo(function ProductList({
       </div>
 
       {isLoadingState ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4">
+        <div className={cn('grid', gridGap, `grid-cols-${columnCount}`)}>
           {Array.from({ length: 6 }, (_, i) => (
             <div key={`skeleton-${Date.now()}-${i}`} className="flex flex-col gap-2">
               <Skeleton className="w-full aspect-square" />
@@ -168,7 +151,7 @@ export const ProductList = React.memo(function ProductList({
           onAction={!searchQuery ? onAddProduct : undefined}
         />
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4">
+        <div className={cn('grid', gridGap, `grid-cols-${columnCount}`)}>
           {filteredProducts.map((product: Product) => (
             <div
               key={product.id}
@@ -187,6 +170,7 @@ export const ProductList = React.memo(function ProductList({
                 isLoading={isLoading}
                 isFocused={focusedItemId === product.id}
                 onFocus={() => setFocusedItemId(product.id)}
+                density={isCompact ? 'compact' : 'normal'}
               />
             </div>
           ))}

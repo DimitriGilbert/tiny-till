@@ -1,4 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
+
+import { ProductList } from "@/components/product-list";
 
 export const Route = createFileRoute("/")({
   component: TallyPage,
@@ -6,15 +8,14 @@ export const Route = createFileRoute("/")({
 
 function TallyPage() {
   return (
-    <div className="container mx-auto max-w-3xl px-4 py-2">
-      <h1 className="text-2xl font-bold mb-4">Tally</h1>
-      <div className="grid gap-6">
-        <section className="rounded-lg border p-4">
-          <p className="text-muted-foreground">
-            Product grid will be displayed here.
-          </p>
-        </section>
-      </div>
+    <div className="container mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+      <header className="mb-6">
+        <h1 className="text-3xl font-bold tracking-tight">Tally</h1>
+        <p className="text-muted-foreground mt-1">
+          Select products to add to your tally
+        </p>
+      </header>
+      <ProductList />
     </div>
   );
 }

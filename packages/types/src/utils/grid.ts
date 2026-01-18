@@ -9,10 +9,25 @@ export function calculateColumns(
     return override
   }
 
-  const baseColumns =
-    screenWidth < 640 ? 2 : screenWidth < 768 ? 3 : screenWidth < 1024 ? 4 : 6
+  if (screenWidth < 320) return 2
 
-  return density === 'compact' ? Math.ceil(baseColumns * 1.33) : baseColumns
+  if (screenWidth < 768) {
+    return density === 'compact' ? 3 : 2
+  }
+
+  if (screenWidth < 1024) {
+    return density === 'compact' ? 6 : 4
+  }
+
+  if (screenWidth < 1280) {
+    return density === 'compact' ? 7 : 6
+  }
+
+  if (screenWidth < 1536) {
+    return density === 'compact' ? 8 : 7
+  }
+
+  return density === 'compact' ? 8 : 8
 }
 
 export function validateColumnCount(count: number): count is ColumnCount {
@@ -21,4 +36,8 @@ export function validateColumnCount(count: number): count is ColumnCount {
 
 export function getGridConfig(screenWidth: number, density: GridDensity, override?: ColumnCount): number {
   return calculateColumns(screenWidth, density, override)
+}
+
+export function getGridGap(density: GridDensity): string {
+  return density === 'compact' ? 'gap-3' : 'gap-4'
 }

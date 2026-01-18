@@ -22,6 +22,7 @@ interface ProductCardProps {
   className?: string
   isFocused?: boolean
   onFocus?: () => void
+  density?: 'normal' | 'compact'
 }
 
 export const ProductCard = React.memo(function ProductCard({
@@ -32,6 +33,7 @@ export const ProductCard = React.memo(function ProductCard({
   className,
   isFocused = false,
   onFocus,
+  density = 'normal',
 }: ProductCardProps) {
   const cardRef = React.useRef<HTMLButtonElement>(null)
   const [isDeleting, setIsDeleting] = React.useState(false)
@@ -75,23 +77,23 @@ export const ProductCard = React.memo(function ProductCard({
       onFocus={handleFocus}
       onClick={() => onEdit?.(product.id)}
     >
-      <Card size="sm" className="transition-colors group-hover:border-primary/20">
+      <Card size={density === 'compact' ? 'sm' : 'sm'} className="transition-colors group-hover:border-primary/20">
       <CardHeader>
         {product.imageData ? (
-          <div className="mb-2 flex justify-center overflow-hidden rounded-none">
+          <div className={cn('mb-2 flex justify-center overflow-hidden rounded-none', density === 'compact' ? 'mb-1' : 'mb-2')}>
             <img
               src={product.imageData}
               alt=""
-              className="w-full max-w-[128px] aspect-square rounded-none object-cover transition-transform duration-300 group-hover:scale-105"
+              className={cn('w-full aspect-square rounded-none object-cover transition-transform duration-300 group-hover:scale-105', density === 'compact' ? 'max-w-[96px]' : 'max-w-[128px]')}
               loading="lazy"
             />
           </div>
         ) : (
-          <div className="mb-2 flex size-32 items-center justify-center rounded-none bg-muted transition-colors group-hover:bg-muted/80" aria-hidden="true">
-            <span className="text-4xl transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3">📦</span>
+          <div className={cn('flex items-center justify-center rounded-none bg-muted transition-colors group-hover:bg-muted/80', density === 'compact' ? 'size-24 mb-1' : 'size-32 mb-2')} aria-hidden="true">
+            <span className={cn('transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3', density === 'compact' ? 'text-3xl' : 'text-4xl')}>📦</span>
           </div>
         )}
-        <CardTitle className="line-clamp-2 min-h-[2.5em] text-sm sm:text-base transition-colors group-hover:text-primary">{product.name}</CardTitle>
+        <CardTitle className={cn('line-clamp-2 transition-colors group-hover:text-primary', density === 'compact' ? 'min-h-[2em] text-xs' : 'min-h-[2.5em] text-sm sm:text-base')}>{product.name}</CardTitle>
         <CardAction className="flex gap-1 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
           {onEdit && (
             <Button
@@ -103,7 +105,7 @@ export const ProductCard = React.memo(function ProductCard({
               }}
               disabled={isLoading || isDeleting}
               aria-label={`Edit ${product.name}`}
-              className="h-9 w-9 touch-manipulation transition-transform hover:scale-110 active:scale-95"
+              className={cn('touch-manipulation transition-transform hover:scale-110 active:scale-95', density === 'compact' ? 'h-8 w-8' : 'h-9 w-9')}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -131,7 +133,7 @@ export const ProductCard = React.memo(function ProductCard({
               }}
               disabled={isLoading || isDeleting}
               aria-label={`Delete ${product.name}`}
-              className="h-9 w-9 touch-manipulation text-destructive hover:bg-destructive/10 transition-transform hover:scale-110 active:scale-95"
+              className={cn('touch-manipulation text-destructive hover:bg-destructive/10 transition-transform hover:scale-110 active:scale-95', density === 'compact' ? 'h-8 w-8' : 'h-9 w-9')}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -154,7 +156,7 @@ export const ProductCard = React.memo(function ProductCard({
         </CardAction>
       </CardHeader>
       <CardContent>
-        <div className="text-center text-base sm:text-lg font-semibold text-foreground transition-colors group-hover:text-primary">
+        <div className={cn('text-center font-semibold text-foreground transition-colors group-hover:text-primary', density === 'compact' ? 'text-sm' : 'text-base sm:text-lg')}>
           <span className="sr-only">Price: </span>
           {formatPrice(product.price)}
         </div>
