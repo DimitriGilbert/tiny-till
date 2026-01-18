@@ -1,15 +1,16 @@
 import * as React from 'react'
 
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { Download, Loader2 } from 'lucide-react'
+import { Download, Loader2, Upload } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { ConfirmationDialog } from '@/components/confirmation-dialog'
 import { ProductForm } from '@/components/product-form'
 import { ProductList } from '@/components/product-list'
+import { CatalogImport } from '@/components/CatalogImport'
 import { useCatalogStore } from '@/stores/catalog-store'
 import { useCatalogExport } from '@/hooks/useCatalogExport'
-import type { Product } from '@tiny-till/types'
+import type { CatalogImport as CatalogImportType } from '@tiny-till/types'
 
 export const Route = createFileRoute('/settings/catalog')({
   component: CatalogPage,
@@ -22,11 +23,16 @@ function CatalogPage() {
   const [showAddDialog, setShowAddDialog] = React.useState(false)
   const [editingProductId, setEditingProductId] = React.useState<string | null>(null)
   const [showDeleteDialog, setShowDeleteDialog] = React.useState<string | null>(null)
+  const [showImportDialog, setShowImportDialog] = React.useState(false)
 
   const editingProduct = editingProductId ? getProduct(editingProductId) : undefined
 
   const handleExportCatalog = async () => {
     await exportCatalog()
+  }
+
+  const handleImportCatalog = async (data: CatalogImportType) => {
+    console.log('Import catalog data:', data)
   }
 
   const handleAddProduct = () => {
@@ -90,6 +96,14 @@ function CatalogPage() {
           <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
             <Button
               variant="outline"
+              onClick={() => setShowImportDialog(true)}
+              className="w-full sm:w-auto touch-manipulation min-h-[44px]"
+            >
+              <Upload className="mr-2 h-4 w-4" />
+              Import Catalog
+            </Button>
+            <Button
+              variant="outline"
               onClick={handleExportCatalog}
               disabled={isExporting}
               className="w-full sm:w-auto touch-manipulation min-h-[44px]"
@@ -106,7 +120,7 @@ function CatalogPage() {
                 </>
               )}
             </Button>
-            <Button 
+            <Button
               onClick={handleAddProduct}
               className="w-full sm:w-auto touch-manipulation min-h-[44px]"
             >
@@ -149,6 +163,13 @@ function CatalogPage() {
         onConfirm={handleConfirmDelete}
         isDestructive
       />
+
+      <CatalogImport
+        open={showImportDialog}
+        onOpenChange={setShowImportDialog}
+        onImport={handleImportCatalog}
+      />
+
       <div aria-live="polite" aria-atomic="true" className="sr-only">
         {products.length} products in catalog
       </div>
