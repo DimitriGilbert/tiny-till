@@ -37,7 +37,7 @@
           "status": "todo",
           "subtasks": [],
           "createdAt": 1768730817013,
-          "updatedAt": 1768730817013
+          "updatedAt": 1768742202656
         },
         {
           "id": "1.4",
@@ -91,7 +91,7 @@
         }
       ],
       "createdAt": 1768729943871,
-      "updatedAt": 1768729943871,
+      "updatedAt": 1768742202657,
       "prdFile": "prd/prd-corrected.md"
     },
     {
