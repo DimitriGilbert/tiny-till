@@ -44,6 +44,9 @@ export const springConfig = {
 
 export const animationPresets = {
   touchFeedback: 'transition-transform duration-150 ease-out active:scale-95 hover:scale-105',
+  touchFeedbackActive: 'transition-transform duration-75 ease-out active:scale-95 active:bg-primary/90',
+  touchFeedbackHover: 'transition-transform duration-150 ease-out hover:scale-105',
+  rippleEffect: 'active:shadow-lg active:shadow-primary/20',
   cardActive: 'transition-all duration-300 ease-out',
   modalEnter: 'transition-all duration-350 ease-out',
   buttonPress: 'active:scale-95 transition-transform duration-100',

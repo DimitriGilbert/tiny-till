@@ -436,6 +436,43 @@ a:focus-visible,
   backface-visibility: hidden;
 }
 
+.touch-pan-y {
+  touch-action: pan-y;
+}
+
+.touch-pan-x {
+  touch-action: pan-x;
+}
+
+.touch-manipulation {
+  touch-action: manipulation;
+}
+
+.touch-none {
+  touch-action: none;
+}
+
+.touch-auto {
+  touch-action: auto;
+}
+
+.touch-pan-xy {
+  touch-action: pan-x pan-y;
+}
+
+.no-select {
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
+@media (pointer: coarse) {
+  .touch-target {
+    min-width: 48px;
+    min-height: 48px;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-spring-pulse,
   .animate-spring-enter,

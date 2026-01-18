@@ -94,7 +94,7 @@ function TallyPage() {
           onAction={() => router.navigate({ to: '/settings' })}
         />
       ) : (
-        <div className={cn('grid', gridGap, `grid-cols-${columnCount}`)}>
+        <div className={cn('grid touch-pan-y', gridGap, `grid-cols-${columnCount}`)}>
           {products.map((product) => {
             const item = items.get(product.id)
             const quantity = item?.quantity || 0

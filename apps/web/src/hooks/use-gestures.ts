@@ -20,7 +20,7 @@ interface UseGesturesReturn {
 export function useGestures({
   onLongPress,
   onDoubleTap,
-  longPressDelay = 500,
+  longPressDelay = 400,
   doubleTapDelay = 300,
 }: UseGesturesOptions): UseGesturesReturn {
   const [isLongPressing, setIsLongPressing] = React.useState(false)

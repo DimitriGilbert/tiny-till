@@ -132,7 +132,7 @@ export const NumericKeypad = React.memo(function NumericKeypad({
             'transition-all duration-150',
             'active:scale-95 active:bg-primary/80',
             'focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
-            'touch-manipulation',
+            'touch-manipulation no-select',
             btn.position
           )}
           onClick={() => {

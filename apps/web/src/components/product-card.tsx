@@ -90,7 +90,7 @@ export const ProductCard = React.memo(function ProductCard({
       ref={cardRef}
       type="button"
       className={cn(
-        'group relative flex flex-col text-left',
+        'group relative flex flex-col text-left touch-manipulation no-select',
         animationPresets.cardActive,
         'gpu-accelerated',
         isHovered && '-translate-y-1 shadow-lg shadow-primary/10',
@@ -141,7 +141,7 @@ export const ProductCard = React.memo(function ProductCard({
               }}
               disabled={isLoading || isDeleting}
               aria-label={`Edit ${product.name}`}
-              className={cn('touch-manipulation', animationPresets.touchFeedback, density === 'compact' ? 'h-8 w-8' : 'h-9 w-9')}
+              className={cn('touch-manipulation no-select', animationPresets.touchFeedback, animationPresets.rippleEffect, 'h-11 w-11 min-w-[44px] min-h-[44px]')}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -169,7 +169,7 @@ export const ProductCard = React.memo(function ProductCard({
               }}
               disabled={isLoading || isDeleting}
               aria-label={`Delete ${product.name}`}
-              className={cn('touch-manipulation text-destructive hover:bg-destructive/10', animationPresets.touchFeedback, density === 'compact' ? 'h-8 w-8' : 'h-9 w-9')}
+              className={cn('touch-manipulation text-destructive hover:bg-destructive/10 no-select', animationPresets.touchFeedback, animationPresets.rippleEffect, 'h-11 w-11 min-w-[44px] min-h-[44px]')}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"

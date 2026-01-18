@@ -106,7 +106,7 @@ export const TallyProductCard = React.memo(function TallyProductCard({
   }
 
   const touchTargetSize = density === 'normal' ? 'min-w-[80px] min-h-[80px]' : 'min-w-[60px] min-h-[60px]'
-  const decrementSize = density === 'normal' ? 'h-10 w-10' : 'h-8 w-8'
+  const decrementSize = density === 'normal' ? 'h-11 w-11' : 'h-11 w-11'
   const badgeSize = density === 'compact' ? 'h-5 w-5 text-[10px]' : 'h-6 w-6 text-xs'
   const imageSize = density === 'compact' ? 'max-w-[96px]' : 'max-w-[128px]'
   const placeholderSize = density === 'compact' ? 'size-24' : 'size-32'
@@ -118,7 +118,7 @@ export const TallyProductCard = React.memo(function TallyProductCard({
       ref={cardRef}
       type="button"
       className={cn(
-        'group relative flex flex-col text-left touch-manipulation',
+        'group relative flex flex-col text-left touch-manipulation no-select',
         animationPresets.cardActive,
         'gpu-accelerated',
         isHovered && '-translate-y-1 shadow-lg shadow-primary/10',
@@ -189,8 +189,9 @@ export const TallyProductCard = React.memo(function TallyProductCard({
           size="icon"
           variant="destructive"
           className={cn(
-            'absolute bottom-2 right-2 z-10 touch-manipulation shadow-lg',
+            'absolute bottom-2 right-2 z-10 touch-manipulation shadow-lg no-select',
             animationPresets.touchFeedback,
+            animationPresets.rippleEffect,
             decrementSize
           )}
           onClick={handleDecrement}

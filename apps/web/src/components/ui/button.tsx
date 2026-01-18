@@ -24,13 +24,13 @@ const buttonVariants = cva(
       },
       size: {
         default:
-          "h-8 gap-1.5 px-2.5 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
-        xs: "h-6 gap-1 rounded-none px-2 text-xs has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3",
-        sm: "h-7 gap-1 rounded-none px-2.5 has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3.5",
-        lg: "h-9 gap-1.5 px-2.5 has-data-[icon=inline-end]:pr-3 has-data-[icon=inline-start]:pl-3",
-        icon: "size-8 min-w-[44px] min-h-[44px]",
-        "icon-xs": "size-6 rounded-none [&_svg:not([class*='size-'])]:size-3",
-        "icon-sm": "size-9 min-w-[44px] min-h-[44px] rounded-none",
+          "h-11 gap-1.5 px-2.5 min-h-[44px] has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
+        xs: "h-11 gap-1 rounded-none px-2 min-h-[44px] text-xs has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3 min-w-[44px]",
+        sm: "h-11 gap-1 rounded-none px-2.5 min-h-[44px] has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3.5 min-w-[44px]",
+        lg: "h-11 gap-1.5 px-2.5 min-h-[44px] has-data-[icon=inline-end]:pr-3 has-data-[icon=inline-start]:pl-3",
+        icon: "size-11 min-w-[44px] min-h-[44px]",
+        "icon-xs": "size-11 min-w-[44px] min-h-[44px] rounded-none [&_svg:not([class*='size-'])]:size-3",
+        "icon-sm": "size-11 min-w-[44px] min-h-[44px] rounded-none",
         "icon-lg": "size-11 min-w-[44px] min-h-[44px]",
       },
     },
@@ -41,23 +41,23 @@ const buttonVariants = cva(
     compoundVariants: [
       {
         variant: "default",
-        className: animationPresets.buttonPress,
+        className: animationPresets.touchFeedbackActive,
       },
       {
         variant: "outline",
-        className: animationPresets.buttonPress,
+        className: animationPresets.touchFeedbackActive,
       },
       {
         variant: "secondary",
-        className: animationPresets.buttonPress,
+        className: animationPresets.touchFeedbackActive,
       },
       {
         variant: "ghost",
-        className: animationPresets.buttonPress,
+        className: animationPresets.touchFeedbackActive,
       },
       {
         variant: "destructive",
-        className: animationPresets.buttonPress,
+        className: animationPresets.touchFeedbackActive,
       },
     ],
   },

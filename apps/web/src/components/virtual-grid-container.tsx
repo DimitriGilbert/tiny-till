@@ -27,6 +27,9 @@ export function VirtualGridContainer({
 
   const virtualRows = React.useMemo(() => rowVirtualizer.getVirtualItems(), [rowVirtualizer])
 
+  const handleScroll = React.useCallback((e: React.UIEvent<HTMLDivElement>) => {
+  }, [])
+
   const renderVirtualRow = React.useCallback(
     (row: VirtualItem) => {
       const rowProducts = getRowProducts(row.index)
@@ -51,7 +54,8 @@ export function VirtualGridContainer({
   return (
     <div
       ref={containerRef}
-      className="relative overflow-y-auto"
+      className="relative overflow-y-auto touch-pan-y"
+      onScroll={handleScroll}
       style={{
         height: 'calc(100vh - 300px)',
         minHeight: '400px',
