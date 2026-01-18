@@ -5,6 +5,7 @@ import {
   createExportData,
 } from '@tiny-till/types'
 import { downloadExportFile } from '@/lib/export/download'
+import { setLastBackupTimestamp } from '@/lib/backup-reminder'
 import { toast } from 'sonner'
 
 export interface UseCatalogExportReturn {
@@ -52,6 +53,8 @@ export function useCatalogExport(): UseCatalogExportReturn {
         setIsExporting(false)
         return
       }
+
+      await setLastBackupTimestamp(Date.now())
 
       setExportError(null)
     } catch (error) {

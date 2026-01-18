@@ -34,7 +34,7 @@ const initialState: Omit<SettingsState, 'hasHydrated'> = {
   theme: 'system',
   gridDensity: 'normal',
   columnCountOverride: undefined,
-  backupReminder: undefined,
+  backupReminder: 168,
 }
 
 export const useSettingsStore = create<SettingsStore>()(

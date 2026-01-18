@@ -4,9 +4,13 @@ import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
 import { FilePicker } from '@/components/FilePicker'
 import { ImportPreview } from '@/components/ImportPreview'
+import { BackupWarningDialog } from '@/components/backup-warning-dialog'
 import type { CatalogImport as CatalogImportType, ImportPreviewData, ProductChange } from '@tiny-till/types'
 import { useCatalogImport } from '@/hooks/useCatalogImport'
 import { useCatalogStore } from '@/stores/catalog-store'
+import { useSettingsStore } from '@/stores/settings-store'
+import { useCatalogExport } from '@/hooks/useCatalogExport'
+import { getBackupReminderConfig } from '@/lib/backup-reminder'
 import { toast } from 'sonner'
 
 export interface CatalogImportProps {
@@ -33,6 +37,10 @@ export function CatalogImport({
   const [showPreview, setShowPreview] = React.useState(false)
   const [isImportingPreview, setIsImportingPreview] = React.useState(false)
 
+  const settings = useSettingsStore((state) => state)
+  const { exportCatalog, isExporting } = useCatalogExport()
+  const [showBackupWarning, setShowBackupWarning] = React.useState(false)
+
   const resetState = React.useCallback(() => {
     setSelectedFile(null)
     setValidationResult(null)
@@ -40,6 +48,7 @@ export function CatalogImport({
     setFilePickerError(undefined)
     setPreviewData(null)
     setShowPreview(false)
+    setShowBackupWarning(false)
     clearError()
   }, [clearError])
 
@@ -143,6 +152,38 @@ export function CatalogImport({
     setPreviewData(null)
   }, [])
 
+  const handleReviewAndImport = React.useCallback(async () => {
+    if (!previewData) return
+
+    const backupConfig = await getBackupReminderConfig(
+      settings.backupReminder ?? 168
+    )
+
+    if (
+      backupConfig.isBackupOverdue ||
+      backupConfig.lastBackupTimestamp === null
+    ) {
+      setShowBackupWarning(true)
+      return
+    }
+
+    setShowPreview(true)
+  }, [previewData, settings.backupReminder])
+
+  const handleCreateBackup = React.useCallback(async () => {
+    setShowBackupWarning(false)
+    await exportCatalog()
+  }, [exportCatalog])
+
+  const handleProceedAnyway = React.useCallback(() => {
+    setShowBackupWarning(false)
+    setShowPreview(true)
+  }, [])
+
+  const handleBackupWarningCancel = React.useCallback(() => {
+    setShowBackupWarning(false)
+  }, [])
+
   return (
     <>
       <Dialog open={open && !showPreview} onOpenChange={onOpenChange}>
@@ -237,7 +278,7 @@ export function CatalogImport({
               Cancel
             </Button>
             <Button
-              onClick={() => previewData && setShowPreview(true)}
+              onClick={handleReviewAndImport}
               disabled={disabled || !validationResult?.isValid || isProcessing || isImporting}
             >
               {isProcessing || isImporting ? (
@@ -255,6 +296,18 @@ export function CatalogImport({
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <BackupWarningDialog
+        open={showBackupWarning}
+        onOpenChange={setShowBackupWarning}
+        onConfirm={handleProceedAnyway}
+        onCancel={handleBackupWarningCancel}
+        onCreateBackup={handleCreateBackup}
+        daysSinceBackup={null}
+        lastBackupDate={null}
+        isOverdue={true}
+        isCreatingBackup={isExporting}
+      />
 
       {previewData && (
         <ImportPreview

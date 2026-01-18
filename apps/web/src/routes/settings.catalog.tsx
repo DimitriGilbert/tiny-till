@@ -8,6 +8,7 @@ import { ConfirmationDialog } from '@/components/confirmation-dialog'
 import { ProductForm } from '@/components/product-form'
 import { ProductList } from '@/components/product-list'
 import { CatalogImport } from '@/components/CatalogImport'
+import { BackupReminderCard } from '@/components/backup-reminder-card'
 import { useCatalogStore } from '@/stores/catalog-store'
 import { useCatalogExport } from '@/hooks/useCatalogExport'
 import type { CatalogImport as CatalogImportType } from '@tiny-till/types'
@@ -125,6 +126,8 @@ function CatalogPage() {
           </div>
         </div>
       </header>
+
+      <BackupReminderCard className="mb-6" />
 
       <ProductList
         onEdit={handleEditProduct}
