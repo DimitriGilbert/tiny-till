@@ -115,3 +115,123 @@ export function parsePrice(priceString: string): number {
 
   return toCents(dollars)
 }
+
+export function formatPriceCompact(cents: number, locale: string = 'en-US'): string {
+  if (typeof cents !== 'number' || !Number.isFinite(cents)) {
+    throw new TypeError('Cents must be a finite number')
+  }
+
+  return new Intl.NumberFormat(locale, {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(toDollars(cents))
+}
+
+export function formatPriceWithSymbol(
+  cents: number,
+  symbol: string,
+  locale: string = 'en-US'
+): string {
+  if (typeof cents !== 'number' || !Number.isFinite(cents)) {
+    throw new TypeError('Cents must be a finite number')
+  }
+
+  const formatted = new Intl.NumberFormat(locale, {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(toDollars(cents))
+
+  return `${symbol}${formatted}`
+}
+
+export function formatPriceRange(
+  minCents: number,
+  maxCents: number,
+  locale: string = 'en-US'
+): string {
+  if (typeof minCents !== 'number' || !Number.isFinite(minCents)) {
+    throw new TypeError('Min cents must be a finite number')
+  }
+
+  if (typeof maxCents !== 'number' || !Number.isFinite(maxCents)) {
+    throw new TypeError('Max cents must be a finite number')
+  }
+
+  const minFormatted = formatPrice(minCents, locale)
+  const maxFormatted = formatPrice(maxCents, locale)
+
+  return `${minFormatted} - ${maxFormatted}`
+}
+
+export function formatPriceIntegerOnly(cents: number, locale: string = 'en-US'): string {
+  if (typeof cents !== 'number' || !Number.isFinite(cents)) {
+    throw new TypeError('Cents must be a finite number')
+  }
+
+  return new Intl.NumberFormat(locale, {
+    style: 'currency',
+    currency: 'USD',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(toDollars(cents))
+}
+
+export function parsePriceStrict(input: string): {
+  success: boolean
+  cents?: number
+  error?: string
+} {
+  if (typeof input !== 'string') {
+    return {
+      success: false,
+      error: 'Input must be a string',
+    }
+  }
+
+  const trimmed = input.trim()
+
+  if (!trimmed) {
+    return {
+      success: false,
+      error: 'Price is required',
+    }
+  }
+
+  try {
+    const cleaned = trimmed.replace(/[^0-9.-]/g, '')
+    const dollars = parseFloat(cleaned)
+
+    if (isNaN(dollars)) {
+      return {
+        success: false,
+        error: `Invalid price format: "${input}"`,
+      }
+    }
+
+    if (dollars < 0.01) {
+      return {
+        success: false,
+        error: 'Price must be at least $0.01',
+      }
+    }
+
+    const cents = Math.round(dollars * 100)
+
+    if (cents > 99999999) {
+      return {
+        success: false,
+        error: 'Price cannot exceed $999,999.99',
+      }
+    }
+
+    return {
+      success: true,
+      cents,
+    }
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error parsing price',
+    }
+  }
+}

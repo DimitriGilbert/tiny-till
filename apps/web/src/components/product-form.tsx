@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent } from '@/components/ui/card'
 import { ImageUpload } from '@/components/ImageUpload'
+import { PriceInput } from '@/components/price-input'
 import { useProductForm } from '@/hooks/use-product-form'
 import type { Product } from '@tiny-till/types'
 import { formatPrice } from '@tiny-till/types'
@@ -165,16 +166,14 @@ export function ProductForm({
             >
                {(field) => (
                  <div className="space-y-1">
-                   <Input
+                   <PriceInput
                      id="price"
-                     value={field.state.value}
-                     onChange={(e) => {
-                       const value = e.target.value
-                       if (/^\$?\s*\d*\.?\d{0,2}$/.test(value)) {
-                         field.handleChange(value)
-                       }
-                     }}
-                     onBlur={field.handleBlur}
+                     value={
+                       field.state.value
+                         ? Math.round(parseFloat(field.state.value.replace(/[^0-9.]/g, '')) * 100)
+                         : 0
+                     }
+                     onChange={(cents) => field.handleChange(`$${(cents / 100).toFixed(2)}`)}
                      placeholder="$0.00"
                      aria-invalid={field.state.meta.errors.length > 0}
                      aria-describedby={
