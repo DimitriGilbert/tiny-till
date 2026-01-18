@@ -8,7 +8,8 @@
     "build": "vite build",
     "serve": "vite preview",
     "start": "vite",
-    "check-types": "tsc --noEmit"
+    "check-types": "tsc --noEmit",
+    "generate-icons": "tsx scripts/generate-icons.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.0.0",
@@ -41,7 +42,9 @@
     "@types/react-dom": "19.2.3",
     "@vitejs/plugin-react": "^4.3.4",
     "postcss": "^8.5.3",
+    "sharp": "^0.33.0",
     "tailwindcss": "^4.0.15",
+    "tsx": "^4.19.0",
     "typescript": "^5",
     "vite": "^6.2.2"
   }
