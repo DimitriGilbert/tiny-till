@@ -306,20 +306,20 @@
           "title": "Product Card Component with Touch-Optimized Interactions",
           "description": "Create reusable Product Card components with large touch targets optimized for one-handed operation (80x80px normal mode, 60x60px compact mode). Implement tap-to-increment/decrement functionality with immediate visual feedback. Add quantity badges that display count for items > 0, positioned prominently on cards. Include visual pulse animations on quantity changes. Ensure proper accessibility attributes (ARIA labels) and keyboard navigation support.",
           "contentFile": "tasks/4.2.md",
-          "status": "in-progress",
+          "status": "completed",
           "subtasks": [],
           "createdAt": 1768731146360,
-          "updatedAt": 1768767321302
+          "updatedAt": 1768767564967
         },
         {
           "id": "4.3",
           "title": "Manual Input Overlay with Large Numeric Keypad",
           "description": "Build a modal/overlay component featuring a large, touch-friendly numeric keypad for manual quantity entry. Implement overlay that appears when user long-presses or double-taps a product card. Create numeric keypad with large buttons (min 44x44px touch targets), clear/confirm actions, and input display area. Style for high visibility and easy thumb reach on mobile devices. Ensure proper state management and closes on backdrop click or cancel action.",
           "contentFile": "tasks/4.3.md",
-          "status": "todo",
+          "status": "in-progress",
           "subtasks": [],
           "createdAt": 1768731146361,
-          "updatedAt": 1768731146361
+          "updatedAt": 1768767760132
         },
         {
           "id": "4.4",
