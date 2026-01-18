@@ -16,12 +16,14 @@ interface ThemeState {
   theme: Theme
   resolvedTheme: 'light' | 'dark'
   isHydrated: boolean
+  syncStatus: 'idle' | 'syncing' | 'synced'
 }
 
 interface ThemeActions {
   setTheme: (theme: Theme) => void
   toggleTheme: () => void
   resetToSystem: () => void
+  syncToSystemTheme: () => void
   _applyTheme: (theme: 'light' | 'dark') => void
   _syncSystemTheme: () => void
 }
@@ -31,6 +33,7 @@ type ThemeStore = ThemeState & ThemeActions
 const initialState: Omit<ThemeState, 'isHydrated'> = {
   theme: 'system',
   resolvedTheme: 'light',
+  syncStatus: 'idle',
 }
 
 const calculateResolvedTheme = (theme: Theme): 'light' | 'dark' => {
@@ -62,7 +65,13 @@ export const useThemeStore = create<ThemeStore>()(
 
         resetToSystem: () => {
           const resolvedTheme = getSystemTheme()
-          set({ theme: 'system', resolvedTheme })
+          set({ theme: 'system', resolvedTheme, syncStatus: 'idle' })
+          applyThemeToDOM(resolvedTheme)
+        },
+
+        syncToSystemTheme: () => {
+          const resolvedTheme = getSystemTheme()
+          set({ resolvedTheme, syncStatus: 'synced' })
           applyThemeToDOM(resolvedTheme)
         },
 
@@ -75,7 +84,7 @@ export const useThemeStore = create<ThemeStore>()(
           const { theme } = get()
           if (theme === 'system') {
             const resolvedTheme = getSystemTheme()
-            set({ resolvedTheme })
+            set({ resolvedTheme, syncStatus: 'synced' })
             applyThemeToDOM(resolvedTheme)
           }
         },

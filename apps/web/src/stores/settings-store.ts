@@ -18,6 +18,8 @@ interface SettingsState {
   currency: Currency
   locale: Locale
   hasHydrated: boolean
+  hasUnsavedChanges: boolean
+  changedSettings: Array<keyof Omit<SettingsState, 'hasHydrated' | 'hasUnsavedChanges' | 'changedSettings'>>
 }
 
 interface SettingsActions {
@@ -27,11 +29,13 @@ interface SettingsActions {
   setCurrency: (currency: Currency) => void
   setLocale: (locale: Locale) => void
   resetSettings: () => void
+  markAsSaved: () => void
+  getChangedSettings: () => Array<keyof Omit<SettingsState, 'hasHydrated' | 'hasUnsavedChanges' | 'changedSettings'>>
 }
 
 type SettingsStore = SettingsState & SettingsActions
 
-const initialState: Omit<SettingsState, 'hasHydrated'> = {
+const initialState: Omit<SettingsState, 'hasHydrated' | 'hasUnsavedChanges' | 'changedSettings'> = {
   gridDensity: 'normal',
   columnCountOverride: undefined,
   backupReminder: 168,
@@ -42,9 +46,11 @@ const initialState: Omit<SettingsState, 'hasHydrated'> = {
 export const useSettingsStore = create<SettingsStore>()(
   devtools(
     persist(
-      (set) => ({
+      (set, get) => ({
         ...initialState,
         hasHydrated: false,
+        hasUnsavedChanges: false,
+        changedSettings: [],
 
         setGridDensity: async (density: GridDensity) => {
           const validation = await validateGridDensityChange(density)
@@ -52,7 +58,16 @@ export const useSettingsStore = create<SettingsStore>()(
             console.warn('[SettingsStore] Validation failed:', validation.error)
             throw new Error(validation.error || 'Invalid grid density')
           }
-          set({ gridDensity: density })
+          const state = get()
+          const changedSettings = [...state.changedSettings]
+          if (!changedSettings.includes('gridDensity')) {
+            changedSettings.push('gridDensity')
+          }
+          set({
+            gridDensity: density,
+            hasUnsavedChanges: true,
+            changedSettings,
+          })
           console.log('[SettingsStore] setGridDensity', { gridDensity: density })
         },
 
@@ -62,7 +77,16 @@ export const useSettingsStore = create<SettingsStore>()(
             console.warn('[SettingsStore] Validation failed:', validation.error)
             throw new Error(validation.error || 'Invalid column count')
           }
-          set({ columnCountOverride: count })
+          const state = get()
+          const changedSettings = [...state.changedSettings]
+          if (!changedSettings.includes('columnCountOverride')) {
+            changedSettings.push('columnCountOverride')
+          }
+          set({
+            columnCountOverride: count,
+            hasUnsavedChanges: true,
+            changedSettings,
+          })
           console.log('[SettingsStore] setColumnCountOverride', { columnCountOverride: count })
         },
 
@@ -70,25 +94,76 @@ export const useSettingsStore = create<SettingsStore>()(
           if (days !== undefined && days < 0) {
             throw new Error('Backup reminder days must be non-negative')
           }
-          set({ backupReminder: days })
+          const state = get()
+          const changedSettings = [...state.changedSettings]
+          if (!changedSettings.includes('backupReminder')) {
+            changedSettings.push('backupReminder')
+          }
+          set({
+            backupReminder: days,
+            hasUnsavedChanges: true,
+            changedSettings,
+          })
           console.log('[SettingsStore] setBackupReminder', { backupReminder: days })
         },
 
         setCurrency: (currency: Currency) => {
-          set({ currency })
+          const state = get()
+          const changedSettings = [...state.changedSettings]
+          if (!changedSettings.includes('currency')) {
+            changedSettings.push('currency')
+          }
+          set({
+            currency,
+            hasUnsavedChanges: true,
+            changedSettings,
+          })
           console.log('[SettingsStore] setCurrency', { currency })
         },
 
         setLocale: (locale: Locale) => {
-          set({ locale })
+          const state = get()
+          const changedSettings = [...state.changedSettings]
+          if (!changedSettings.includes('locale')) {
+            changedSettings.push('locale')
+          }
+          set({
+            locale,
+            hasUnsavedChanges: true,
+            changedSettings,
+          })
           console.log('[SettingsStore] setLocale', { locale })
         },
 
         resetSettings: () => {
           set({
             ...initialState,
+            hasHydrated: true,
+            hasUnsavedChanges: false,
+            changedSettings: [],
           })
           console.log('[SettingsStore] resetSettings', initialState)
+        },
+
+        markAsSaved: () => {
+          set({
+            hasUnsavedChanges: false,
+            changedSettings: [],
+          })
+          console.log('[SettingsStore] markAsSaved')
+        },
+
+        getChangedSettings: () => {
+          const state = get()
+          const changed: Array<keyof Omit<SettingsState, 'hasHydrated' | 'hasUnsavedChanges' | 'changedSettings'>> = []
+
+          for (const key of Object.keys(initialState) as Array<keyof Omit<SettingsState, 'hasHydrated' | 'hasUnsavedChanges' | 'changedSettings'>>) {
+            if (state[key] !== initialState[key]) {
+              changed.push(key)
+            }
+          }
+
+          return changed
         },
       }),
       {
