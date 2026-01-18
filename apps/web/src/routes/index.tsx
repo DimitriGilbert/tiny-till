@@ -3,7 +3,8 @@ import * as React from 'react'
 
 import { TallyProductCard } from '@/components/tally-product-card'
 import { QuantityInputDialog } from '@/components/quantity-input-dialog'
-import { TallyTotalsDisplay } from '@/components/tally-totals-display'
+import { StickyTallyFooter } from '@/components/sticky-tally-footer'
+import { ClearCartDialog } from '@/components/clear-cart-dialog'
 import { useCatalogStore } from '@/stores/catalog-store'
 import { useTallyStore } from '@/stores/tally-store'
 import { useResponsiveGrid } from '@/hooks/useResponsiveGrid'
@@ -18,7 +19,7 @@ export const Route = createFileRoute('/')({
 function TallyPage() {
   const router = useRouter()
   const { products, hasHydrated } = useCatalogStore()
-  const { items, updateQuantity, incrementItem, getSummary } = useTallyStore()
+  const { items, updateQuantity, incrementItem, clearTally, getSummary } = useTallyStore()
   const { columnCount, gridGap, isCompact } = useResponsiveGrid()
 
   const [dialogState, setDialogState] = React.useState({
@@ -30,7 +31,15 @@ function TallyPage() {
     currentQuantity: 0,
   })
 
+  const [clearDialogOpen, setClearDialogOpen] = React.useState(false)
+
   const summary = getSummary()
+  const isCartEmpty = items.size === 0
+
+  const handleClearCart = React.useCallback(() => {
+    clearTally()
+    setClearDialogOpen(false)
+  }, [clearTally])
 
   const handleEditQuantity = React.useCallback((productId: string) => {
     const product = products.find((p) => p.id === productId)
@@ -66,22 +75,13 @@ function TallyPage() {
   const isLoading = !hasHydrated
 
   return (
-    <div className="container mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+    <div className="container mx-auto max-w-7xl px-4 py-6 pb-24 sm:px-6 lg:px-8 sm:pb-28">
       <header className="mb-6">
         <h1 className="text-3xl font-bold tracking-tight">Tally</h1>
         <p className="text-muted-foreground mt-1">
           Select products to add to your tally
         </p>
       </header>
-
-      {summary.itemCount > 0 && (
-        <div className="mb-6">
-          <TallyTotalsDisplay
-            totalCents={summary.total}
-            itemCount={summary.itemCount}
-          />
-        </div>
-      )}
 
       {isLoading ? (
         <LoadingState message="Loading products..." />
@@ -122,6 +122,21 @@ function TallyPage() {
         productPrice={dialogState.productPrice}
         currentQuantity={dialogState.currentQuantity}
         onConfirm={handleConfirmQuantity}
+      />
+
+      <StickyTallyFooter
+        totalCents={summary.total}
+        itemCount={summary.itemCount}
+        onClearCart={() => setClearDialogOpen(true)}
+        isCartEmpty={isCartEmpty}
+      />
+
+      <ClearCartDialog
+        open={clearDialogOpen}
+        onOpenChange={setClearDialogOpen}
+        onConfirm={handleClearCart}
+        itemCount={summary.itemCount}
+        totalCents={summary.total}
       />
     </div>
   )
