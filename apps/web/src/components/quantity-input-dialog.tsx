@@ -10,6 +10,9 @@ import {
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { NumericKeypad } from '@/components/ui/numeric-keypad'
+import { ValidatedQuantityInput } from '@/components/ui/validated-quantity-input'
+import { ValidationErrorMessage } from '@/components/ui/validation-error-message'
+import { useQuantityValidation } from '@/hooks/use-quantity-validation'
 import { cn } from '@/lib/utils'
 
 interface QuantityInputDialogProps {
@@ -34,16 +37,36 @@ export const QuantityInputDialog = React.memo(function QuantityInputDialog({
   onConfirm,
 }: QuantityInputDialogProps) {
   const [inputValue, setInputValue] = React.useState(currentQuantity.toString())
+  const [showError, setShowError] = React.useState(false)
+
+  const {
+    validateAndParse,
+    hasError,
+    errorState,
+    validationState,
+    setError,
+    resetValidation,
+  } = useQuantityValidation()
 
   React.useEffect(() => {
     if (open) {
       setInputValue(currentQuantity.toString())
+      setShowError(false)
+      resetValidation()
     }
-  }, [open, currentQuantity])
+  }, [open, currentQuantity, resetValidation])
 
   const handleConfirm = () => {
-    const quantity = inputValue === '' || inputValue === '0' ? 0 : parseInt(inputValue, 10)
-    onConfirm(quantity)
+    const result = validateAndParse(inputValue)
+
+    if (!result.isValid || result.error) {
+      setShowError(true)
+      setError(result.error || 'Invalid input')
+      return
+    }
+
+    onConfirm(result.quantity || 0)
+    onOpenChange(false)
   }
 
   const handleRemove = () => {
@@ -51,11 +74,20 @@ export const QuantityInputDialog = React.memo(function QuantityInputDialog({
     onOpenChange(false)
   }
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      e.preventDefault()
+      handleConfirm()
+    }
+  }
+
+  const canConfirm = !hasError && inputValue.length > 0
+
   const displayValue = inputValue || '0'
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-sm mx-auto p-6">
+      <DialogContent className="max-w-sm mx-auto p-6" onKeyDown={handleKeyDown}>
         <DialogHeader>
           <DialogTitle>Edit Quantity</DialogTitle>
         </DialogHeader>
@@ -82,16 +114,38 @@ export const QuantityInputDialog = React.memo(function QuantityInputDialog({
           </div>
         </div>
 
-        <output className="bg-muted rounded-none p-6 text-center mb-4">
-          <div className="text-5xl font-mono font-bold tracking-wider">
-            {displayValue}
+        <div className="mb-4">
+          <ValidatedQuantityInput
+            value={displayValue}
+            error={errorState}
+            isValid={validationState.isValid}
+            hasError={hasError}
+            placeholder="0"
+          />
+        </div>
+
+        {showError && errorState && (
+          <div className="mb-4">
+            <ValidationErrorMessage
+              message={errorState}
+              visible={showError}
+              type="error"
+              onDismiss={() => setShowError(false)}
+            />
           </div>
-        </output>
+        )}
 
         <NumericKeypad
           value={inputValue}
           onChange={setInputValue}
           maxLength={6}
+          validateOnChange={true}
+          onError={setError}
+          onValidChange={(isValid) => {
+            if (!isValid) {
+              setShowError(true)
+            }
+          }}
         />
 
         <DialogFooter className="gap-2 sm:gap-0 mt-4">
@@ -111,7 +165,11 @@ export const QuantityInputDialog = React.memo(function QuantityInputDialog({
           </Button>
           <Button
             onClick={handleConfirm}
-            className="flex-1 sm:flex-none"
+            disabled={!canConfirm}
+            className={cn(
+              'flex-1 sm:flex-none',
+              !canConfirm && 'opacity-50 cursor-not-allowed'
+            )}
           >
             Confirm
           </Button>

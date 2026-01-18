@@ -35,6 +35,7 @@ export const TallyProductCard = React.memo(function TallyProductCard({
   className,
 }: TallyProductCardProps) {
   const [isPulsing, setIsPulsing] = React.useState(false)
+  const [isShaking, setIsShaking] = React.useState(false)
   const [prevQuantity, setPrevQuantity] = React.useState(quantity)
   const cardRef = React.useRef<HTMLButtonElement>(null)
 
@@ -54,13 +55,29 @@ export const TallyProductCard = React.memo(function TallyProductCard({
 
   const handleIncrement = () => {
     if (!shouldPreventClick) {
-      onIncrement(product.id)
+      try {
+        onIncrement(product.id)
+      } catch (error) {
+        if (error instanceof Error) {
+          console.warn('[TallyProductCard] Increment error:', error.message)
+          setIsShaking(true)
+          setTimeout(() => setIsShaking(false), 300)
+        }
+      }
     }
   }
 
   const handleDecrement = (e: React.MouseEvent) => {
     e.stopPropagation()
-    onDecrement(product.id)
+    try {
+      onDecrement(product.id)
+    } catch (error) {
+      if (error instanceof Error) {
+        console.warn('[TallyProductCard] Decrement error:', error.message)
+        setIsShaking(true)
+        setTimeout(() => setIsShaking(false), 300)
+      }
+    }
   }
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -96,6 +113,7 @@ export const TallyProductCard = React.memo(function TallyProductCard({
         'hover:shadow-lg hover:shadow-primary/10',
         'active:scale-[0.98] hover:scale-[1.02] focus-visible:scale-[1.02]',
         isLongPressing && 'opacity-80 scale-[0.97]',
+        isShaking && 'animate-shake',
         touchTargetSize,
         className
       )}

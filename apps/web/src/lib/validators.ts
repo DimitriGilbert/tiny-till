@@ -65,6 +65,30 @@ export function validateQuantity(value: number): ValidationResult {
   return { isValid: true }
 }
 
+export function validateQuantityString(value: string, maxLength: number = 6): ValidationResult {
+  const trimmed = value.trim()
+
+  if (trimmed.length === 0) {
+    return { isValid: true }
+  }
+
+  if (!/^\d+$/.test(trimmed)) {
+    return { isValid: false, error: 'Quantity must be a whole number (no decimals)' }
+  }
+
+  if (trimmed.length > maxLength) {
+    return { isValid: false, error: `Quantity cannot exceed ${maxLength} digits` }
+  }
+
+  const numValue = parseInt(trimmed, 10)
+
+  if (numValue > 9_999) {
+    return { isValid: false, error: 'Quantity cannot exceed 9,999' }
+  }
+
+  return { isValid: true }
+}
+
 export function validateImageFile(file: File): ValidationResult {
   if (!file) {
     return { isValid: false, error: 'No file provided' }

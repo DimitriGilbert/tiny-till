@@ -9,6 +9,7 @@ import {
   validateTallyRemoveItem,
   validateTallyClear,
 } from '@/lib/validation-helpers'
+import { validateQuantity, validateQuantityString, type ValidationResult } from '@/lib/validators'
 
 interface TallyStoreState {
   items: TallyState
@@ -19,11 +20,12 @@ interface TallyStoreState {
 interface TallyActions {
   addItem: (productId: string, price: number, quantity?: number) => void
   removeItem: (productId: string) => void
-  updateQuantity: (productId: string, quantity: number) => void
+  updateQuantity: (productId: string, quantity: number | string) => void
   incrementItem: (productId: string) => void
   clearTally: () => void
   getSummary: () => TallySummary
   hasActiveItems: () => boolean
+  validateQuantityInput: (value: string | number) => ValidationResult
 }
 
 type TallyStore = TallyStoreState & TallyActions
@@ -37,6 +39,30 @@ const initialState: TallyStoreState = {
 export const useTallyStore = create<TallyStore>()(
   devtools((set, get) => ({
     ...initialState,
+
+    validateQuantityInput: (value: string | number): ValidationResult => {
+      if (typeof value === 'string') {
+        const trimmed = value.trim()
+
+        if (trimmed.length === 0) {
+          return { isValid: true }
+        }
+
+        if (!/^\d+$/.test(trimmed)) {
+          return { isValid: false, error: 'Quantity must be a whole number' }
+        }
+
+        const numValue = parseInt(trimmed, 10)
+
+        if (isNaN(numValue)) {
+          return { isValid: false, error: 'Invalid quantity format' }
+        }
+
+        return validateQuantity(numValue)
+      }
+
+      return validateQuantity(value)
+    },
 
     addItem: async (productId: string, price: number, quantity = 1) => {
       if (quantity <= 0) {
@@ -93,22 +119,39 @@ export const useTallyStore = create<TallyStore>()(
       })
     },
 
-    updateQuantity: (productId: string, quantity: number) => {
-      if (quantity < 0) {
-        throw new Error('Quantity cannot be negative')
+    updateQuantity: (productId: string, quantity: number | string) => {
+      let numQuantity: number
+
+      if (typeof quantity === 'string') {
+        const validationResult = get().validateQuantityInput(quantity)
+
+        if (!validationResult.isValid) {
+          throw new Error(validationResult.error || 'Invalid quantity format')
+        }
+
+        const trimmed = quantity.trim()
+        numQuantity = trimmed.length === 0 ? 0 : parseInt(trimmed, 10)
+      } else {
+        const validationResult = validateQuantity(quantity)
+
+        if (!validationResult.isValid) {
+          throw new Error(validationResult.error || 'Invalid quantity')
+        }
+
+        numQuantity = quantity
       }
 
       set((state) => {
         const newItems = new Map<string, TallyItem>(state.items)
 
-        if (quantity === 0) {
+        if (numQuantity === 0) {
           newItems.delete(productId)
         } else {
           const existing = newItems.get(productId)
           if (existing) {
             newItems.set(productId, {
               ...existing,
-              quantity,
+              quantity: numQuantity,
             })
           }
         }

@@ -8,6 +8,9 @@ interface NumericKeypadProps {
   onChange: (value: string) => void
   maxLength?: number
   disabled?: boolean
+  validateOnChange?: boolean
+  onError?: (error: string | null) => void
+  onValidChange?: (isValid: boolean) => void
   className?: string
 }
 
@@ -16,28 +19,58 @@ export const NumericKeypad = React.memo(function NumericKeypad({
   onChange,
   maxLength = 6,
   disabled = false,
+  validateOnChange = true,
+  onError,
+  onValidChange,
   className,
 }: NumericKeypadProps) {
   const handleNumberPress = React.useCallback((num: string) => {
     if (disabled) return
 
     const newValue = value === '0' ? num : value + num
+
+    if (validateOnChange) {
+      if (!/^\d+$/.test(newValue)) {
+        onError?.('Invalid input. Use numbers only')
+        onValidChange?.(false)
+        return
+      }
+
+      const numValue = parseInt(newValue, 10)
+      if (numValue > 9_999) {
+        onError?.('Quantity cannot exceed 9,999')
+        onValidChange?.(false)
+        return
+      }
+    }
+
     if (newValue.length <= maxLength) {
       onChange(newValue)
+      onError?.(null)
+      onValidChange?.(true)
     }
-  }, [disabled, value, maxLength, onChange])
+  }, [disabled, value, maxLength, onChange, validateOnChange, onError, onValidChange])
 
   const handleClear = React.useCallback(() => {
     if (disabled) return
     onChange('')
-  }, [disabled, onChange])
+    onError?.(null)
+    onValidChange?.(true)
+  }, [disabled, onChange, onError, onValidChange])
 
   const handleBackspace = React.useCallback(() => {
     if (disabled) return
     if (value.length > 0) {
       onChange(value.slice(0, -1))
+      if (validateOnChange) {
+        const newValue = value.slice(0, -1)
+        if (newValue.length === 0 || /^\d+$/.test(newValue)) {
+          onError?.(null)
+          onValidChange?.(true)
+        }
+      }
     }
-  }, [disabled, value, onChange])
+  }, [disabled, value, onChange, validateOnChange, onError, onValidChange])
 
   React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -52,12 +85,16 @@ export const NumericKeypad = React.memo(function NumericKeypad({
       } else if (e.key === 'Escape') {
         e.preventDefault()
         handleClear()
+      } else if (e.key === '.') {
+        e.preventDefault()
+        onError?.('Quantity must be a whole number (no decimals)')
+        onValidChange?.(false)
       }
     }
 
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [disabled, handleNumberPress, handleBackspace, handleClear])
+  }, [disabled, handleNumberPress, handleBackspace, handleClear, onError, onValidChange])
 
   const buttons = [
     { label: '1', value: '1', position: 'col-start-1 row-start-1' },
