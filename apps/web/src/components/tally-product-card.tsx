@@ -10,7 +10,9 @@ import {
   CardTitle,
   CardContent,
 } from '@/components/ui/card'
+import { HighlightRing } from '@/components/ui/spring-indicator'
 import { useGestures } from '@/hooks/use-gestures'
+import { animationClasses, animationPresets } from '@/lib/animations'
 import { cn } from '@/lib/utils'
 import { getFocusVisibleClassName } from '@/lib/focus-styles'
 import type { Product } from '@tiny-till/types'
@@ -37,6 +39,9 @@ export const TallyProductCard = React.memo(function TallyProductCard({
   const [isPulsing, setIsPulsing] = React.useState(false)
   const [isShaking, setIsShaking] = React.useState(false)
   const [prevQuantity, setPrevQuantity] = React.useState(quantity)
+  const [showHighlight, setShowHighlight] = React.useState(false)
+  const [isHovered, setIsHovered] = React.useState(false)
+  const [isPressed, setIsPressed] = React.useState(false)
   const cardRef = React.useRef<HTMLButtonElement>(null)
 
   const { isLongPressing, shouldPreventClick, eventHandlers } = useGestures({
@@ -47,7 +52,11 @@ export const TallyProductCard = React.memo(function TallyProductCard({
   React.useEffect(() => {
     if (quantity !== prevQuantity && quantity > 0) {
       setIsPulsing(true)
-      const timer = setTimeout(() => setIsPulsing(false), 300)
+      setShowHighlight(true)
+      const timer = setTimeout(() => {
+        setIsPulsing(false)
+        setShowHighlight(false)
+      }, 400)
       return () => clearTimeout(timer)
     }
     setPrevQuantity(quantity)
@@ -109,9 +118,11 @@ export const TallyProductCard = React.memo(function TallyProductCard({
       ref={cardRef}
       type="button"
       className={cn(
-        'group relative flex flex-col text-left transition-all duration-200 touch-manipulation',
-        'hover:shadow-lg hover:shadow-primary/10',
-        'active:scale-[0.98] hover:scale-[1.02] focus-visible:scale-[1.02]',
+        'group relative flex flex-col text-left touch-manipulation',
+        animationPresets.cardActive,
+        'gpu-accelerated',
+        isHovered && '-translate-y-1 shadow-lg shadow-primary/10',
+        isPressed && 'scale-[0.98]',
         isLongPressing && 'opacity-80 scale-[0.97]',
         isShaking && 'animate-shake',
         touchTargetSize,
@@ -120,17 +131,26 @@ export const TallyProductCard = React.memo(function TallyProductCard({
       aria-label={`${product.name}, ${formatPrice(product.price)}, quantity: ${quantity}`}
       onKeyDown={handleKeyDown}
       onClick={handleIncrement}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => {
+        setIsHovered(false)
+        setIsPressed(false)
+      }}
+      onMouseDown={() => setIsPressed(true)}
+      onMouseUp={() => setIsPressed(false)}
       {...eventHandlers}
     >
+      <HighlightRing show={showHighlight} />
       <Card size={density === 'compact' ? 'sm' : 'sm'} className="transition-colors group-hover:border-primary/20">
         {quantity > 0 && (
           <div className="absolute -top-1 -right-1 z-10">
             <Badge
               variant="default"
               className={cn(
-                'flex items-center justify-center font-bold shadow-md cursor-pointer hover:scale-110 active:scale-95 transition-transform',
+                'flex items-center justify-center font-bold shadow-md cursor-pointer',
+                animationPresets.touchFeedback,
                 badgeSize,
-                isPulsing && 'animate-pulse-once'
+                isPulsing && animationClasses.springPulse
               )}
               onClick={handleBadgeClick}
               aria-live="polite"
@@ -146,7 +166,7 @@ export const TallyProductCard = React.memo(function TallyProductCard({
               <img
                 src={product.imageData}
                 alt=""
-                className={cn('w-full aspect-square rounded-none object-cover transition-transform duration-300 group-hover:scale-105', imageSize)}
+                className={cn('w-full aspect-square rounded-none object-cover', animationPresets.hoverLift, imageSize)}
                 loading="lazy"
               />
             </div>
@@ -169,7 +189,8 @@ export const TallyProductCard = React.memo(function TallyProductCard({
           size="icon"
           variant="destructive"
           className={cn(
-            'absolute bottom-2 right-2 z-10 touch-manipulation transition-transform hover:scale-110 active:scale-95 shadow-lg',
+            'absolute bottom-2 right-2 z-10 touch-manipulation shadow-lg',
+            animationPresets.touchFeedback,
             decrementSize
           )}
           onClick={handleDecrement}

@@ -1,6 +1,7 @@
 import * as React from 'react'
 import { Check, X } from 'lucide-react'
 
+import { animationClasses } from '@/lib/animations'
 import { cn } from '@/lib/utils'
 import { getErrorStateClasses, getValidationTransitionClasses } from '@/lib/animations'
 
@@ -32,8 +33,7 @@ export const ValidatedQuantityInput = React.memo(function ValidatedQuantityInput
   return (
     <output
       className={cn(
-        'relative rounded-none p-6 text-center',
-        'border-2',
+        'relative rounded-none p-6 text-center border-2 gpu-accelerated',
         borderClasses,
         transitionClasses,
         hasError && 'animate-shake',
@@ -59,7 +59,7 @@ export const ValidatedQuantityInput = React.memo(function ValidatedQuantityInput
             className={cn(
               'rounded-full bg-green-500 p-1',
               'transition-all duration-200',
-              'animate-fade-in'
+              animationClasses.springEnter
             )}
             aria-hidden="true"
           >
@@ -74,7 +74,7 @@ export const ValidatedQuantityInput = React.memo(function ValidatedQuantityInput
             className={cn(
               'rounded-full bg-destructive p-1',
               'transition-all duration-200',
-              'animate-fade-in'
+              animationClasses.springEnter
             )}
             aria-hidden="true"
           >

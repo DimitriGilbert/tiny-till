@@ -2,6 +2,7 @@ import * as React from 'react'
 
 import { AlertCircle, XCircle, Info } from 'lucide-react'
 import { VALIDATION_TYPES, type ValidationMessageType } from '@/lib/validation-messages'
+import { animationClasses } from '@/lib/animations'
 import { cn } from '@/lib/utils'
 
 export interface ValidationErrorMessageProps {
@@ -49,8 +50,8 @@ export const ValidationErrorMessage = React.memo(function ValidationErrorMessage
       aria-live="polite"
       aria-atomic="true"
       className={cn(
-        'flex items-start gap-2 px-3 py-2 rounded-none border',
-        'animate-fade-in',
+        'flex items-start gap-2 px-3 py-2 rounded-none border gpu-accelerated',
+        animationClasses.springEnter,
         bgMap[type],
         className
       )}
@@ -72,8 +73,7 @@ export const ValidationErrorMessage = React.memo(function ValidationErrorMessage
           type="button"
           onClick={onDismiss}
           className={cn(
-            'flex-shrink-0 ml-auto opacity-70 hover:opacity-100',
-            'transition-opacity',
+            'flex-shrink-0 ml-auto opacity-70 hover:opacity-100 transition-opacity',
             colorMap[type]
           )}
           aria-label="Dismiss message"

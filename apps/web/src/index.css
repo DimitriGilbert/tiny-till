@@ -267,3 +267,183 @@ a:focus-visible,
   animation: slide-down 250ms ease-out;
 }
 
+@keyframes spring-pulse {
+  0% {
+    transform: scale(1);
+  }
+  25% {
+    transform: scale(1.15);
+  }
+  40% {
+    transform: scale(0.95);
+  }
+  60% {
+    transform: scale(1.05);
+  }
+  80% {
+    transform: scale(0.98);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes spring-slide-up {
+  0% {
+    transform: translateY(20px) scale(0.95);
+    opacity: 0;
+  }
+  50% {
+    transform: translateY(-5px) scale(1.02);
+    opacity: 1;
+  }
+  70% {
+    transform: translateY(2px) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes spring-slide-down {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+  30% {
+    transform: translateY(-10px) scale(1.02);
+    opacity: 1;
+  }
+  60% {
+    transform: translateY(15px) scale(0.95);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(20px) scale(0.9);
+    opacity: 0;
+  }
+}
+
+@keyframes highlight-fade {
+  0% {
+    box-shadow: 0 0 0 4px var(--primary);
+    opacity: 0;
+  }
+  50% {
+    box-shadow: 0 0 0 8px var(--primary);
+    opacity: 0.3;
+  }
+  100% {
+    box-shadow: 0 0 0 0 var(--primary);
+    opacity: 0;
+  }
+}
+
+@keyframes ripple {
+  0% {
+    transform: scale(0);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(2.5);
+    opacity: 0;
+  }
+}
+
+@keyframes loading-dots {
+  0%, 20% {
+    transform: scale(0.8);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  80%, 100% {
+    transform: scale(0.8);
+    opacity: 0.5;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes success-check {
+  0% {
+    stroke-dashoffset: 24;
+    transform: scale(0);
+  }
+  50% {
+    stroke-dashoffset: 12;
+    transform: scale(1.1);
+  }
+  100% {
+    stroke-dashoffset: 0;
+    transform: scale(1);
+  }
+}
+
+.animate-spring-pulse {
+  animation: spring-pulse 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.animate-spring-enter {
+  animation: spring-slide-up 350ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.animate-spring-exit {
+  animation: spring-slide-down 250ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.animate-highlight {
+  animation: highlight-fade 600ms ease-out;
+}
+
+.animate-ripple {
+  animation: ripple 500ms ease-out;
+}
+
+.animate-loading {
+  animation: loading-dots 1.4s ease-in-out infinite;
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+.animate-success-check {
+  animation: success-check 400ms ease-out forwards;
+}
+
+.gpu-accelerated {
+  will-change: transform, opacity;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-spring-pulse,
+  .animate-spring-enter,
+  .animate-spring-exit,
+  .animate-highlight,
+  .animate-ripple,
+  .animate-loading,
+  .animate-shimmer {
+    animation: none;
+  }
+
+  .gpu-accelerated {
+    will-change: auto;
+    transform: none;
+  }
+}

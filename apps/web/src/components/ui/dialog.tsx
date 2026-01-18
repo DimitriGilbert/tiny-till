@@ -2,6 +2,7 @@ import * as React from "react"
 
 import { Dialog as DialogPrimitive } from "@base-ui/react/dialog"
 
+import { animationPresets } from "@/lib/animations";
 import { cn } from "@/lib/utils"
 
 function Dialog(props: DialogPrimitive.Root.Props) {
@@ -43,7 +44,9 @@ function DialogBackdrop({
     <DialogPrimitive.Backdrop
       data-slot="dialog-backdrop"
       className={cn(
-        "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 fixed inset-0 z-50 bg-black/50 transition-all duration-200",
+        "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 fixed inset-0 z-50 bg-black/50",
+        animationPresets.modalEnter,
+        "gpu-accelerated",
         className,
       )}
       {...props}
@@ -63,7 +66,9 @@ function DialogContent({
         <DialogPrimitive.Popup
           data-slot="dialog-content"
           className={cn(
-            "bg-background text-foreground data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 relative grid w-full max-w-lg gap-4 rounded-none border p-6 shadow-lg transition-all duration-200",
+            "bg-background text-foreground data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 relative grid w-full max-w-lg gap-4 rounded-none border p-6 shadow-lg",
+            "data-[state=open]:animate-spring-enter data-[state=closed]:animate-spring-exit",
+            "gpu-accelerated",
             className,
           )}
           {...props}
@@ -84,6 +89,7 @@ function DialogHeader({
       data-slot="dialog-header"
       className={cn(
         "flex flex-col space-y-1.5 text-center sm:text-left",
+        animationPresets.modalEnter,
         className,
       )}
       {...props}
@@ -100,6 +106,7 @@ function DialogFooter({
       data-slot="dialog-footer"
       className={cn(
         "flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2",
+        animationPresets.modalEnter,
         className,
       )}
       {...props}

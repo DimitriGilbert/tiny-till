@@ -10,6 +10,8 @@ import {
   CardTitle,
   CardContent,
 } from '@/components/ui/card'
+import { HighlightRing } from '@/components/ui/spring-indicator'
+import { animationPresets } from '@/lib/animations'
 import { cn } from '@/lib/utils'
 import { getFocusVisibleClassName } from '@/lib/focus-styles'
 import type { Product } from '@tiny-till/types'
@@ -37,6 +39,9 @@ export const ProductCard = React.memo(function ProductCard({
 }: ProductCardProps) {
   const cardRef = React.useRef<HTMLButtonElement>(null)
   const [isDeleting, setIsDeleting] = React.useState(false)
+  const [showHighlight, setShowHighlight] = React.useState(false)
+  const [isHovered, setIsHovered] = React.useState(false)
+  const [isPressed, setIsPressed] = React.useState(false)
 
   const handleDelete = async () => {
     if (onDelete && !isDeleting) {
@@ -49,6 +54,8 @@ export const ProductCard = React.memo(function ProductCard({
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault()
+      setShowHighlight(true)
+      setTimeout(() => setShowHighlight(false), 400)
       onEdit?.(product.id)
     }
     if (e.key === 'Delete') {
@@ -61,22 +68,51 @@ export const ProductCard = React.memo(function ProductCard({
     onFocus?.()
   }
 
+  const handleMouseEnter = () => {
+    setIsHovered(true)
+  }
+
+  const handleMouseLeave = () => {
+    setIsHovered(false)
+    setIsPressed(false)
+  }
+
+  const handleMouseDown = () => {
+    setIsPressed(true)
+  }
+
+  const handleMouseUp = () => {
+    setIsPressed(false)
+  }
+
   return (
     <button
       ref={cardRef}
       type="button"
       className={cn(
-        'group relative flex flex-col text-left transition-all duration-200',
-        'hover:shadow-lg hover:shadow-primary/10',
-        'active:scale-[0.98] hover:scale-[1.02] focus-visible:scale-[1.02]',
+        'group relative flex flex-col text-left',
+        animationPresets.cardActive,
+        'gpu-accelerated',
+        isHovered && '-translate-y-1 shadow-lg shadow-primary/10',
+        isPressed && 'scale-[0.98]',
+        isFocused && 'scale-[1.02]',
         getFocusVisibleClassName(isFocused),
         className
       )}
       aria-label={`${product.name}, ${formatPrice(product.price)}`}
       onKeyDown={handleKeyDown}
       onFocus={handleFocus}
-      onClick={() => onEdit?.(product.id)}
+      onClick={() => {
+        setShowHighlight(true)
+        setTimeout(() => setShowHighlight(false), 400)
+        onEdit?.(product.id)
+      }}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      onMouseDown={handleMouseDown}
+      onMouseUp={handleMouseUp}
     >
+      <HighlightRing show={showHighlight} />
       <Card size={density === 'compact' ? 'sm' : 'sm'} className="transition-colors group-hover:border-primary/20">
       <CardHeader>
         {product.imageData ? (
@@ -84,7 +120,7 @@ export const ProductCard = React.memo(function ProductCard({
             <img
               src={product.imageData}
               alt=""
-              className={cn('w-full aspect-square rounded-none object-cover transition-transform duration-300 group-hover:scale-105', density === 'compact' ? 'max-w-[96px]' : 'max-w-[128px]')}
+              className={cn('w-full aspect-square rounded-none object-cover', animationPresets.hoverLift, density === 'compact' ? 'max-w-[96px]' : 'max-w-[128px]')}
               loading="lazy"
             />
           </div>
@@ -105,7 +141,7 @@ export const ProductCard = React.memo(function ProductCard({
               }}
               disabled={isLoading || isDeleting}
               aria-label={`Edit ${product.name}`}
-              className={cn('touch-manipulation transition-transform hover:scale-110 active:scale-95', density === 'compact' ? 'h-8 w-8' : 'h-9 w-9')}
+              className={cn('touch-manipulation', animationPresets.touchFeedback, density === 'compact' ? 'h-8 w-8' : 'h-9 w-9')}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -133,7 +169,7 @@ export const ProductCard = React.memo(function ProductCard({
               }}
               disabled={isLoading || isDeleting}
               aria-label={`Delete ${product.name}`}
-              className={cn('touch-manipulation text-destructive hover:bg-destructive/10 transition-transform hover:scale-110 active:scale-95', density === 'compact' ? 'h-8 w-8' : 'h-9 w-9')}
+              className={cn('touch-manipulation text-destructive hover:bg-destructive/10', animationPresets.touchFeedback, density === 'compact' ? 'h-8 w-8' : 'h-9 w-9')}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
