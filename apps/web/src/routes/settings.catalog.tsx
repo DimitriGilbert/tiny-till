@@ -6,7 +6,7 @@ import { Download, Loader2, Upload } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ConfirmationDialog } from '@/components/confirmation-dialog'
 import { ProductForm } from '@/components/product-form'
-import { ProductList } from '@/components/product-list'
+import { VirtualizedProductGrid } from '@/components/virtualized-product-grid'
 import { CatalogImport } from '@/components/CatalogImport'
 import { BackupReminderCard } from '@/components/backup-reminder-card'
 import { useCatalogStore } from '@/stores/catalog-store'
@@ -129,7 +129,7 @@ function CatalogPage() {
 
       <BackupReminderCard className="mb-6" />
 
-      <ProductList
+      <VirtualizedProductGrid
         onEdit={handleEditProduct}
         onDelete={handleDeleteProduct}
         onAddProduct={handleAddProduct}
