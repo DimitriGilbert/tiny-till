@@ -1,22 +1,56 @@
-import { useCallback } from "react";
-import { useNavigate, useLocation } from "@tanstack/react-router";
+import { useCallback, useState } from "react"
+import { useNavigate, useLocation } from "@tanstack/react-router"
+import type { NavigateOptions } from "@tanstack/react-router"
 
-export function useTallyNavigationGuard(hasActiveTally: () => boolean) {
-  const navigate = useNavigate();
-  const location = useLocation();
+interface NavigationGuardReturn {
+  isModalOpen: boolean
+  navigateWithCheck: (to: string, options?: NavigateOptions) => void
+  handleConfirm: () => void
+  handleCancel: () => void
+}
+
+export function useTallyNavigationGuard(
+  hasActiveTally: () => boolean,
+  clearTally: () => void
+): NavigationGuardReturn {
+  const navigate = useNavigate()
+  const location = useLocation()
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [pendingNavigation, setPendingNavigation] = useState<{
+    to: string
+    options?: NavigateOptions
+  } | null>(null)
 
   const navigateWithCheck = useCallback(
-    (to: string) => {
+    (to: string, options?: NavigateOptions) => {
       if (location.pathname === "/" && hasActiveTally()) {
-        const shouldProceed = confirm(
-          "You have items in your current tally. Clear and continue?"
-        );
-        if (!shouldProceed) return;
+        setPendingNavigation({ to, options })
+        setIsModalOpen(true)
+        return
       }
-      navigate({ to });
+      navigate({ to: to as never, ...options })
     },
     [navigate, location.pathname, hasActiveTally]
-  );
+  )
 
-  return { navigateWithCheck };
+  const handleConfirm = useCallback(() => {
+    clearTally()
+    setIsModalOpen(false)
+    if (pendingNavigation) {
+      navigate({ to: pendingNavigation.to as never, ...pendingNavigation.options })
+      setPendingNavigation(null)
+    }
+  }, [clearTally, navigate, pendingNavigation])
+
+  const handleCancel = useCallback(() => {
+    setIsModalOpen(false)
+    setPendingNavigation(null)
+  }, [])
+
+  return {
+    isModalOpen,
+    navigateWithCheck,
+    handleConfirm,
+    handleCancel,
+  }
 }

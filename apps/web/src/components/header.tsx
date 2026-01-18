@@ -1,12 +1,15 @@
-import { Link } from "@tanstack/react-router";
+import type { NavigateOptions } from "@tanstack/react-router"
+import { ModeToggle } from "./mode-toggle"
 
-import { ModeToggle } from "./mode-toggle";
+interface HeaderProps {
+  navigateWithCheck: (to: string, options?: NavigateOptions) => void
+}
 
-export default function Header() {
+export default function Header({ navigateWithCheck }: HeaderProps) {
   const links = [
     { to: "/", label: "Tally" },
     { to: "/settings", label: "Settings" },
-  ] as const;
+  ] as const
 
   return (
     <div>
@@ -14,10 +17,15 @@ export default function Header() {
         <nav className="flex gap-4 text-lg">
           {links.map(({ to, label }) => {
             return (
-              <Link key={to} to={to}>
+              <button
+                key={to}
+                type="button"
+                onClick={() => navigateWithCheck(to)}
+                className="hover:text-foreground/80 transition-colors"
+              >
                 {label}
-              </Link>
-            );
+              </button>
+            )
           })}
         </nav>
         <div className="flex items-center gap-2">
@@ -26,5 +34,5 @@ export default function Header() {
       </div>
       <hr />
     </div>
-  );
+  )
 }
