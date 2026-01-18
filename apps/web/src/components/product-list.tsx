@@ -4,6 +4,7 @@ import { Input } from '@/components/ui/input'
 import { ProductCard } from '@/components/product-card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useCatalogStore } from '@/stores/catalog-store'
+import { useKeyboardNavigation } from '@/hooks/use-keyboard-navigation'
 import type { Product } from '@tiny-till/types'
 
 interface ProductListProps {
@@ -19,15 +20,48 @@ export function ProductList({
 }: ProductListProps) {
   const { products, searchProducts, isLoading, hasHydrated } = useCatalogStore()
   const [searchQuery, setSearchQuery] = React.useState('')
+  const [columnCount, setColumnCount] = React.useState(6)
 
   const filteredProducts = React.useMemo(
     () => searchProducts(searchQuery),
     [searchQuery, searchProducts]
   )
 
+  const productMap = React.useRef<Map<string, HTMLElement>>(new Map())
+
   const handleSearchChange = (value: string) => {
     setSearchQuery(value)
   }
+
+  const getItemElement = (id: string) => {
+    return productMap.current.get(id) || null
+  }
+
+  const { focusedItemId, setFocusedItemId } = useKeyboardNavigation<Product>({
+    items: filteredProducts,
+    itemId: (item) => item.id,
+    onItemSelect: (item) => {
+      onEdit?.(item.id)
+    },
+    getItemElement,
+    columnCount,
+    enabled: !searchQuery && filteredProducts.length > 0,
+  })
+
+  const updateColumnCount = React.useCallback(() => {
+    const width = window.innerWidth
+    if (width >= 1280) setColumnCount(6)
+    else if (width >= 1024) setColumnCount(5)
+    else if (width >= 768) setColumnCount(4)
+    else if (width >= 640) setColumnCount(3)
+    else setColumnCount(2)
+  }, [])
+
+  React.useEffect(() => {
+    updateColumnCount()
+    window.addEventListener('resize', updateColumnCount)
+    return () => window.removeEventListener('resize', updateColumnCount)
+  }, [updateColumnCount])
 
   const isLoadingState = !hasHydrated || externalLoading || isLoading
 
@@ -61,7 +95,11 @@ export function ProductList({
           />
         </div>
         {searchQuery && (
-          <span className="text-sm text-muted-foreground">
+          <span
+            className="text-sm text-muted-foreground"
+            aria-live="polite"
+            aria-atomic="true"
+          >
             {filteredProducts.length} of {products.length} products
           </span>
         )}
@@ -70,7 +108,7 @@ export function ProductList({
       {isLoadingState ? (
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
           {Array.from({ length: 6 }).map((_, i) => (
-            <div key={`skeleton-${i}`} className="flex flex-col gap-2">
+            <div key={`skeleton-${i}-${Date.now()}`} className="flex flex-col gap-2">
               <Skeleton className="size-32" />
               <Skeleton className="h-4 w-3/4" />
               <Skeleton className="h-4 w-1/2" />
@@ -92,13 +130,25 @@ export function ProductList({
       ) : (
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
           {filteredProducts.map((product: Product) => (
-            <ProductCard
+            <div
               key={product.id}
-              product={product}
-              onEdit={onEdit}
-              onDelete={onDelete}
-              isLoading={isLoading}
-            />
+              ref={(el) => {
+                if (el) {
+                  productMap.current.set(product.id, el)
+                } else {
+                  productMap.current.delete(product.id)
+                }
+              }}
+            >
+              <ProductCard
+                product={product}
+                onEdit={onEdit}
+                onDelete={onDelete}
+                isLoading={isLoading}
+                isFocused={focusedItemId === product.id}
+                onFocus={() => setFocusedItemId(product.id)}
+              />
+            </div>
           ))}
         </div>
       )}

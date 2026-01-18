@@ -57,15 +57,18 @@ function CatalogPage() {
     : undefined
 
   return (
-    <div className="container mx-auto max-w-6xl px-4 py-2">
-      <div className="mb-4 flex items-center justify-between">
-        <Link to="/settings" className="text-primary hover:underline">
-          ← Back to Settings
-        </Link>
-        <Button onClick={handleAddProduct}>Add Product</Button>
-      </div>
-
-      <h1 className="mb-6 text-2xl font-bold">Catalog Management</h1>
+    <main aria-label="Product catalog management" className="container mx-auto max-w-6xl px-4 py-2">
+      <header>
+        <nav className="mb-4" aria-label="Back navigation">
+          <Link to="/settings" className="text-primary hover:underline">
+            ← Back to Settings
+          </Link>
+        </nav>
+        <div className="flex items-center justify-between">
+          <h1 className="mb-6 text-2xl font-bold">Catalog Management</h1>
+          <Button onClick={handleAddProduct}>Add Product</Button>
+        </div>
+      </header>
 
       <ProductList
         onEdit={handleEditProduct}
@@ -99,6 +102,9 @@ function CatalogPage() {
         onConfirm={handleConfirmDelete}
         isDestructive
       />
-    </div>
+      <div aria-live="polite" aria-atomic="true" className="sr-only">
+        {products.length} products in catalog
+      </div>
+    </main>
   )
 }

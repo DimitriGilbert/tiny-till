@@ -9,6 +9,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
+import { focusVisibleStyles } from '@/lib/focus-styles'
 
 interface ConfirmationDialogProps {
   open: boolean
@@ -35,6 +36,8 @@ export function ConfirmationDialog({
   isLoading = false,
   children,
 }: ConfirmationDialogProps) {
+  const confirmButtonRef = React.useRef<HTMLButtonElement>(null)
+  const previousFocusRef = React.useRef<HTMLElement | null>(null)
   const [isProcessing, setIsProcessing] = React.useState(false)
 
   const handleConfirm = async () => {
@@ -49,12 +52,42 @@ export function ConfirmationDialog({
     }
   }
 
+  React.useEffect(() => {
+    if (open) {
+      previousFocusRef.current = document.activeElement as HTMLElement
+      setTimeout(() => {
+        confirmButtonRef.current?.focus()
+      }, 100)
+    } else if (previousFocusRef.current) {
+      previousFocusRef.current.focus()
+      previousFocusRef.current = null
+    }
+  }, [open])
+
+  React.useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && open && !isProcessing) {
+        onOpenChange(false)
+      }
+    }
+    document.addEventListener('keydown', handleEscape)
+    return () => document.removeEventListener('keydown', handleEscape)
+  }, [open, onOpenChange, isProcessing])
+
   return (
     <Dialog open={open} onOpenChange={isProcessing ? undefined : onOpenChange}>
-      <DialogContent>
+      <DialogContent
+        role={isDestructive ? 'alertdialog' : 'dialog'}
+        aria-labelledby="dialog-title"
+        aria-describedby={description ? 'dialog-description' : undefined}
+      >
         <DialogHeader>
-          <DialogTitle>{title}</DialogTitle>
-          {description && <DialogDescription>{description}</DialogDescription>}
+          <DialogTitle id="dialog-title">{title}</DialogTitle>
+          {description && (
+            <DialogDescription id="dialog-description">
+              {description}
+            </DialogDescription>
+          )}
         </DialogHeader>
         {children && <div className="py-4">{children}</div>}
         <DialogFooter>
@@ -62,13 +95,16 @@ export function ConfirmationDialog({
             variant="outline"
             onClick={() => onOpenChange(false)}
             disabled={isProcessing || isLoading}
+            className={focusVisibleStyles}
           >
             {cancelLabel}
           </Button>
           <Button
+            ref={confirmButtonRef}
             variant={isDestructive ? 'destructive' : 'default'}
             onClick={handleConfirm}
             disabled={isProcessing || isLoading}
+            className={focusVisibleStyles}
           >
             {isProcessing || isLoading ? 'Processing...' : confirmLabel}
           </Button>

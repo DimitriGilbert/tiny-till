@@ -10,6 +10,8 @@ import {
   CardTitle,
   CardContent,
 } from '@/components/ui/card'
+import { cn } from '@/lib/utils'
+import { getFocusVisibleClassName } from '@/lib/focus-styles'
 import type { Product } from '@tiny-till/types'
 
 interface ProductCardProps {
@@ -18,6 +20,8 @@ interface ProductCardProps {
   onDelete?: (id: string) => void
   isLoading?: boolean
   className?: string
+  isFocused?: boolean
+  onFocus?: () => void
 }
 
 export function ProductCard({
@@ -26,7 +30,10 @@ export function ProductCard({
   onDelete,
   isLoading = false,
   className,
+  isFocused = false,
+  onFocus,
 }: ProductCardProps) {
+  const cardRef = React.useRef<HTMLButtonElement>(null)
   const [isDeleting, setIsDeleting] = React.useState(false)
 
   const handleDelete = async () => {
@@ -37,20 +44,48 @@ export function ProductCard({
     }
   }
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault()
+      onEdit?.(product.id)
+    }
+    if (e.key === 'Delete') {
+      e.preventDefault()
+      handleDelete()
+    }
+  }
+
+  const handleFocus = () => {
+    onFocus?.()
+  }
+
   return (
-    <Card size="sm" className={className}>
+    <button
+      ref={cardRef}
+      type="button"
+      className={cn(
+        'flex flex-col text-left',
+        getFocusVisibleClassName(isFocused),
+        className
+      )}
+      aria-label={`${product.name}, ${formatPrice(product.price)}`}
+      onKeyDown={handleKeyDown}
+      onFocus={handleFocus}
+      onClick={() => onEdit?.(product.id)}
+    >
+      <Card size="sm">
       <CardHeader>
         {product.imageData ? (
           <div className="mb-2 flex justify-center">
             <img
               src={product.imageData}
-              alt={product.name}
+              alt=""
               className="size-32 rounded-none object-cover"
               loading="lazy"
             />
           </div>
         ) : (
-          <div className="mb-2 flex size-32 items-center justify-center rounded-none bg-muted">
+          <div className="mb-2 flex size-32 items-center justify-center rounded-none bg-muted" aria-hidden="true">
             <span className="text-4xl">📦</span>
           </div>
         )}
@@ -60,7 +95,10 @@ export function ProductCard({
             <Button
               size="icon-xs"
               variant="ghost"
-              onClick={() => onEdit(product.id)}
+              onClick={(e) => {
+                e.stopPropagation()
+                onEdit(product.id)
+              }}
               disabled={isLoading || isDeleting}
               aria-label={`Edit ${product.name}`}
             >
@@ -84,7 +122,10 @@ export function ProductCard({
             <Button
               size="icon-xs"
               variant="ghost"
-              onClick={handleDelete}
+              onClick={(e) => {
+                e.stopPropagation()
+                handleDelete()
+              }}
               disabled={isLoading || isDeleting}
               aria-label={`Delete ${product.name}`}
               className="text-destructive hover:bg-destructive/10"
@@ -111,9 +152,11 @@ export function ProductCard({
       </CardHeader>
       <CardContent>
         <div className="text-center text-lg font-semibold text-foreground">
+          <span className="sr-only">Price: </span>
           {formatPrice(product.price)}
         </div>
       </CardContent>
-    </Card>
+      </Card>
+    </button>
   )
 }

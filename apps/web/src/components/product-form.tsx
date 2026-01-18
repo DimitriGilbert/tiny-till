@@ -15,6 +15,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { useProductForm } from '@/hooks/use-product-form'
 import type { Product } from '@tiny-till/types'
 import { formatPrice } from '@tiny-till/types'
+import { focusVisibleStyles } from '@/lib/focus-styles'
 
 interface ProductFormProps {
   open: boolean
@@ -33,6 +34,8 @@ export function ProductForm({
   onSuccess,
   onCancel,
 }: ProductFormProps) {
+  const formRef = React.useRef<HTMLFormElement>(null)
+  const previousFocusRef = React.useRef<HTMLElement | null>(null)
   const { form, handleSubmit, handleCancel, validateImage } = useProductForm({
     mode,
     product,
@@ -55,6 +58,32 @@ export function ProductForm({
   const [imagePreview, setImagePreview] = React.useState<string>()
 
   const fileInputRef = React.useRef<HTMLInputElement>(null)
+
+  React.useEffect(() => {
+    if (open) {
+      previousFocusRef.current = document.activeElement as HTMLElement
+    } else if (previousFocusRef.current) {
+      previousFocusRef.current.focus()
+      previousFocusRef.current = null
+    }
+  }, [open])
+
+  React.useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && open) {
+        onOpenChange(false)
+      }
+    }
+    document.addEventListener('keydown', handleEscape)
+    return () => document.removeEventListener('keydown', handleEscape)
+  }, [open, onOpenChange])
+
+  React.useEffect(() => {
+    if (open && formRef.current) {
+      const firstInput = formRef.current.querySelector('input') as HTMLInputElement
+      firstInput?.focus()
+    }
+  }, [open])
 
   React.useEffect(() => {
     if (product?.imageData) {
@@ -102,19 +131,24 @@ export function ProductForm({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle>{isEditMode ? 'Edit Product' : 'Add Product'}</DialogTitle>
-          <DialogDescription>
+          <DialogTitle id="product-form-title">
+            {isEditMode ? 'Edit Product' : 'Add Product'}
+          </DialogTitle>
+          <DialogDescription id="product-form-description">
             {isEditMode
               ? 'Update the product details below.'
               : 'Add a new product to your catalog.'}
           </DialogDescription>
         </DialogHeader>
         <form
+          ref={formRef}
           onSubmit={(e) => {
             e.preventDefault()
             handleSubmit()
           }}
           className="flex flex-col gap-4"
+          aria-labelledby="product-form-title"
+          aria-describedby="product-form-description"
         >
           <div className="grid gap-2">
             <Label htmlFor="name">Product Name *</Label>
@@ -129,25 +163,28 @@ export function ProductForm({
                 },
               }}
             >
-              {(field) => (
-                <div className="space-y-1">
-                  <Input
-                    id="name"
-                    value={field.state.value}
-                    onChange={(e) => field.handleChange(e.target.value)}
-                    onBlur={field.handleBlur}
-                    placeholder="e.g., Chocolate Croissant"
-                    maxLength={50}
-                    aria-invalid={field.state.meta.errors.length > 0}
-                    aria-describedby={field.state.meta.errors.length > 0 ? 'name-error' : undefined}
-                  />
-                  {field.state.meta.errors.length > 0 && (
-                    <p id="name-error" className="text-destructive text-xs">
-                      {field.state.meta.errors[0]}
-                    </p>
-                  )}
-                </div>
-              )}
+               {(field) => (
+                 <div className="space-y-1">
+                   <Input
+                     id="name"
+                     value={field.state.value}
+                     onChange={(e) => field.handleChange(e.target.value)}
+                     onBlur={field.handleBlur}
+                     placeholder="e.g., Chocolate Croissant"
+                     maxLength={50}
+                     aria-invalid={field.state.meta.errors.length > 0}
+                     aria-describedby={
+                       field.state.meta.errors.length > 0 ? 'name-error' : undefined
+                     }
+                     className={focusVisibleStyles}
+                   />
+                   {field.state.meta.errors.length > 0 && (
+                     <p id="name-error" className="text-destructive text-xs" role="alert">
+                       {field.state.meta.errors[0]}
+                     </p>
+                   )}
+                 </div>
+               )}
             </form.Field>
           </div>
 
@@ -171,29 +208,32 @@ export function ProductForm({
                 },
               }}
             >
-              {(field) => (
-                <div className="space-y-1">
-                  <Input
-                    id="price"
-                    value={field.state.value}
-                    onChange={(e) => {
-                      const value = e.target.value
-                      if (/^\$?\s*\d*\.?\d{0,2}$/.test(value)) {
-                        field.handleChange(value)
-                      }
-                    }}
-                    onBlur={field.handleBlur}
-                    placeholder="$0.00"
-                    aria-invalid={field.state.meta.errors.length > 0}
-                    aria-describedby={field.state.meta.errors.length > 0 ? 'price-error' : undefined}
-                  />
-                  {field.state.meta.errors.length > 0 && (
-                    <p id="price-error" className="text-destructive text-xs">
-                      {field.state.meta.errors[0]}
-                    </p>
-                  )}
-                </div>
-              )}
+               {(field) => (
+                 <div className="space-y-1">
+                   <Input
+                     id="price"
+                     value={field.state.value}
+                     onChange={(e) => {
+                       const value = e.target.value
+                       if (/^\$?\s*\d*\.?\d{0,2}$/.test(value)) {
+                         field.handleChange(value)
+                       }
+                     }}
+                     onBlur={field.handleBlur}
+                     placeholder="$0.00"
+                     aria-invalid={field.state.meta.errors.length > 0}
+                     aria-describedby={
+                       field.state.meta.errors.length > 0 ? 'price-error' : undefined
+                     }
+                     className={focusVisibleStyles}
+                   />
+                   {field.state.meta.errors.length > 0 && (
+                     <p id="price-error" className="text-destructive text-xs" role="alert">
+                       {field.state.meta.errors[0]}
+                     </p>
+                   )}
+                 </div>
+               )}
             </form.Field>
           </div>
 
@@ -285,26 +325,28 @@ export function ProductForm({
             </div>
           </div>
 
-          <DialogFooter>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => onOpenChange(false)}
-              disabled={form.state.isSubmitting}
-            >
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              disabled={form.state.isSubmitting || form.state.canSubmit === false}
-            >
-              {form.state.isSubmitting
-                ? 'Saving...'
-                : isEditMode
-                  ? 'Update Product'
-                  : 'Add Product'}
-            </Button>
-          </DialogFooter>
+           <DialogFooter>
+             <Button
+               type="button"
+               variant="outline"
+               onClick={() => onOpenChange(false)}
+               disabled={form.state.isSubmitting}
+               className={focusVisibleStyles}
+             >
+               Cancel
+             </Button>
+             <Button
+               type="submit"
+               disabled={form.state.isSubmitting || form.state.canSubmit === false}
+               className={focusVisibleStyles}
+             >
+               {form.state.isSubmitting
+                 ? 'Saving...'
+                 : isEditMode
+                   ? 'Update Product'
+                   : 'Add Product'}
+             </Button>
+           </DialogFooter>
         </form>
       </DialogContent>
     </Dialog>
