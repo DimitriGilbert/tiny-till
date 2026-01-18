@@ -13,10 +13,14 @@ import { Input } from '@/components/ui/input'
 import { Card, CardContent } from '@/components/ui/card'
 import { ImageUpload } from '@/components/ImageUpload'
 import { PriceInput } from '@/components/price-input'
+import { FormValidationStatus } from '@/components/ui/form-validation-status'
+import { FormValidationSummary } from '@/components/ui/form-validation-summary'
+import { ValidatedInput } from '@/components/ui/validated-input'
 import { useProductForm } from '@/hooks/use-product-form'
 import type { Product } from '@tiny-till/types'
 import { formatPrice } from '@tiny-till/types'
 import { focusVisibleStyles } from '@/lib/focus-styles'
+import { useCatalogStore } from '@/stores/catalog-store'
 
 interface ProductFormProps {
   open: boolean
@@ -37,6 +41,10 @@ export function ProductForm({
 }: ProductFormProps) {
   const formRef = React.useRef<HTMLFormElement>(null)
   const previousFocusRef = React.useRef<HTMLElement | null>(null)
+  const products = useCatalogStore((state) => state.products)
+  const nameFieldRef = React.useRef<HTMLInputElement>(null)
+  const priceFieldRef = React.useRef<HTMLInputElement>(null)
+
   const { form, handleSubmit, handleCancel } = useProductForm({
     mode,
     product,
@@ -82,6 +90,39 @@ export function ProductForm({
   }, [open])
 
   const isEditMode = mode === 'edit'
+  const hasErrors = !form.state.isValid && form.state.isDirty
+
+  const errorCount = Object.keys(form.state.fieldMeta).filter((key) => {
+    const meta = form.state.fieldMeta[key as keyof typeof form.state.fieldMeta]
+    return meta && 'errors' in meta && (meta.errors as unknown[]).length > 0
+  }).length
+
+  const getErrorMap = (): Map<string, string> => {
+    const errors = new Map<string, string>()
+    Object.entries(form.state.fieldMeta).forEach(([field, meta]) => {
+      if (meta && 'errors' in meta && (meta.errors as string[]).length > 0) {
+        errors.set(field, (meta.errors as string[])[0])
+      }
+    })
+    return errors
+  }
+
+  const handleFocusField = (fieldName: string) => {
+    if (fieldName === 'name' && nameFieldRef.current) {
+      nameFieldRef.current.focus()
+    } else if (fieldName === 'price' && priceFieldRef.current) {
+      priceFieldRef.current.focus()
+    }
+  }
+
+  const getValidationStatus = () => {
+    return {
+      isValid: form.state.isValid,
+      isDirty: form.state.isDirty,
+      isValidating: form.state.isSubmitting,
+      errorCount,
+    }
+  }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -106,13 +147,30 @@ export function ProductForm({
           aria-labelledby="product-form-title"
           aria-describedby="product-form-description"
         >
+          <FormValidationStatus {...getValidationStatus()} variant="inline" />
+
+          {hasErrors && (
+            <FormValidationSummary
+              errors={getErrorMap()}
+              warnings={new Map()}
+              onFocusField={handleFocusField}
+              dismissible
+              variant="compact"
+            />
+          )}
+
           <div className="grid gap-2">
             <label htmlFor="name">Product Name *</label>
             <form.Field
               name="name"
               validators={{
-                onChange: ({ value }) =>
-                  value.length > 50 ? 'Name cannot exceed 50 characters' : undefined,
+                onChange: ({ value }) => {
+                  if (value.length > 50) return 'Name cannot exceed 50 characters'
+                  if (products.some(p => p.id !== product?.id && p.name.toLowerCase() === value.toLowerCase())) {
+                    return 'A product with this name already exists'
+                  }
+                  return undefined
+                },
                 onChangeAsync: async ({ value }) => {
                   await new Promise((resolve) => setTimeout(resolve, 100))
                   return value.trim().length === 0 ? 'Product name is required' : undefined
@@ -122,6 +180,7 @@ export function ProductForm({
                {(field) => (
                  <div className="space-y-1">
                    <Input
+                     ref={nameFieldRef}
                      id="name"
                      value={field.state.value}
                      onChange={(e) => field.handleChange(e.target.value)}
@@ -141,8 +200,8 @@ export function ProductForm({
                    )}
                  </div>
                )}
-            </form.Field>
-          </div>
+             </form.Field>
+           </div>
 
           <div className="grid gap-2">
             <label htmlFor="price">Price ($) *</label>

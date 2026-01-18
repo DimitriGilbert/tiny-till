@@ -1,7 +1,9 @@
 import * as React from 'react'
+import { CheckCircle2, AlertCircle } from 'lucide-react'
 
 import { Input } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
+import { animationClasses, getValidationTransitionClasses } from '@/lib/animations'
 
 interface PriceInputProps {
   value?: number
@@ -15,6 +17,7 @@ interface PriceInputProps {
   id?: string
   placeholder?: string
   disabled?: boolean
+  showValidationIcon?: boolean
 }
 
 export function PriceInput({
@@ -29,6 +32,7 @@ export function PriceInput({
   id,
   placeholder = '$0.00',
   disabled = false,
+  showValidationIcon = true,
   ...props
 }: PriceInputProps) {
   const [displayValue, setDisplayValue] = React.useState(() => {
@@ -37,6 +41,7 @@ export function PriceInput({
     return `${currencySymbol}${dollars.toFixed(2)}`
   })
   const [isFocused, setIsFocused] = React.useState(false)
+  const [hasInteracted, setHasInteracted] = React.useState(false)
 
   const formatPriceForDisplay = React.useCallback(
     (cents: number) => {
@@ -125,26 +130,71 @@ export function PriceInput({
     inline: 'h-6 w-24 text-xs',
   }
 
+  const isValid = value > 0 && !error && hasInteracted
+  const showValidIcon = isValid && showValidationIcon
+
   return (
     <div className="space-y-1">
-      <Input
-        id={id}
-        type="text"
-        inputMode="decimal"
-        value={displayValue}
-        onChange={(e) => handleChange(e.target.value)}
-        onBlur={handleBlur}
-        onFocus={handleFocus}
-        placeholder={placeholder}
-        disabled={disabled}
-        className={cn(variantStyles[variant], className)}
-        aria-invalid={!!error}
-        aria-describedby={error && id ? `${id}-error` : undefined}
-        {...props}
-      />
+      <div className="relative">
+        <Input
+          id={id}
+          type="text"
+          inputMode="decimal"
+          value={displayValue}
+          onChange={(e) => {
+            setHasInteracted(true)
+            handleChange(e.target.value)
+          }}
+          onBlur={handleBlur}
+          onFocus={handleFocus}
+          placeholder={placeholder}
+          disabled={disabled}
+          className={cn(
+            variantStyles[variant],
+            error && 'pr-10',
+            showValidIcon && 'pr-10',
+            getValidationTransitionClasses(),
+            className
+          )}
+          aria-invalid={!!error}
+          aria-describedby={error && id ? `${id}-error` : undefined}
+          {...props}
+        />
+        {showValidIcon && (
+          <div
+            className={cn(
+              'absolute right-3 top-1/2 -translate-y-1/2 flex-shrink-0',
+              animationClasses.springEnter
+            )}
+            aria-hidden="true"
+          >
+            <CheckCircle2 className="h-4 w-4 text-green-500 dark:text-green-400" />
+          </div>
+        )}
+        {error && showValidationIcon && (
+          <div
+            className={cn(
+              'absolute right-3 top-1/2 -translate-y-1/2 flex-shrink-0',
+              animationClasses.springEnter
+            )}
+            aria-hidden="true"
+          >
+            <AlertCircle className="h-4 w-4 text-destructive" />
+          </div>
+        )}
+      </div>
       {error && id && (
-        <p id={`${id}-error`} className="text-destructive text-xs" role="alert">
-          {error}
+        <p
+          id={`${id}-error`}
+          className={cn(
+            'text-destructive text-xs flex items-start gap-1.5',
+            animationClasses.springEnter
+          )}
+          role="alert"
+          aria-live="polite"
+        >
+          <AlertCircle className="h-3.5 w-3.5 mt-0.5 flex-shrink-0" aria-hidden="true" />
+          <span>{error}</span>
         </p>
       )}
     </div>

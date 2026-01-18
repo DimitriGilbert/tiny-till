@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button'
 import { NumericKeypad } from '@/components/ui/numeric-keypad'
 import { ValidatedQuantityInput } from '@/components/ui/validated-quantity-input'
 import { ValidationErrorMessage } from '@/components/ui/validation-error-message'
+import { FormValidationStatus } from '@/components/ui/form-validation-status'
 import { useQuantityValidation } from '@/hooks/use-quantity-validation'
 import { cn } from '@/lib/utils'
 
@@ -82,6 +83,7 @@ export const QuantityInputDialog = React.memo(function QuantityInputDialog({
   }
 
   const canConfirm = !hasError && inputValue.length > 0
+  const hasValidationStatus = inputValue.length > 0 || hasError
 
   const displayValue = inputValue || '0'
 
@@ -91,6 +93,18 @@ export const QuantityInputDialog = React.memo(function QuantityInputDialog({
         <DialogHeader>
           <DialogTitle>Edit Quantity</DialogTitle>
         </DialogHeader>
+
+        {hasValidationStatus && (
+          <div className="mb-3">
+            <FormValidationStatus
+              isValid={validationState.isValid && !hasError}
+              isDirty={inputValue.length > 0}
+              isValidating={false}
+              errorCount={hasError ? 1 : 0}
+              variant="inline"
+            />
+          </div>
+        )}
 
         <div className="flex items-center gap-4 mb-4">
           {productImage ? (

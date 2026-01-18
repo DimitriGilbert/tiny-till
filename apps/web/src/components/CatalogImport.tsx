@@ -5,6 +5,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { FilePicker } from '@/components/FilePicker'
 import { ImportPreview } from '@/components/ImportPreview'
 import { BackupWarningDialog } from '@/components/backup-warning-dialog'
+import { FormValidationSummary } from '@/components/ui/form-validation-summary'
 import type { CatalogImport as CatalogImportType, ImportPreviewData, ProductChange } from '@tiny-till/types'
 import { useCatalogImport } from '@/hooks/useCatalogImport'
 import { useCatalogStore } from '@/stores/catalog-store'
@@ -12,6 +13,8 @@ import { useSettingsStore } from '@/stores/settings-store'
 import { useCatalogExport } from '@/hooks/useCatalogExport'
 import { getBackupReminderConfig } from '@/lib/backup-reminder'
 import { toast } from 'sonner'
+import { animationClasses } from '@/lib/animations'
+import { cn } from '@/lib/utils'
 
 export interface CatalogImportProps {
   open: boolean
@@ -228,43 +231,62 @@ export function CatalogImport({
 
                 {isProcessing || isImporting ? (
                   <div className="flex items-center justify-center p-4">
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                      <span>Validating file...</span>
+                    <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                      <Loader2 className="h-5 w-5 animate-spin text-primary" />
+                      <div>
+                        <p className="font-medium">Validating file...</p>
+                        <p className="text-xs text-muted-foreground mt-0.5">Please wait while we check the catalog</p>
+                      </div>
                     </div>
                   </div>
-                ) : (
-                  <>
-                    {validationResult?.isValid ? (
-                      <div className="flex items-start gap-2 p-3 rounded-md bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-900/30">
-                        <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5" />
-                        <div className="flex-1">
-                          <p className="text-sm font-medium text-green-900 dark:text-green-100">
-                            File Validated Successfully
-                          </p>
-                          <p className="text-xs text-green-700 dark:text-green-300 mt-1">
-                            Ready to review {previewData?.analysis.totalProducts || 0} products
-                          </p>
+                ) : validationResult?.errors && validationResult.errors.length > 0 ? (
+                  <FormValidationSummary
+                    errors={
+                      new Map(
+                        validationResult.errors.map((e: any) => [
+                          e.field || 'File',
+                          e.message,
+                        ])
+                      )
+                    }
+                    warnings={new Map()}
+                    dismissible={false}
+                    variant="compact"
+                  />
+                ) : validationResult?.isValid ? (
+                  <div
+                    className={cn(
+                      'flex items-start gap-3 p-4 rounded-lg bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-900/30',
+                      animationClasses.springEnter
+                    )}
+                  >
+                    <CheckCircle className="h-6 w-6 text-green-600 dark:text-green-400 flex-shrink-0" />
+                    <div className="flex-1">
+                      <p className="text-sm font-semibold text-green-900 dark:text-green-100">
+                        File Validated Successfully
+                      </p>
+                      <p className="text-sm text-green-700 dark:text-green-300 mt-1">
+                        Ready to review {previewData?.analysis.totalProducts || 0} products
+                      </p>
+                      {previewData && (
+                        <div className="mt-3 flex gap-4 text-xs text-green-600 dark:text-green-400">
+                          <span>
+                            <strong className="font-semibold">{previewData.analysis.productsToAdd.length}</strong>{' '}
+                            new
+                          </span>
+                          <span>
+                            <strong className="font-semibold">{previewData.analysis.productsToUpdate.length}</strong>{' '}
+                            updates
+                          </span>
+                          <span>
+                            <strong className="font-semibold">{previewData.analysis.productsInConflict.length}</strong>{' '}
+                            conflicts
+                          </span>
                         </div>
-                      </div>
-                    ) : validationResult?.errors && validationResult.errors.length > 0 ? (
-                      <div className="flex items-start gap-2 p-3 rounded-md bg-destructive/10 border border-destructive/20">
-                        <AlertCircle className="h-5 w-5 text-destructive flex-shrink-0 mt-0.5" />
-                        <div className="flex-1">
-                          <p className="text-sm font-medium text-destructive">Validation Errors</p>
-                          <ul className="text-xs text-destructive/80 mt-1 list-disc list-inside space-y-0.5">
-                            {validationResult.errors.map((error: any) => (
-                              <li key={`${error.field}-${error.code}-${error.message}`}>
-                                {error.field ? <span className="font-medium">{error.field}: </span> : ''}
-                                {error.message}
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      </div>
-                    ) : null}
-                  </>
-                )}
+                      )}
+                    </div>
+                  </div>
+                ) : null}
               </div>
             )}
           </div>

@@ -73,7 +73,7 @@ export const ValidationErrorMessage = React.memo(function ValidationErrorMessage
           type="button"
           onClick={onDismiss}
           className={cn(
-            'flex-shrink-0 ml-auto opacity-70 hover:opacity-100 transition-opacity',
+            'flex-shrink-0 ml-auto opacity-70 hover:opacity-100 transition-all duration-200 hover:scale-110',
             colorMap[type]
           )}
           aria-label="Dismiss message"

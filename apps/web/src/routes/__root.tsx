@@ -9,6 +9,7 @@ import { LoadingOverlay } from "@/components/loading-overlay"
 import { Toaster } from "@/components/ui/sonner"
 import { OfflineBanner, OnlineBanner } from "@/components/offline-banner"
 import { StorageWarningAlert } from "@/components/storage-warning-alert"
+import { AppErrorBoundary } from "@/components/app-error-boundary"
 import { useServiceWorker } from "@/hooks/useServiceWorker"
 import { useTallyStore } from "@/stores/tally-store"
 import { useTallyNavigationGuard } from "@/lib/route-guards"
@@ -65,8 +66,24 @@ function RootComponent() {
   useEffect(() => {
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {
       if (hasActiveItems()) {
+        const summary = useTallyStore.getState().getSummary()
+        const formattedTotal = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(summary.total / 100)
+
+        const message = `You have ${summary.itemCount} item${summary.itemCount !== 1 ? 's' : ''} (${formattedTotal}) in your tally. Are you sure you want to leave? Your changes will be lost.`
+
+        try {
+          sessionStorage.setItem('unsaved-tally', JSON.stringify({
+            items: Array.from(useTallyStore.getState().items.entries()),
+            timestamp: Date.now(),
+            itemCount: summary.itemCount,
+            total: summary.total,
+          }))
+        } catch (e) {
+          console.error('[BeforeUnload] Failed to save tally:', e)
+        }
+
         event.preventDefault()
-        event.returnValue = ""
+        event.returnValue = message
       }
     }
 
@@ -91,23 +108,25 @@ function RootComponent() {
   return (
     <>
       <HeadContent />
-      <ThemeProvider>
-        <OfflineBanner isOffline={isOffline} />
-        <OnlineBanner isOnline={!isOffline} />
-        <StorageWarningAlert />
-        <div className="grid grid-rows-[auto_1fr] h-svh">
-          <Header navigateWithCheck={navigateWithCheck} />
-          <Outlet />
-        </div>
-        <Toaster richColors />
-        <LoadingOverlay />
-        <NavigationConfirmationDialog
-          open={isModalOpen}
-          onOpenChange={handleCancel}
-          onConfirm={handleConfirm}
-          onCancel={handleCancel}
-        />
-      </ThemeProvider>
+      <AppErrorBoundary>
+        <ThemeProvider>
+          <OfflineBanner isOffline={isOffline} />
+          <OnlineBanner isOnline={!isOffline} />
+          <StorageWarningAlert />
+          <div className="grid grid-rows-[auto_1fr] h-svh">
+            <Header navigateWithCheck={navigateWithCheck} />
+            <Outlet />
+          </div>
+          <Toaster richColors />
+          <LoadingOverlay />
+          <NavigationConfirmationDialog
+            open={isModalOpen}
+            onOpenChange={handleCancel}
+            onConfirm={handleConfirm}
+            onCancel={handleCancel}
+          />
+        </ThemeProvider>
+      </AppErrorBoundary>
       <TanStackRouterDevtools position="bottom-left" />
     </>
   )

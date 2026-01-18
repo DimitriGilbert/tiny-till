@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Check, X } from 'lucide-react'
+import { Check, X, Info } from 'lucide-react'
 
 import { animationClasses } from '@/lib/animations'
 import { cn } from '@/lib/utils'
@@ -13,6 +13,8 @@ export interface ValidatedQuantityInputProps {
   placeholder?: string
   className?: string
   displayClassName?: string
+  tooltip?: string
+  showSuccessAnimation?: boolean
 }
 
 export const ValidatedQuantityInput = React.memo(function ValidatedQuantityInput({
@@ -23,9 +25,12 @@ export const ValidatedQuantityInput = React.memo(function ValidatedQuantityInput
   placeholder = '0',
   className,
   displayClassName,
+  tooltip,
+  showSuccessAnimation = false,
 }: ValidatedQuantityInputProps) {
   const displayValue = value || placeholder
   const showValidIndicator = isValid && value.length > 0 && !hasError
+  const [showTooltip, setShowTooltip] = React.useState(false)
 
   const borderClasses = getErrorStateClasses(hasError, isValid)
   const transitionClasses = getValidationTransitionClasses()
@@ -37,6 +42,7 @@ export const ValidatedQuantityInput = React.memo(function ValidatedQuantityInput
         borderClasses,
         transitionClasses,
         hasError && 'animate-shake',
+        showSuccessAnimation && animationClasses.successCheck,
         className
       )}
       aria-live="polite"
@@ -80,6 +86,34 @@ export const ValidatedQuantityInput = React.memo(function ValidatedQuantityInput
           >
             <X className="h-3 w-3 text-destructive-foreground" />
           </div>
+        </div>
+      )}
+
+      {tooltip && (
+        <div className="absolute top-2 left-2">
+          <button
+            type="button"
+            className="cursor-help text-gray-400 hover:text-gray-500 dark:text-gray-500 dark:hover:text-gray-400"
+            onMouseEnter={() => setShowTooltip(true)}
+            onMouseLeave={() => setShowTooltip(false)}
+            onFocus={() => setShowTooltip(true)}
+            onBlur={() => setShowTooltip(false)}
+            aria-label="Show help tooltip"
+          >
+            <Info className="h-4 w-4" aria-hidden="true" />
+          </button>
+          {showTooltip && (
+            <div
+              className={cn(
+                'absolute left-6 top-0 w-48 p-2 rounded-lg bg-gray-900 text-white text-xs shadow-lg',
+                'z-50',
+                animationClasses.fadeIn
+              )}
+              role="tooltip"
+            >
+              {tooltip}
+            </div>
+          )}
         </div>
       )}
     </output>
