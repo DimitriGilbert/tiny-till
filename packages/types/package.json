@@ -1,0 +1,20 @@
+{
+  "name": "@tiny-till/types",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./entities": "./src/entities/index.ts",
+    "./utils": "./src/utils/index.ts",
+    "./guards": "./src/guards/index.ts",
+    "./validation": "./src/validation/index.ts"
+  },
+  "dependencies": {
+    "zod": "^4.1.13"
+  },
+  "devDependencies": {
+    "@tiny-till/config": "*",
+    "typescript": "^5"
+  }
+}
