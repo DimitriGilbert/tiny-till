@@ -4,6 +4,13 @@ import { devtools, persist } from 'zustand/middleware'
 import type { Theme, GridDensity, ColumnCount } from '@tiny-till/types'
 import { STORAGE_KEYS } from '@/lib/storage-keys'
 import { withHydrationTracking } from '@/lib/persist-middleware'
+import { checkSettingsIntegrity } from '@/lib/data-integrity'
+import {
+  validateSettingsUpdate,
+  validateThemeChange,
+  validateGridDensityChange,
+  validateColumnCountChange,
+} from '@/lib/validation-helpers'
 
 interface SettingsState {
   theme: Theme
@@ -37,17 +44,32 @@ export const useSettingsStore = create<SettingsStore>()(
         ...initialState,
         hasHydrated: false,
 
-        setTheme: (theme: Theme) => {
+        setTheme: async (theme: Theme) => {
+          const validation = await validateThemeChange(theme)
+          if (!validation.isValid) {
+            console.warn('[SettingsStore] Validation failed:', validation.error)
+            throw new Error(validation.error || 'Invalid theme')
+          }
           set({ theme })
           console.log('[SettingsStore] setTheme', { theme })
         },
 
-        setGridDensity: (density: GridDensity) => {
+        setGridDensity: async (density: GridDensity) => {
+          const validation = await validateGridDensityChange(density)
+          if (!validation.isValid) {
+            console.warn('[SettingsStore] Validation failed:', validation.error)
+            throw new Error(validation.error || 'Invalid grid density')
+          }
           set({ gridDensity: density })
           console.log('[SettingsStore] setGridDensity', { gridDensity: density })
         },
 
-        setColumnCountOverride: (count: ColumnCount | undefined) => {
+        setColumnCountOverride: async (count: ColumnCount | undefined) => {
+          const validation = await validateColumnCountChange(count)
+          if (!validation.isValid) {
+            console.warn('[SettingsStore] Validation failed:', validation.error)
+            throw new Error(validation.error || 'Invalid column count')
+          }
           set({ columnCountOverride: count })
           console.log('[SettingsStore] setColumnCountOverride', { columnCountOverride: count })
         },
@@ -69,7 +91,7 @@ export const useSettingsStore = create<SettingsStore>()(
       }),
       {
         name: STORAGE_KEYS.SETTINGS,
-        onRehydrateStorage: () => (state: SettingsStore | undefined, error?: unknown) => {
+        onRehydrateStorage: () => async (state: SettingsStore | undefined, error?: unknown) => {
           if (error) {
             console.error('[SettingsStore] Rehydration failed:', error)
             return
@@ -77,6 +99,15 @@ export const useSettingsStore = create<SettingsStore>()(
           if (state) {
             state.hasHydrated = true
             console.log('[SettingsStore] Hydration complete')
+
+            try {
+              const integrityReport = await checkSettingsIntegrity()
+              if (!integrityReport.isValid) {
+                console.warn('[SettingsStore] Integrity issues:', integrityReport.issues)
+              }
+            } catch (integrityError) {
+              console.error('[SettingsStore] Integrity check failed:', integrityError)
+            }
           }
         },
       }

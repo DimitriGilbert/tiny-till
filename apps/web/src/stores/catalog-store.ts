@@ -18,6 +18,12 @@ import {
 import { STORAGE_KEYS } from '@/lib/storage-keys'
 import { createIndexedDBStorage } from '@/lib/persist-middleware'
 import { toast } from 'sonner'
+import { checkAllDataIntegrity } from '@/lib/data-integrity'
+import {
+  validateProductAdd,
+  validateProductUpdate,
+  validateProductDelete,
+} from '@/lib/validation-helpers'
 
 interface CatalogState {
   products: ProductList
@@ -64,6 +70,14 @@ export const useCatalogStore = create<CatalogStore>()(
 
         addProduct: async (input: ProductInput, optimistic = true) => {
           try {
+            const validationResult = await validateProductAdd(input)
+            if (!validationResult.isValid) {
+              const errorMessage = validationResult.error || 'Validation failed'
+              toast.error('Validation Error', { description: errorMessage })
+              set({ error: errorMessage })
+              return null
+            }
+
             const validation = productInputSchema.safeParse(input)
             if (!validation.success) {
               const errorMessage = validation.error.issues
@@ -361,7 +375,7 @@ export const useCatalogStore = create<CatalogStore>()(
       {
         name: STORAGE_KEYS.CATALOG,
         storage: createIndexedDBStorage<CatalogStore>(),
-        onRehydrateStorage: () => (state: CatalogStore | undefined, error?: unknown) => {
+        onRehydrateStorage: () => async (state: CatalogStore | undefined, error?: unknown) => {
           if (error) {
             console.error('[CatalogStore] Rehydration failed:', error)
             toast.error('Storage Error', {
@@ -379,6 +393,12 @@ export const useCatalogStore = create<CatalogStore>()(
               toast.warning('Data Integrity Warning', {
                 description: `Found ${validation.invalidIndices.length} products with issues`,
               })
+            }
+
+            try {
+              await checkAllDataIntegrity()
+            } catch (integrityError) {
+              console.error('[CatalogStore] Integrity check failed:', integrityError)
             }
           }
         },

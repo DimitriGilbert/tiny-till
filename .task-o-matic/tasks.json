@@ -5,7 +5,7 @@
       "title": "Core Application Foundation & State Management",
       "description": "Initialize the complete application structure within Turborepo, configure TanStack Router with file-based routing for all required routes (Tally, Settings, Catalog), and set up Tailwind CSS with Shadcn UI theme system. Implement core Zustand stores for Catalog, Tally, and Settings with proper TypeScript interfaces and strict type safety. Set up IndexedDB persistence using Zustand's persist middleware with idb-keyval wrapper and proper error handling. Implement navigation guards to prevent accidental route changes with active tally and ensure root route redirection. Establish base TypeScript interfaces for all core data structures with UUID generation for product IDs and timestamp tracking.",
       "contentFile": "tasks/1.md",
-      "status": "todo",
+      "status": "completed",
       "dependencies": [],
       "tags": [],
       "subtasks": [
@@ -64,34 +64,34 @@
           "title": "Implement TanStack Router with file-based routing",
           "description": "Configure TanStack Router with file-based routing for all required routes: root, Tally, Settings, and Catalog. Create route files under appropriate directories, define layout routes, set up route guards, lazy loading, and navigation utilities. Implement root route redirection logic, type-safe route parameter handling, and integrate routing with the application layout. Create basic navigation links.",
           "contentFile": "tasks/1.6.md",
-          "status": "in-progress",
+          "status": "completed",
           "subtasks": [],
           "createdAt": 1768730817015,
-          "updatedAt": 1768747572831
+          "updatedAt": 1768747893295
         },
         {
           "id": "1.7",
           "title": "Implement navigation guards and route protection",
           "description": "Create navigation guard hooks to prevent accidental route changes during active tally sessions. Implement confirmation modals for navigation away from active counting. Set up global navigation utilities that respect the active tally state, integrate with TanStack Router navigation events, ensure proper cleanup on route changes, and redirect to root if needed when guards are triggered.",
           "contentFile": "tasks/1.7.md",
-          "status": "todo",
+          "status": "completed",
           "subtasks": [],
           "createdAt": 1768730817016,
-          "updatedAt": 1768730817016
+          "updatedAt": 1768748524206
         },
         {
           "id": "1.8",
           "title": "Integrate and test complete application foundation",
           "description": "Combine all configured systems and run integration tests for routing, state management, and persistence. Verify TypeScript compilation, test navigation guards, validate IndexedDB operations with quota scenarios, and ensure the Shadcn UI theme applies correctly across all routes and in both light/dark modes. Create initial documentation for the architecture and developer setup guide.",
           "contentFile": "tasks/1.8.md",
-          "status": "todo",
+          "status": "completed",
           "subtasks": [],
           "createdAt": 1768730817017,
-          "updatedAt": 1768730817017
+          "updatedAt": 1768749389267
         }
       ],
       "createdAt": 1768729943871,
-      "updatedAt": 1768745337074,
+      "updatedAt": 1768749389268,
       "prdFile": "prd/prd-corrected.md"
     },
     {
@@ -110,66 +110,66 @@
           "title": "Product Data Model and State Management Infrastructure",
           "description": "Define TypeScript interfaces for products with UUID identification, integer price storage (cents), and base64 image fields. Implement state management using TanStack Store or React Context. Create persistence layer with IndexedDB/LocalStorage. Build utility functions for UUID generation and currency formatting (cents ↔ display strings). Establish data integrity validation rules.",
           "contentFile": "tasks/2.1.md",
-          "status": "todo",
+          "status": "completed",
           "estimatedEffort": "medium",
           "subtasks": [],
           "createdAt": 1768731003594,
-          "updatedAt": 1768731003594
+          "updatedAt": 1768750323190
         },
         {
           "id": "2.2",
           "title": "Core CRUD Operations and API Integration",
           "description": "Implement complete create, read, update, delete operations for products. Build RESTful endpoints (or frontend state mutations) with UUID handling. Add optimistic UI updates and reactivity. Implement basic field validation, error handling, and data integrity checks. Ensure proper state synchronization between UI and storage layer.",
           "contentFile": "tasks/2.2.md",
-          "status": "todo",
+          "status": "completed",
           "estimatedEffort": "large",
           "subtasks": [],
           "createdAt": 1768731003595,
-          "updatedAt": 1768731003595
+          "updatedAt": 1768751507640
         },
         {
           "id": "2.3",
           "title": "Product List UI with Inline CRUD Interface",
           "description": "Develop main product catalog list view component with responsive design. Implement inline 'Add', 'Edit', and 'Delete' functionality with modal overlays or inline forms. Connect to state management layer for real-time updates. Add keyboard navigation, focus management, and ARIA labels for accessibility. Include loading states and empty state handling.",
           "contentFile": "tasks/2.3.md",
-          "status": "todo",
+          "status": "completed",
           "estimatedEffort": "large",
           "subtasks": [],
           "createdAt": 1768731003597,
-          "updatedAt": 1768731003597
+          "updatedAt": 1768752269338
         },
         {
           "id": "2.4",
           "title": "Image Upload System with Client-Side Validation",
           "description": "Create image upload component with drag-and-drop support. Implement strict validation: MIME type checking (PNG, JPEG, WebP only), dimension enforcement (max 128x128px), and file size limits. Handle Base64 encoding/decoding with storage optimization. Generate detailed error messages for validation failures. Integrate with product CRUD to associate images with products.",
           "contentFile": "tasks/2.4.md",
-          "status": "todo",
+          "status": "completed",
           "estimatedEffort": "large",
           "subtasks": [],
           "createdAt": 1768731003598,
-          "updatedAt": 1768731003598
+          "updatedAt": 1768755681455
         },
         {
           "id": "2.5",
           "title": "Price Management and Validation System",
           "description": "Build comprehensive price handling system storing all prices as integer cents. Implement validation for price ranges and format conversions. Create input components that accept user-friendly currency formats ($10.50) and convert to cents (1050) for storage. Add display formatting utilities. Include safeguards against invalid price data and floating-point errors.",
           "contentFile": "tasks/2.5.md",
-          "status": "todo",
+          "status": "completed",
           "estimatedEffort": "medium",
           "subtasks": [],
           "createdAt": 1768731003599,
-          "updatedAt": 1768731003599
+          "updatedAt": 1768756273342
         },
         {
           "id": "2.6",
           "title": "Comprehensive Validation Framework and Error Handling",
           "description": "Build unified validation framework covering field-level, image, price, and business logic validation. Implement centralized error state management with user-friendly messaging. Add toast notifications for operation feedback. Create validation helpers for all CRUD operations. Ensure data integrity checks throughout the application with detailed error recovery flows.",
           "contentFile": "tasks/2.6.md",
-          "status": "todo",
+          "status": "in-progress",
           "estimatedEffort": "medium",
           "subtasks": [],
           "createdAt": 1768731003599,
-          "updatedAt": 1768731003599
+          "updatedAt": 1768756476034
         },
         {
           "id": "2.7",

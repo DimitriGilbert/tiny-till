@@ -2,6 +2,13 @@ import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
 
 import type { TallyItem, TallyState, TallySummary } from '@tiny-till/types'
+import { checkTallyIntegrity } from '@/lib/data-integrity'
+import {
+  validateTallyAddItem,
+  validateTallyUpdateQuantity,
+  validateTallyRemoveItem,
+  validateTallyClear,
+} from '@/lib/validation-helpers'
 
 interface TallyStoreState {
   items: TallyState
@@ -31,9 +38,15 @@ export const useTallyStore = create<TallyStore>()(
   devtools((set, get) => ({
     ...initialState,
 
-    addItem: (productId: string, price: number, quantity = 1) => {
+    addItem: async (productId: string, price: number, quantity = 1) => {
       if (quantity <= 0) {
         throw new Error('Quantity must be positive')
+      }
+
+      const validationResult = await validateTallyAddItem(productId, price, quantity)
+      if (!validationResult.isValid) {
+        console.warn('[TallyStore] Validation failed:', validationResult.error)
+        throw new Error(validationResult.error || 'Validation failed')
       }
 
       set((state) => {
