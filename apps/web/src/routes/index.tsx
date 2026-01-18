@@ -3,6 +3,7 @@ import * as React from 'react'
 
 import { TallyProductCard } from '@/components/tally-product-card'
 import { QuantityInputDialog } from '@/components/quantity-input-dialog'
+import { TallyTotalsDisplay } from '@/components/tally-totals-display'
 import { useCatalogStore } from '@/stores/catalog-store'
 import { useTallyStore } from '@/stores/tally-store'
 import { useResponsiveGrid } from '@/hooks/useResponsiveGrid'
@@ -17,7 +18,7 @@ export const Route = createFileRoute('/')({
 function TallyPage() {
   const router = useRouter()
   const { products, hasHydrated } = useCatalogStore()
-  const { items, updateQuantity, incrementItem } = useTallyStore()
+  const { items, updateQuantity, incrementItem, getSummary } = useTallyStore()
   const { columnCount, gridGap, isCompact } = useResponsiveGrid()
 
   const [dialogState, setDialogState] = React.useState({
@@ -28,6 +29,8 @@ function TallyPage() {
     productPrice: 0,
     currentQuantity: 0,
   })
+
+  const summary = getSummary()
 
   const handleEditQuantity = React.useCallback((productId: string) => {
     const product = products.find((p) => p.id === productId)
@@ -70,6 +73,15 @@ function TallyPage() {
           Select products to add to your tally
         </p>
       </header>
+
+      {summary.itemCount > 0 && (
+        <div className="mb-6">
+          <TallyTotalsDisplay
+            totalCents={summary.total}
+            itemCount={summary.itemCount}
+          />
+        </div>
+      )}
 
       {isLoading ? (
         <LoadingState message="Loading products..." />

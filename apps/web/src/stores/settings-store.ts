@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { devtools, persist } from 'zustand/middleware'
 
-import type { Theme, GridDensity, ColumnCount } from '@tiny-till/types'
+import type { Theme, GridDensity, ColumnCount, Currency, Locale } from '@tiny-till/types'
 import { STORAGE_KEYS } from '@/lib/storage-keys'
 import { withHydrationTracking } from '@/lib/persist-middleware'
 import { checkSettingsIntegrity } from '@/lib/data-integrity'
@@ -17,6 +17,8 @@ interface SettingsState {
   gridDensity: GridDensity
   columnCountOverride: ColumnCount | undefined
   backupReminder: number | undefined
+  currency: Currency
+  locale: Locale
   hasHydrated: boolean
 }
 
@@ -25,6 +27,8 @@ interface SettingsActions {
   setGridDensity: (density: GridDensity) => void
   setColumnCountOverride: (count: ColumnCount | undefined) => void
   setBackupReminder: (days: number | undefined) => void
+  setCurrency: (currency: Currency) => void
+  setLocale: (locale: Locale) => void
   resetSettings: () => void
 }
 
@@ -35,6 +39,8 @@ const initialState: Omit<SettingsState, 'hasHydrated'> = {
   gridDensity: 'normal',
   columnCountOverride: undefined,
   backupReminder: 168,
+  currency: 'USD',
+  locale: 'en-US',
 }
 
 export const useSettingsStore = create<SettingsStore>()(
@@ -80,6 +86,16 @@ export const useSettingsStore = create<SettingsStore>()(
           }
           set({ backupReminder: days })
           console.log('[SettingsStore] setBackupReminder', { backupReminder: days })
+        },
+
+        setCurrency: (currency: Currency) => {
+          set({ currency })
+          console.log('[SettingsStore] setCurrency', { currency })
+        },
+
+        setLocale: (locale: Locale) => {
+          set({ locale })
+          console.log('[SettingsStore] setLocale', { locale })
         },
 
         resetSettings: () => {
