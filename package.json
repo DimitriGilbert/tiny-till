@@ -16,7 +16,8 @@
   "dependencies": {
     "@tiny-till/env": "*",
     "dotenv": "^17.2.2",
-    "zod": "^4.1.13"
+    "zod": "^4.1.13",
+    "zustand": "^5.0.10"
   },
   "devDependencies": {
     "@tiny-till/config": "*",
