@@ -3,6 +3,8 @@ import ReactDOM from "react-dom/client";
 
 import Loader from "./components/loader";
 import { routeTree } from "./routeTree.gen";
+import { StorageErrorBoundary } from "./components/storage-error-boundary";
+import { HydrateLoader } from "./components/hydrate-loader";
 
 const router = createRouter({
   routeTree,
@@ -25,5 +27,11 @@ if (!rootElement) {
 
 if (!rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement);
-  root.render(<RouterProvider router={router} />);
+  root.render(
+    <StorageErrorBoundary>
+      <HydrateLoader>
+        <RouterProvider router={router} />
+      </HydrateLoader>
+    </StorageErrorBoundary>
+  );
 }

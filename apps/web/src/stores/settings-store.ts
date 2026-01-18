@@ -1,13 +1,16 @@
 import { create } from 'zustand'
-import { devtools } from 'zustand/middleware'
+import { devtools, persist } from 'zustand/middleware'
 
 import type { Theme, GridDensity, ColumnCount } from '@tiny-till/types'
+import { STORAGE_KEYS } from '@/lib/storage-keys'
+import { withHydrationTracking } from '@/lib/persist-middleware'
 
 interface SettingsState {
   theme: Theme
   gridDensity: GridDensity
   columnCountOverride: ColumnCount | undefined
   backupReminder: number | undefined
+  hasHydrated: boolean
 }
 
 interface SettingsActions {
@@ -20,7 +23,7 @@ interface SettingsActions {
 
 type SettingsStore = SettingsState & SettingsActions
 
-const initialState: SettingsState = {
+const initialState: Omit<SettingsState, 'hasHydrated'> = {
   theme: 'system',
   gridDensity: 'normal',
   columnCountOverride: undefined,
@@ -28,37 +31,55 @@ const initialState: SettingsState = {
 }
 
 export const useSettingsStore = create<SettingsStore>()(
-  devtools((set) => ({
-    ...initialState,
-
-    setTheme: (theme: Theme) => {
-      set({ theme })
-      console.log('[SettingsStore] setTheme', { theme })
-    },
-
-    setGridDensity: (density: GridDensity) => {
-      set({ gridDensity: density })
-      console.log('[SettingsStore] setGridDensity', { gridDensity: density })
-    },
-
-    setColumnCountOverride: (count: ColumnCount | undefined) => {
-      set({ columnCountOverride: count })
-      console.log('[SettingsStore] setColumnCountOverride', { columnCountOverride: count })
-    },
-
-    setBackupReminder: (days: number | undefined) => {
-      if (days !== undefined && days < 0) {
-        throw new Error('Backup reminder days must be non-negative')
-      }
-      set({ backupReminder: days })
-      console.log('[SettingsStore] setBackupReminder', { backupReminder: days })
-    },
-
-    resetSettings: () => {
-      set({
+  devtools(
+    persist(
+      (set) => ({
         ...initialState,
-      })
-      console.log('[SettingsStore] resetSettings', initialState)
-    },
-  }))
+        hasHydrated: false,
+
+        setTheme: (theme: Theme) => {
+          set({ theme })
+          console.log('[SettingsStore] setTheme', { theme })
+        },
+
+        setGridDensity: (density: GridDensity) => {
+          set({ gridDensity: density })
+          console.log('[SettingsStore] setGridDensity', { gridDensity: density })
+        },
+
+        setColumnCountOverride: (count: ColumnCount | undefined) => {
+          set({ columnCountOverride: count })
+          console.log('[SettingsStore] setColumnCountOverride', { columnCountOverride: count })
+        },
+
+        setBackupReminder: (days: number | undefined) => {
+          if (days !== undefined && days < 0) {
+            throw new Error('Backup reminder days must be non-negative')
+          }
+          set({ backupReminder: days })
+          console.log('[SettingsStore] setBackupReminder', { backupReminder: days })
+        },
+
+        resetSettings: () => {
+          set({
+            ...initialState,
+          })
+          console.log('[SettingsStore] resetSettings', initialState)
+        },
+      }),
+      {
+        name: STORAGE_KEYS.SETTINGS,
+        onRehydrateStorage: () => (state: SettingsStore | undefined, error?: unknown) => {
+          if (error) {
+            console.error('[SettingsStore] Rehydration failed:', error)
+            return
+          }
+          if (state) {
+            state.hasHydrated = true
+            console.log('[SettingsStore] Hydration complete')
+          }
+        },
+      }
+    )
+  )
 )
