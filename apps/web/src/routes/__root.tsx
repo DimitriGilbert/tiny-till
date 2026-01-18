@@ -1,5 +1,6 @@
-import { HeadContent, Outlet, createRootRouteWithContext } from "@tanstack/react-router";
+import { HeadContent, Outlet, createRootRouteWithContext, useNavigate, useLocation } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
+import { useEffect } from "react";
 
 import Header from "@/components/header";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -7,7 +8,7 @@ import { Toaster } from "@/components/ui/sonner";
 
 import "../index.css";
 
-export interface RouterAppContext {}
+export type RouterAppContext = Record<string, unknown>;
 
 export const Route = createRootRouteWithContext<RouterAppContext>()({
   component: RootComponent,
@@ -31,6 +32,20 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
 });
 
 function RootComponent() {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    const hasReloaded = sessionStorage.getItem("has-reloaded");
+    if (!hasReloaded) {
+      sessionStorage.setItem("has-reloaded", "true");
+    } else {
+      if (location.pathname !== "/") {
+        navigate({ to: "/" });
+      }
+    }
+  }, [navigate, location.pathname]);
+
   return (
     <>
       <HeadContent />

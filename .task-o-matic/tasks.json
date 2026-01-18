@@ -64,10 +64,10 @@
           "title": "Implement TanStack Router with file-based routing",
           "description": "Configure TanStack Router with file-based routing for all required routes: root, Tally, Settings, and Catalog. Create route files under appropriate directories, define layout routes, set up route guards, lazy loading, and navigation utilities. Implement root route redirection logic, type-safe route parameter handling, and integrate routing with the application layout. Create basic navigation links.",
           "contentFile": "tasks/1.6.md",
-          "status": "todo",
+          "status": "in-progress",
           "subtasks": [],
           "createdAt": 1768730817015,
-          "updatedAt": 1768730817015
+          "updatedAt": 1768747572831
         },
         {
           "id": "1.7",
