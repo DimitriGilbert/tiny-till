@@ -37,27 +37,27 @@
           "status": "completed",
           "subtasks": [],
           "createdAt": 1768730817013,
-          "updatedAt": 1768744864024
+          "updatedAt": 1768745337073
         },
         {
           "id": "1.4",
           "title": "Implement core Zustand stores with strict typing",
           "description": "Create three Zustand stores: Catalog store for product management, Tally store for active counting sessions, and Settings store for user preferences. Implement with TypeScript interfaces, export typed hooks, add placeholder reducers and actions, and validate store logic and state updates independently. Include middleware for logging and proper error boundaries.",
           "contentFile": "tasks/1.4.md",
-          "status": "todo",
+          "status": "completed",
           "subtasks": [],
           "createdAt": 1768730817014,
-          "updatedAt": 1768730817014
+          "updatedAt": 1768746080838
         },
         {
           "id": "1.5",
           "title": "Set up IndexedDB persistence layer with idb-keyval",
           "description": "Install idb-keyval wrapper and configure IndexedDB connection handling. Integrate Zustand's persist middleware for all stores using idb-keyval. Implement proper error handling for storage operations, quota management, retry logic, fallback mechanisms for browser compatibility, and hydration logic to ensure state survives application reloads. Test data saving/loading across browser sessions.",
           "contentFile": "tasks/1.5.md",
-          "status": "todo",
+          "status": "completed",
           "subtasks": [],
           "createdAt": 1768730817014,
-          "updatedAt": 1768730817014
+          "updatedAt": 1768747362437
         },
         {
           "id": "1.6",
@@ -91,7 +91,7 @@
         }
       ],
       "createdAt": 1768729943871,
-      "updatedAt": 1768742202657,
+      "updatedAt": 1768745337074,
       "prdFile": "prd/prd-corrected.md"
     },
     {
