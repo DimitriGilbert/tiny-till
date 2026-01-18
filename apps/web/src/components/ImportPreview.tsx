@@ -119,6 +119,10 @@ export function ImportPreview({
       updated: 0,
       skipped: 0,
       failed: 0,
+      startTime: Date.now(),
+      retryAttempts: 0,
+      currentBatch: 1,
+      totalBatches: Math.ceil(selectedChanges.length / 50),
     })
 
     try {

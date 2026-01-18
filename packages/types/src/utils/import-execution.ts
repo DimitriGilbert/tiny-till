@@ -23,6 +23,10 @@ export async function executeImportAtomic(
     updated: 0,
     skipped: 0,
     failed: 0,
+    startTime: Date.now(),
+    retryAttempts: 0,
+    currentBatch: 1,
+    totalBatches: Math.ceil(changes.length / batchSize),
   }
 
   const results: ImportExecutionResult = {
@@ -79,6 +83,13 @@ async function processBatch(
       name: change.newProduct.name,
     }
 
+    const elapsed = Date.now() - progress.startTime
+    if (progress.processed > 0) {
+      const avgTimePerItem = elapsed / progress.processed
+      const remainingItems = progress.total - progress.processed
+      progress.estimatedTimeRemaining = Math.round(avgTimePerItem * remainingItems)
+    }
+
     try {
       if (change.changeType === 'add') {
         pendingAdds.push(change.newProduct)
@@ -119,6 +130,8 @@ async function processBatch(
       onProgress({ ...progress })
     }
   }
+
+  progress.currentBatch = (progress.currentBatch || 0) + 1
 }
 
 function generateTransactionId(): string {

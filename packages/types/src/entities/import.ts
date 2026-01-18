@@ -158,6 +158,11 @@ export interface ImportProgress {
     name: string
   }
   error?: string
+  startTime: number
+  estimatedTimeRemaining?: number
+  retryAttempts: number
+  currentBatch?: number
+  totalBatches?: number
 }
 
 export interface ImportTransaction {
