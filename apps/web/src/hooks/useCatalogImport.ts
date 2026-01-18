@@ -4,7 +4,9 @@ import type {
   ImportValidationResult,
   ImportResult,
   DetailedValidationResult,
+  ImportPreviewData,
 } from '@tiny-till/types'
+import type { Product } from '@tiny-till/types'
 import {
   checkFileExtension,
   checkFileSize,
@@ -13,6 +15,8 @@ import {
   validateImportFileDetailed,
   validateJSONFileDetailed,
   processImportFile,
+  compareProductsForImport,
+  categorizeProductChange,
 } from '@tiny-till/types'
 import { toast } from 'sonner'
 
@@ -22,6 +26,7 @@ export interface UseCatalogImportReturn {
   validateImport: (file: File) => Promise<ImportValidationResult>
   validateImportDetailed: (file: File) => Promise<DetailedValidationResult>
   parseImportFile: (file: File) => Promise<ImportResult>
+  analyzeImport: (file: File, existingProducts: Product[]) => Promise<ImportPreviewData | null>
   clearError: () => void
 }
 
@@ -316,12 +321,89 @@ export function useCatalogImport(): UseCatalogImportReturn {
     []
   )
 
+  const analyzeImport = React.useCallback(
+    async (file: File, existingProducts: Product[]): Promise<ImportPreviewData | null> => {
+      setIsImporting(true)
+      setImportError(null)
+
+      try {
+        const extensionCheck = checkFileExtension(file)
+        if (!extensionCheck.isValid) {
+          setImportError(extensionCheck.error || 'Invalid file extension')
+          toast.error('Invalid File', {
+            description: extensionCheck.error,
+          })
+          setIsImporting(false)
+          return null
+        }
+
+        const sizeCheck = checkFileSize(file)
+        if (!sizeCheck.isValid) {
+          setImportError(sizeCheck.error || 'File too large')
+          toast.error('File Too Large', {
+            description: sizeCheck.error,
+          })
+          setIsImporting(false)
+          return null
+        }
+
+        const jsonCheck = await validateJSONFileDetailed(file)
+        if (!jsonCheck.isValid) {
+          setImportError(jsonCheck.error || 'Invalid JSON syntax')
+          toast.error('Invalid JSON', {
+            description: jsonCheck.error,
+          })
+          setIsImporting(false)
+          return null
+        }
+
+        const fileContent = await file.text()
+        const data = JSON.parse(fileContent)
+
+        const validationResult = await validateImportFileDetailed(data)
+        if (!validationResult.isValid) {
+          setImportError('Validation failed')
+          toast.error('Validation Failed', {
+            description: 'File does not match expected catalog format',
+          })
+          setIsImporting(false)
+          return null
+        }
+
+        const analysis = compareProductsForImport(existingProducts, data)
+        const allChanges = data.products.map((product: Product) =>
+          categorizeProductChange(existingProducts, product)
+        )
+
+        const previewData: ImportPreviewData = {
+          file,
+          importData: data,
+          analysis,
+          allChanges,
+        }
+
+        setIsImporting(false)
+        return previewData
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred'
+        setImportError(errorMessage)
+        toast.error('Analysis Error', {
+          description: errorMessage,
+        })
+        setIsImporting(false)
+        return null
+      }
+    },
+    []
+  )
+
   return {
     isImporting,
     importError,
     validateImport,
     validateImportDetailed,
     parseImportFile,
+    analyzeImport,
     clearError,
   }
 }

@@ -6,6 +6,11 @@ import type {
   ProductInput,
   ProductUpdate,
   ProductList,
+  ProductChange,
+  ImportPreviewData,
+  ImportExecutionResult,
+  ConflictResolution,
+  ImportProgress,
 } from '@tiny-till/types'
 import {
   generateUUID,
@@ -14,6 +19,7 @@ import {
   validateProductList,
   checkProductIntegrity,
   checkTimestampConsistency,
+  executeImportAtomic,
 } from '@tiny-till/types'
 import { STORAGE_KEYS } from '@/lib/storage-keys'
 import { createIndexedDBStorage } from '@/lib/persist-middleware'
@@ -49,6 +55,18 @@ interface CatalogActions {
   getProductCount: () => number
   searchProducts: (query: string) => Product[]
   getProductsByPriceRange: (minCents: number, maxCents: number) => Product[]
+  importWithPreview: (
+    previewData: ImportPreviewData,
+    selectedChanges: ProductChange[]
+  ) => Promise<{ added: number; updated: number; skipped: number }>
+  importAtomic: (
+    changes: ProductChange[],
+    options: {
+      conflictResolutions: Map<string, ConflictResolution>
+      batchSize?: number
+      onProgress?: (progress: ImportProgress) => void
+    }
+  ) => Promise<ImportExecutionResult>
   clearError: () => void
   setLoading: (loading: boolean) => void
 }
@@ -370,6 +388,137 @@ export const useCatalogStore = create<CatalogStore>()(
         setLoading: (loading: boolean) => {
           set({ isLoading: loading })
           console.log('[CatalogStore] setLoading', get())
+        },
+
+        importWithPreview: async (
+          previewData: ImportPreviewData,
+          selectedChanges: ProductChange[]
+        ) => {
+          set({ isLoading: true })
+          let added = 0
+          let updated = 0
+          let skipped = 0
+
+          try {
+            for (const change of selectedChanges) {
+              if (change.changeType === 'add') {
+                const product = change.newProduct
+                const result = await get().addProduct(
+                  {
+                    name: product.name,
+                    price: product.price,
+                    imageData: product.imageData,
+                  },
+                  false
+                )
+                if (result) {
+                  added++
+                } else {
+                  skipped++
+                }
+              } else if (change.changeType === 'update' || change.changeType === 'conflict') {
+                const result = await get().updateProduct(
+                  change.productId,
+                  {
+                    name: change.newProduct.name,
+                    price: change.newProduct.price,
+                    imageData: change.newProduct.imageData,
+                  },
+                  false
+                )
+                if (result) {
+                  updated++
+                } else {
+                  skipped++
+                }
+              } else {
+                skipped++
+              }
+            }
+
+            set({ isLoading: false })
+
+            if (skipped === 0) {
+              toast.success('Import Completed', {
+                description: `Added ${added} and updated ${updated} products`,
+              })
+            } else if (added === 0 && updated === 0) {
+              toast.warning('Import Failed', {
+                description: 'No products were imported',
+              })
+            } else {
+              toast.warning('Import Partially Completed', {
+                description: `Added ${added}, updated ${updated}, skipped ${skipped}`,
+              })
+            }
+
+            return { added, updated, skipped }
+          } catch (error) {
+            const errorMessage =
+              error instanceof Error ? error.message : 'Failed to import products'
+            set({ error: errorMessage, isLoading: false })
+            toast.error('Import Error', {
+              description: errorMessage,
+            })
+            return { added, updated, skipped }
+          }
+        },
+
+        importAtomic: async (changes, options) => {
+          set({ isLoading: true })
+
+          try {
+            const result = await executeImportAtomic(get().products, changes, options)
+
+            if (result.success) {
+              const productsToAdd: ProductInput[] = []
+              const productsToUpdate: Array<{ id: string; data: ProductUpdate }> = []
+
+              for (const change of changes) {
+                if (change.changeType === 'add') {
+                  productsToAdd.push({
+                    name: change.newProduct.name,
+                    price: change.newProduct.price,
+                    imageData: change.newProduct.imageData,
+                  })
+                } else if (change.changeType === 'update' || change.changeType === 'conflict') {
+                  const resolution = options.conflictResolutions.get(change.productId)
+                  if (resolution && resolution.strategy !== 'skip') {
+                    productsToUpdate.push({
+                      id: change.productId,
+                      data: {
+                        name: change.newProduct.name,
+                        price: change.newProduct.price,
+                        imageData: change.newProduct.imageData,
+                      },
+                    })
+                  }
+                }
+              }
+
+              await get().addProducts(productsToAdd)
+              await get().updateProducts(productsToUpdate)
+            }
+
+            set({ isLoading: false })
+            return result
+          } catch (error) {
+            const errorMessage = error instanceof Error ? error.message : 'Failed to import products'
+            set({ error: errorMessage, isLoading: false })
+            return {
+              success: false,
+              transactionId: '',
+              added: 0,
+              updated: 0,
+              skipped: 0,
+              failed: changes.length,
+              errors: changes.map((c) => ({
+                productId: c.productId,
+                productName: c.newProduct.name,
+                error: errorMessage,
+              })),
+            }
+          }
         },
       }),
       {

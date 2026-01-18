@@ -1,6 +1,38 @@
 import type { CatalogExport } from './export'
+import type { Product } from './product'
 
 export type CatalogImport = CatalogExport
+
+export type ProductChangeType = 'add' | 'update' | 'conflict' | 'unchanged'
+
+export interface ProductChange {
+  productId: string
+  changeType: ProductChangeType
+  existingProduct?: Product
+  newProduct: Product
+  changedFields?: string[]
+  isConflict: boolean
+  conflictType?: 'version' | 'data' | 'id'
+}
+
+export interface ImportAnalysis {
+  totalProducts: number
+  productsToAdd: Product[]
+  productsToUpdate: Array<{
+    existing: Product
+    updated: Product
+    changedFields: string[]
+  }>
+  productsInConflict: ProductChange[]
+  unchangedProducts: number
+}
+
+export interface ImportPreviewData {
+  file: File
+  importData: CatalogImport
+  analysis: ImportAnalysis
+  allChanges: ProductChange[]
+}
 
 export interface ImportValidationError {
   field?: string
@@ -98,4 +130,53 @@ export interface IntegrityCheckResult {
   dataIntegrityValid: boolean
   corruptFields: string[]
   message: string
+}
+
+export type ConflictResolutionStrategy = 'merge' | 'replace' | 'skip'
+
+export interface ConflictResolution {
+  productId: string
+  strategy: ConflictResolutionStrategy
+  fieldOverrides?: Record<string, 'existing' | 'incoming'>
+}
+
+export interface ImportExecutionOptions {
+  conflictResolutions: Map<string, ConflictResolution>
+  batchSize?: number
+  onProgress?: (progress: ImportProgress) => void
+}
+
+export interface ImportProgress {
+  total: number
+  processed: number
+  added: number
+  updated: number
+  skipped: number
+  failed: number
+  currentProduct?: {
+    id: string
+    name: string
+  }
+  error?: string
+}
+
+export interface ImportTransaction {
+  id: string
+  products: Product[]
+  timestamp: number
+  status: 'pending' | 'committing' | 'committed' | 'rolled-back'
+}
+
+export interface ImportExecutionResult {
+  success: boolean
+  transactionId: string
+  added: number
+  updated: number
+  skipped: number
+  failed: number
+  errors: Array<{
+    productId: string
+    productName: string
+    error: string
+  }>
 }

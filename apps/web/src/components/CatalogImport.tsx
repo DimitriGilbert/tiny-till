@@ -3,37 +3,43 @@ import { Upload, X, FileJson, CheckCircle, AlertCircle, Loader2 } from 'lucide-r
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
 import { FilePicker } from '@/components/FilePicker'
-import type { CatalogImport as CatalogImportType, ImportValidationResult } from '@tiny-till/types'
+import { ImportPreview } from '@/components/ImportPreview'
+import type { CatalogImport as CatalogImportType, ImportPreviewData, ProductChange } from '@tiny-till/types'
 import { useCatalogImport } from '@/hooks/useCatalogImport'
+import { useCatalogStore } from '@/stores/catalog-store'
 import { toast } from 'sonner'
 
 export interface CatalogImportProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  onImport: (data: CatalogImportType) => void
   disabled?: boolean
 }
 
 export function CatalogImport({
   open,
   onOpenChange,
-  onImport,
   disabled = false,
 }: CatalogImportProps) {
-  const { isImporting, importError, validateImport, parseImportFile, clearError } =
+  const { isImporting, importError, validateImport, parseImportFile, analyzeImport, clearError } =
     useCatalogImport()
+  const importAtomic = useCatalogStore((state) => state.importAtomic)
+  const products = useCatalogStore((state) => state.products)
+
   const [selectedFile, setSelectedFile] = React.useState<File | null>(null)
-  const [validationResult, setValidationResult] = React.useState<ImportValidationResult | null>(
-    null
-  )
+  const [validationResult, setValidationResult] = React.useState<any>(null)
   const [isProcessing, setIsProcessing] = React.useState(false)
   const [filePickerError, setFilePickerError] = React.useState<string>()
+  const [previewData, setPreviewData] = React.useState<ImportPreviewData | null>(null)
+  const [showPreview, setShowPreview] = React.useState(false)
+  const [isImportingPreview, setIsImportingPreview] = React.useState(false)
 
   const resetState = React.useCallback(() => {
     setSelectedFile(null)
     setValidationResult(null)
     setIsProcessing(false)
     setFilePickerError(undefined)
+    setPreviewData(null)
+    setShowPreview(false)
     clearError()
   }, [clearError])
 
@@ -61,6 +67,15 @@ export function CatalogImport({
         }
 
         setValidationResult(validation)
+
+        const preview = await analyzeImport(file, products)
+        if (preview) {
+          setPreviewData(preview)
+          setShowPreview(true)
+        } else {
+          setFilePickerError('Failed to analyze import file')
+        }
+
         setIsProcessing(false)
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Failed to validate file'
@@ -68,39 +83,47 @@ export function CatalogImport({
         setIsProcessing(false)
       }
     },
-    [validateImport]
+    [validateImport, analyzeImport, products]
   )
 
-  const handleImport = React.useCallback(async () => {
-    if (!selectedFile || !validationResult?.isValid) {
+  const handleConfirmImport = async (
+    selectedChanges: ProductChange[],
+    conflictResolutions: Map<string, any>,
+    onProgress: (progress: any) => void
+  ) => {
+    if (!previewData) {
       return
     }
 
     try {
-      setIsProcessing(true)
-      const result = await parseImportFile(selectedFile)
-
-      if (!result.success || !result.data) {
-        setFilePickerError(result.error || 'Failed to parse file')
-        setIsProcessing(false)
-        return
-      }
-
-      onImport(result.data)
-      toast.success('Import Successful', {
-        description: `Imported ${result.data.meta.productCount} products`,
+      setIsImportingPreview(true)
+      const result = await importAtomic(selectedChanges, {
+        conflictResolutions,
+        batchSize: 50,
+        onProgress,
       })
-      resetState()
-      onOpenChange(false)
+
+      if (result.success) {
+        toast.success('Import Completed', {
+          description: `Added ${result.added}, updated ${result.updated}, skipped ${result.skipped}`,
+        })
+
+        resetState()
+        onOpenChange(false)
+      } else {
+        toast.error('Import Failed', {
+          description: `${result.failed} products failed to import`,
+        })
+      }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to import file'
-      setFilePickerError(errorMessage)
-      toast.error('Import Failed', {
+      toast.error('Import Error', {
         description: errorMessage,
       })
-      setIsProcessing(false)
+    } finally {
+      setIsImportingPreview(false)
     }
-  }, [selectedFile, validationResult, parseImportFile, onImport, resetState, onOpenChange])
+  }
 
   const handleCancel = React.useCallback(() => {
     resetState()
@@ -111,120 +134,140 @@ export function CatalogImport({
     setSelectedFile(null)
     setValidationResult(null)
     setFilePickerError(undefined)
+    setPreviewData(null)
+    setShowPreview(false)
   }, [])
 
-  const isValidFile = validationResult?.isValid && selectedFile
+  const handlePreviewCancel = React.useCallback(() => {
+    setShowPreview(false)
+    setPreviewData(null)
+  }, [])
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle>Import Catalog</DialogTitle>
-        </DialogHeader>
+    <>
+      <Dialog open={open && !showPreview} onOpenChange={onOpenChange}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Import Catalog</DialogTitle>
+          </DialogHeader>
 
-        <div className="space-y-4 py-4">
-          {!selectedFile ? (
-            <FilePicker
-              onFileSelect={handleFileSelect}
-              accept=".json"
-              maxSize={10 * 1024 * 1024}
-              allowedExtensions={['.json']}
-              disabled={disabled || isProcessing || isImporting}
-              label="Select Catalog File"
-              helpText="Upload a JSON file exported from Tiny-Till. Maximum file size: 10MB"
-              error={filePickerError || importError || undefined}
-              processing={isProcessing || isImporting}
-            />
-          ) : (
-            <div className="space-y-3">
-              <div className="flex items-center gap-3 p-4 rounded-lg border bg-muted/50">
-                <FileJson className="h-8 w-8 text-primary flex-shrink-0" />
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium truncate">{selectedFile.name}</p>
-                  <p className="text-xs text-muted-foreground">
-                    {(selectedFile.size / 1024).toFixed(1)} KB
-                  </p>
-                </div>
-                <Button
-                  size="icon-xs"
-                  variant="ghost"
-                  onClick={handleClearFile}
-                  disabled={disabled || isProcessing || isImporting}
-                  aria-label="Clear file selection"
-                >
-                  <X className="h-4 w-4" />
-                </Button>
-              </div>
-
-              {isProcessing || isImporting ? (
-                <div className="flex items-center justify-center p-4">
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                    <span>Validating file...</span>
+          <div className="space-y-4 py-4">
+            {!selectedFile ? (
+              <FilePicker
+                onFileSelect={handleFileSelect}
+                accept=".json"
+                maxSize={10 * 1024 * 1024}
+                allowedExtensions={['.json']}
+                disabled={disabled || isProcessing || isImporting}
+                label="Select Catalog File"
+                helpText="Upload a JSON file exported from Tiny-Till. Maximum file size: 10MB"
+                error={filePickerError || importError || undefined}
+                processing={isProcessing || isImporting}
+              />
+            ) : (
+              <div className="space-y-3">
+                <div className="flex items-center gap-3 p-4 rounded-lg border bg-muted/50">
+                  <FileJson className="h-8 w-8 text-primary flex-shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium truncate">{selectedFile.name}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {(selectedFile.size / 1024).toFixed(1)} KB
+                    </p>
                   </div>
+                  <Button
+                    size="icon-xs"
+                    variant="ghost"
+                    onClick={handleClearFile}
+                    disabled={disabled || isProcessing || isImporting}
+                    aria-label="Clear file selection"
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
                 </div>
+
+                {isProcessing || isImporting ? (
+                  <div className="flex items-center justify-center p-4">
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      <span>Validating file...</span>
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    {validationResult?.isValid ? (
+                      <div className="flex items-start gap-2 p-3 rounded-md bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-900/30">
+                        <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5" />
+                        <div className="flex-1">
+                          <p className="text-sm font-medium text-green-900 dark:text-green-100">
+                            File Validated Successfully
+                          </p>
+                          <p className="text-xs text-green-700 dark:text-green-300 mt-1">
+                            Ready to review {previewData?.analysis.totalProducts || 0} products
+                          </p>
+                        </div>
+                      </div>
+                    ) : validationResult?.errors && validationResult.errors.length > 0 ? (
+                      <div className="flex items-start gap-2 p-3 rounded-md bg-destructive/10 border border-destructive/20">
+                        <AlertCircle className="h-5 w-5 text-destructive flex-shrink-0 mt-0.5" />
+                        <div className="flex-1">
+                          <p className="text-sm font-medium text-destructive">Validation Errors</p>
+                          <ul className="text-xs text-destructive/80 mt-1 list-disc list-inside space-y-0.5">
+                            {validationResult.errors.map((error: any) => (
+                              <li key={`${error.field}-${error.code}-${error.message}`}>
+                                {error.field ? <span className="font-medium">{error.field}: </span> : ''}
+                                {error.message}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+                    ) : null}
+                  </>
+                )}
+              </div>
+            )}
+          </div>
+
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={handleCancel}
+              disabled={disabled || isProcessing || isImporting}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={() => previewData && setShowPreview(true)}
+              disabled={disabled || !validationResult?.isValid || isProcessing || isImporting}
+            >
+              {isProcessing || isImporting ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Processing...
+                </>
               ) : (
                 <>
-                  {validationResult?.isValid ? (
-                    <div className="flex items-start gap-2 p-3 rounded-md bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-900/30">
-                      <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5" />
-                      <div className="flex-1">
-                        <p className="text-sm font-medium text-green-900 dark:text-green-100">
-                          File Validated Successfully
-                        </p>
-                        <p className="text-xs text-green-700 dark:text-green-300 mt-1">
-                          Ready to import {validationResult.data?.meta.productCount || 0} products
-                        </p>
-                      </div>
-                    </div>
-                  ) : validationResult?.errors && validationResult.errors.length > 0 ? (
-                    <div className="flex items-start gap-2 p-3 rounded-md bg-destructive/10 border border-destructive/20">
-                      <AlertCircle className="h-5 w-5 text-destructive flex-shrink-0 mt-0.5" />
-                      <div className="flex-1">
-                        <p className="text-sm font-medium text-destructive">Validation Errors</p>
-                        <ul className="text-xs text-destructive/80 mt-1 list-disc list-inside space-y-0.5">
-                          {validationResult.errors.map((error) => (
-                            <li key={`${error.field}-${error.code}-${error.message}`}>
-                              {error.field ? <span className="font-medium">{error.field}: </span> : ''}
-                              {error.message}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    </div>
-                  ) : null}
+                  <Upload className="mr-2 h-4 w-4" />
+                  Review & Import
                 </>
               )}
-            </div>
-          )}
-        </div>
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
-        <DialogFooter>
-          <Button
-            variant="outline"
-            onClick={handleCancel}
-            disabled={disabled || isProcessing || isImporting}
-          >
-            Cancel
-          </Button>
-          <Button
-            onClick={handleImport}
-            disabled={disabled || !isValidFile || isProcessing || isImporting}
-          >
-            {isProcessing || isImporting ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Processing...
-              </>
-            ) : (
-              <>
-                <Upload className="mr-2 h-4 w-4" />
-                Import
-              </>
-            )}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+      {previewData && (
+        <ImportPreview
+          open={showPreview}
+          onOpenChange={(open) => {
+            if (!open) handlePreviewCancel()
+          }}
+          previewData={previewData}
+          onConfirm={handleConfirmImport}
+          onCancel={handlePreviewCancel}
+          isLoading={isImportingPreview}
+        />
+      )}
+    </>
   )
 }

@@ -31,10 +31,6 @@ function CatalogPage() {
     await exportCatalog()
   }
 
-  const handleImportCatalog = async (data: CatalogImportType) => {
-    console.log('Import catalog data:', data)
-  }
-
   const handleAddProduct = () => {
     setShowAddDialog(true)
   }
@@ -167,7 +163,6 @@ function CatalogPage() {
       <CatalogImport
         open={showImportDialog}
         onOpenChange={setShowImportDialog}
-        onImport={handleImportCatalog}
       />
 
       <div aria-live="polite" aria-atomic="true" className="sr-only">
