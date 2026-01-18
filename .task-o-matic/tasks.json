@@ -14,7 +14,7 @@
           "title": "Initialize Turborepo structure and configure base tooling",
           "description": "Set up Turborepo monorepo with workspace configuration, install and configure TypeScript with strict mode, ESLint, and Prettier. Initialize the application package structure with proper imports and workspace aliases. Configure build pipelines and CI scripts. Create initial workspace directories and commit the scaffold.",
           "contentFile": "tasks/1.1.md",
-          "status": "todo",
+          "status": "completed",
           "subtasks": [],
           "createdAt": 1768730817011,
           "updatedAt": 1768730817011
@@ -24,7 +24,7 @@
           "title": "Configure Tailwind CSS with Shadcn UI theme system",
           "description": "Install Tailwind CSS, PostCSS, and Autoprefixer. Configure Shadcn UI with custom theme variables, set up CSS variables for colors, spacing, and typography. Implement dark/light mode support, install foundational UI components, and ensure responsive design utilities are properly configured across the monorepo. Create root application layout shell and verify component rendering.",
           "contentFile": "tasks/1.2.md",
-          "status": "todo",
+          "status": "completed",
           "subtasks": [],
           "createdAt": 1768730817012,
           "updatedAt": 1768730817012
