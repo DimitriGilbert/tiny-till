@@ -5,6 +5,7 @@ import { useEffect } from "react"
 import Header from "@/components/header"
 import { ThemeProvider } from "@/components/theme-provider"
 import { NavigationConfirmationDialog } from "@/components/navigation-confirmation-dialog"
+import { LoadingOverlay } from "@/components/loading-overlay"
 import { Toaster } from "@/components/ui/sonner"
 import { useTallyStore } from "@/stores/tally-store"
 import { useTallyNavigationGuard } from "@/lib/route-guards"
@@ -84,6 +85,7 @@ function RootComponent() {
           <Outlet />
         </div>
         <Toaster richColors />
+        <LoadingOverlay />
         <NavigationConfirmationDialog
           open={isModalOpen}
           onOpenChange={handleCancel}

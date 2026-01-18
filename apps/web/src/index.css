@@ -126,3 +126,49 @@
     @apply font-sans;
   }
 }
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  * {
+    animation-play-state: running;
+  }
+}
+
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+:target {
+  scroll-margin-top: 2rem;
+}
+
+button:focus-visible,
+a:focus-visible,
+[role="button"]:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+@media (prefers-contrast: more) {
+  * {
+    text-shadow: none !important;
+    box-shadow: none !important;
+  }
+  
+  button,
+  a,
+  [role="button"] {
+    border: 2px solid currentColor;
+  }
+}
+
