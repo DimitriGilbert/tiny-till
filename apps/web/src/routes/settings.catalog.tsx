@@ -1,12 +1,14 @@
 import * as React from 'react'
 
 import { createFileRoute, Link } from '@tanstack/react-router'
+import { Download, Loader2 } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { ConfirmationDialog } from '@/components/confirmation-dialog'
 import { ProductForm } from '@/components/product-form'
 import { ProductList } from '@/components/product-list'
 import { useCatalogStore } from '@/stores/catalog-store'
+import { useCatalogExport } from '@/hooks/useCatalogExport'
 import type { Product } from '@tiny-till/types'
 
 export const Route = createFileRoute('/settings/catalog')({
@@ -15,12 +17,17 @@ export const Route = createFileRoute('/settings/catalog')({
 
 function CatalogPage() {
   const { products, getProduct } = useCatalogStore()
+  const { exportCatalog, isExporting } = useCatalogExport()
 
   const [showAddDialog, setShowAddDialog] = React.useState(false)
   const [editingProductId, setEditingProductId] = React.useState<string | null>(null)
   const [showDeleteDialog, setShowDeleteDialog] = React.useState<string | null>(null)
 
   const editingProduct = editingProductId ? getProduct(editingProductId) : undefined
+
+  const handleExportCatalog = async () => {
+    await exportCatalog()
+  }
 
   const handleAddProduct = () => {
     setShowAddDialog(true)
@@ -66,7 +73,26 @@ function CatalogPage() {
         </nav>
         <div className="flex items-center justify-between">
           <h1 className="mb-6 text-2xl font-bold">Catalog Management</h1>
-          <Button onClick={handleAddProduct}>Add Product</Button>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              onClick={handleExportCatalog}
+              disabled={isExporting}
+            >
+              {isExporting ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Exporting...
+                </>
+              ) : (
+                <>
+                  <Download className="mr-2 h-4 w-4" />
+                  Export Catalog
+                </>
+              )}
+            </Button>
+            <Button onClick={handleAddProduct}>Add Product</Button>
+          </div>
         </div>
       </header>
 
