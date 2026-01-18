@@ -2,7 +2,7 @@ export const MAX_IMAGE_WIDTH = 128
 export const MAX_IMAGE_HEIGHT = 128
 export const MIN_IMAGE_SIZE = 32
 export const MAX_IMAGE_SIZE_BYTES = 65536
-export const ACCEPTED_MIME_TYPES = ['image/png', 'image/jpeg', 'image/webp'] as const
+export const ACCEPTED_MIME_TYPES = ['image/png', 'image/jpeg', 'image/webp', 'image/avif'] as const
 export type AcceptedMimeType = (typeof ACCEPTED_MIME_TYPES)[number]
 
 export interface ImageDimensions {
@@ -28,5 +28,5 @@ export interface ImageCompressionOptions {
   maxWidth?: number
   maxHeight?: number
   quality?: number
-  format?: 'image/webp' | 'image/jpeg' | 'image/png'
+  format?: AcceptedMimeType
 }

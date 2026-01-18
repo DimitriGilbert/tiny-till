@@ -8,9 +8,11 @@ import { NavigationConfirmationDialog } from "@/components/navigation-confirmati
 import { LoadingOverlay } from "@/components/loading-overlay"
 import { Toaster } from "@/components/ui/sonner"
 import { OfflineBanner, OnlineBanner } from "@/components/offline-banner"
+import { StorageWarningAlert } from "@/components/storage-warning-alert"
 import { useServiceWorker } from "@/hooks/useServiceWorker"
 import { useTallyStore } from "@/stores/tally-store"
 import { useTallyNavigationGuard } from "@/lib/route-guards"
+import { useStorageStore } from "@/stores/storage-store"
 
 import "../index.css"
 
@@ -47,6 +49,7 @@ function RootComponent() {
     clearTally
   )
   const { isOffline } = useServiceWorker()
+  const { checkStorage, checkImageSupport } = useStorageStore()
 
   useEffect(() => {
     const hasReloaded = sessionStorage.getItem("has-reloaded")
@@ -74,12 +77,24 @@ function RootComponent() {
     }
   }, [hasActiveItems])
 
+  useEffect(() => {
+    checkStorage()
+    checkImageSupport()
+
+    const interval = setInterval(() => {
+      checkStorage()
+    }, 5 * 60 * 1000)
+
+    return () => clearInterval(interval)
+  }, [checkStorage, checkImageSupport])
+
   return (
     <>
       <HeadContent />
       <ThemeProvider>
         <OfflineBanner isOffline={isOffline} />
         <OnlineBanner isOnline={!isOffline} />
+        <StorageWarningAlert />
         <div className="grid grid-rows-[auto_1fr] h-svh">
           <Header navigateWithCheck={navigateWithCheck} />
           <Outlet />

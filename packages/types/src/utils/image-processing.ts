@@ -4,6 +4,10 @@ import type {
   ImageDimensions,
   ImageValidationResult,
 } from './image'
+import type {
+  ImageFormatSupport,
+  PreferredFormat,
+} from './storage'
 import {
   ACCEPTED_MIME_TYPES,
   MAX_IMAGE_HEIGHT,
@@ -11,6 +15,10 @@ import {
   MAX_IMAGE_WIDTH,
   MIN_IMAGE_SIZE,
 } from './image'
+import {
+  getBestSupportedFormat,
+  getFallbackFormats,
+} from './image-support'
 
 export async function validateImageFile(file: File): Promise<ImageValidationResult> {
   if (!ACCEPTED_MIME_TYPES.includes(file.type as AcceptedMimeType)) {
@@ -223,4 +231,60 @@ export function calculateImageQuality(originalSize: number, targetSize: number):
 
 export function isSupportedFormat(mimeType: string): mimeType is AcceptedMimeType {
   return ACCEPTED_MIME_TYPES.includes(mimeType as AcceptedMimeType)
+}
+
+export async function compressImageWithFallback(
+  file: File,
+  options: ImageCompressionOptions = {}
+): Promise<Blob> {
+  const {
+    maxWidth = MAX_IMAGE_WIDTH,
+    maxHeight = MAX_IMAGE_HEIGHT,
+    quality = 0.8,
+  } = options
+
+  const preferredFormat = options.format ?? (await getBestSupportedFormat())
+  const fallbackFormats = getFallbackFormats(preferredFormat)
+
+  try {
+    return await compressImage(file, {
+      maxWidth,
+      maxHeight,
+      quality,
+      format: preferredFormat,
+    })
+  } catch (error) {
+    console.warn(`[Image] Failed to compress as ${preferredFormat}, trying fallback`, error)
+
+    for (const fallbackFormat of fallbackFormats) {
+      try {
+        return await compressImage(file, {
+          maxWidth,
+          maxHeight,
+          quality,
+          format: fallbackFormat,
+        })
+      } catch (fallbackError) {
+        console.warn(`[Image] Failed to compress as ${fallbackFormat}`, fallbackError)
+      }
+    }
+
+    throw new Error('Failed to compress image with any supported format')
+  }
+}
+
+export async function getOptimalFormat(
+  imageSupport?: ImageFormatSupport
+): Promise<PreferredFormat> {
+  if (imageSupport) {
+    return imageSupport.preferred
+  }
+
+  const detected = await getBestSupportedFormat()
+  return detected
+}
+
+export async function autoSelectFormat(): Promise<PreferredFormat> {
+  const bestFormat = await getBestSupportedFormat()
+  return bestFormat
 }

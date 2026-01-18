@@ -11,6 +11,9 @@ import { SettingsActionSection } from '@/components/settings-action-section'
 import { ResetSettingsDialog } from '@/components/reset-settings-dialog'
 import { showSettingsSuccess, showSettingsResetSuccess } from '@/components/settings-success-toast'
 import { useSettingsStore } from '@/stores/settings-store'
+import { useStorageStore } from '@/stores/storage-store'
+import { StorageUsageDisplay } from '@/components/storage-usage-display'
+import { StorageCleanupDialog } from '@/components/storage-cleanup-dialog'
 import type { ColumnCount } from '@tiny-till/types'
 import { toast } from 'sonner'
 
@@ -36,6 +39,8 @@ function SettingsPage() {
   const setGridDensity = useSettingsStore((state) => state.setGridDensity)
   const setColumnCountOverride = useSettingsStore((state) => state.setColumnCountOverride)
   const resetSettings = useSettingsStore((state) => state.resetSettings)
+  const { imageSupport } = useStorageStore()
+  const [cleanupDialogOpen, setCleanupDialogOpen] = React.useState(false)
 
   const { theme, resolvedTheme, setTheme } = useTheme()
   const [resetDialogOpen, setResetDialogOpen] = React.useState(false)
@@ -225,6 +230,44 @@ function SettingsPage() {
             </Link>
           </div>
         </section>
+
+        <section className="rounded-none border p-4">
+          <h2 className="mb-4 font-medium">Storage Management</h2>
+          <div className="space-y-4">
+            <StorageUsageDisplay />
+
+            {imageSupport && (
+              <div className="rounded-none bg-muted p-4">
+                <h3 className="mb-2 text-sm font-medium">Image Format Support</h3>
+                <div className="grid grid-cols-2 gap-2 text-sm">
+                  <div className={imageSupport.avif ? 'text-green-600' : 'text-muted-foreground'}>
+                    AVIF: {imageSupport.avif ? 'Supported' : 'Not Supported'}
+                  </div>
+                  <div className={imageSupport.webP ? 'text-green-600' : 'text-muted-foreground'}>
+                    WebP: {imageSupport.webP ? 'Supported' : 'Not Supported'}
+                  </div>
+                  <div className={imageSupport.jpeg ? 'text-green-600' : 'text-muted-foreground'}>
+                    JPEG: {imageSupport.jpeg ? 'Supported' : 'Not Supported'}
+                  </div>
+                  <div className="text-muted-foreground">
+                    PNG: Supported
+                  </div>
+                </div>
+                <p className="mt-2 text-xs text-muted-foreground">
+                  Preferred format: <strong className="text-foreground">{imageSupport.preferred}</strong>
+                </p>
+              </div>
+            )}
+
+            <button
+              type="button"
+              onClick={() => setCleanupDialogOpen(true)}
+              className="w-full text-left px-4 py-2 rounded-none border border-input bg-transparent hover:bg-accent hover:text-accent-foreground text-sm transition-colors"
+            >
+              Cleanup Storage
+            </button>
+          </div>
+        </section>
       </div>
 
       <ResetSettingsDialog
@@ -233,6 +276,11 @@ function SettingsPage() {
         onConfirm={handleResetSettings}
         currentSettings={currentSettings}
         defaultSettings={defaultSettings}
+      />
+
+      <StorageCleanupDialog
+        open={cleanupDialogOpen}
+        onOpenChange={setCleanupDialogOpen}
       />
 
       <div

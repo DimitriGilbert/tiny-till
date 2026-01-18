@@ -1,6 +1,7 @@
 import { persist, createJSONStorage } from 'zustand/middleware'
 import type { StateStorage, PersistStorage } from 'zustand/middleware'
-import { safeGet, safeSet, safeDelete } from './storage'
+import { safeGet, safeSet, safeDelete, checkQuotaExceeded } from './storage'
+import { showQuotaExceeded } from './storage-toasts'
 
 export function mapSerializer<T>() {
   return {
@@ -21,9 +22,16 @@ function indexedDBStorageImpl(): StateStorage {
       return value ?? null
     },
     setItem: async (name: string, value: string): Promise<void> => {
-      const success = await safeSet(name, value)
-      if (!success) {
-        throw new Error(`Failed to persist state for ${name}`)
+      try {
+        const success = await safeSet(name, value)
+        if (!success) {
+          throw new Error(`Failed to persist state for ${name}`)
+        }
+      } catch (error) {
+        if (checkQuotaExceeded(error)) {
+          showQuotaExceeded()
+        }
+        throw error
       }
     },
     removeItem: async (name: string): Promise<void> => {

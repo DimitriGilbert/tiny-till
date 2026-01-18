@@ -6,11 +6,14 @@ import { cn } from '@/lib/utils'
 import type { ImageValidationError } from '@tiny-till/types'
 import {
   validateImageFile,
-  compressImage,
+  compressImageWithFallback,
   encodeBase64,
   ACCEPTED_MIME_TYPES,
+  autoSelectFormat,
 } from '@tiny-till/types'
 import { toast } from 'sonner'
+import { useStorageStore } from '@/stores/storage-store'
+import { showQuotaExceeded } from '@/lib/storage-toasts'
 
 interface ImageUploadProps {
   value?: string | null
@@ -29,8 +32,9 @@ export function ImageUpload({
   disabled = false,
   className,
   label = 'Product Image',
-  helpText = 'Max size: 128×128 pixels. Formats: PNG, JPEG, WebP',
+  helpText = 'Max size: 128×128 pixels. Formats: PNG, JPEG, WebP, AVIF',
 }: ImageUploadProps) {
+  const { storageInfo, checkStorage } = useStorageStore()
   const [isDragging, setIsDragging] = React.useState(false)
   const [isProcessing, setIsProcessing] = React.useState(false)
   const [error, setError] = React.useState<string>()
@@ -54,6 +58,15 @@ export function ImageUpload({
     }
   }, [previewUrl])
 
+  const checkAvailableStorage = (): boolean => {
+    if (!storageInfo) return true
+
+    const imageEstimate = 20 * 1024
+    const availableSpace = storageInfo.quotaLimit - storageInfo.quotaUsed
+
+    return availableSpace > imageEstimate * 2
+  }
+
   const processFile = async (file: File) => {
     setIsProcessing(true)
     setError(undefined)
@@ -72,12 +85,23 @@ export function ImageUpload({
         return
       }
 
+      if (!checkAvailableStorage()) {
+        setError('Storage is nearly full. Please free up space first.')
+        toast.error('Storage Full', {
+          description: 'Please free up space before uploading images',
+        })
+        showQuotaExceeded()
+        setIsProcessing(false)
+        return
+      }
+
+      const preferredFormat = await autoSelectFormat()
       const originalSize = file.size
-      const compressedBlob = await compressImage(file, {
+      const compressedBlob = await compressImageWithFallback(file, {
         maxWidth: 128,
         maxHeight: 128,
         quality: 0.8,
-        format: 'image/webp',
+        format: preferredFormat,
       })
 
       const compressedSize = compressedBlob.size
@@ -90,6 +114,8 @@ export function ImageUpload({
 
       const base64 = await encodeBase64(compressedBlob)
       onChange(base64)
+
+      await checkStorage()
     } catch (err) {
       const errorMsg = err instanceof Error ? err.message : 'Failed to process image'
       setError(errorMsg)
