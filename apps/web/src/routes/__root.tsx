@@ -7,6 +7,8 @@ import { ThemeProvider } from "@/components/theme-provider"
 import { NavigationConfirmationDialog } from "@/components/navigation-confirmation-dialog"
 import { LoadingOverlay } from "@/components/loading-overlay"
 import { Toaster } from "@/components/ui/sonner"
+import { OfflineBanner, OnlineBanner } from "@/components/offline-banner"
+import { useServiceWorker } from "@/hooks/useServiceWorker"
 import { useTallyStore } from "@/stores/tally-store"
 import { useTallyNavigationGuard } from "@/lib/route-guards"
 
@@ -44,6 +46,7 @@ function RootComponent() {
     hasActiveItems,
     clearTally
   )
+  const { isOffline } = useServiceWorker()
 
   useEffect(() => {
     const hasReloaded = sessionStorage.getItem("has-reloaded")
@@ -75,6 +78,8 @@ function RootComponent() {
     <>
       <HeadContent />
       <ThemeProvider>
+        <OfflineBanner isOffline={isOffline} />
+        <OnlineBanner isOnline={!isOffline} />
         <div className="grid grid-rows-[auto_1fr] h-svh">
           <Header navigateWithCheck={navigateWithCheck} />
           <Outlet />

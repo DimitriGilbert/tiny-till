@@ -5,6 +5,7 @@ import Loader from "./components/loader";
 import { routeTree } from "./routeTree.gen";
 import { StorageErrorBoundary } from "./components/storage-error-boundary";
 import { HydrateLoader } from "./components/hydrate-loader";
+import { useServiceWorker } from "./hooks/useServiceWorker";
 
 const router = createRouter({
   routeTree,
@@ -19,6 +20,14 @@ declare module "@tanstack/react-router" {
   }
 }
 
+function App() {
+  useServiceWorker();
+
+  return (
+    <RouterProvider router={router} />
+  );
+}
+
 const rootElement = document.getElementById("app");
 
 if (!rootElement) {
@@ -30,7 +39,7 @@ if (!rootElement.innerHTML) {
   root.render(
     <StorageErrorBoundary>
       <HydrateLoader>
-        <RouterProvider router={router} />
+        <App />
       </HydrateLoader>
     </StorageErrorBoundary>
   );
