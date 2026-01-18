@@ -4,6 +4,7 @@ import { BackupFrequencySelect } from "@/components/backup-frequency-select";
 import { DensitySettingsSection } from "@/components/density-settings-section";
 import { useSettingsStore } from "@/stores/settings-store";
 import { toast } from "sonner";
+import type { ColumnCount } from "@tiny-till/types";
 
 export const Route = createFileRoute("/settings")({
   component: SettingsPage,
@@ -13,6 +14,7 @@ function SettingsPage() {
   const settings = useSettingsStore((state) => state)
   const setBackupReminder = useSettingsStore((state) => state.setBackupReminder)
   const setGridDensity = useSettingsStore((state) => state.setGridDensity)
+  const setColumnCountOverride = useSettingsStore((state) => state.setColumnCountOverride)
 
   const handleDensityChange = (density: 'normal' | 'compact') => {
     try {
@@ -24,6 +26,25 @@ function SettingsPage() {
       })
     } catch (error) {
       toast.error('Failed to change grid density', {
+        description: error instanceof Error ? error.message : 'Unknown error occurred',
+      })
+    }
+  }
+
+  const handleColumnCountChange = (count: number | undefined) => {
+    try {
+      setColumnCountOverride(count as ColumnCount | undefined)
+      if (count !== undefined) {
+        toast.success(`Column count set to ${count}`, {
+          description: 'Manual override is now active',
+        })
+      } else {
+        toast.success('Reset to auto columns', {
+          description: 'Columns will adjust automatically',
+        })
+      }
+    } catch (error) {
+      toast.error('Failed to set column count', {
         description: error instanceof Error ? error.message : 'Unknown error occurred',
       })
     }
@@ -47,6 +68,7 @@ function SettingsPage() {
           currentDensity={settings.gridDensity}
           columnCountOverride={settings.columnCountOverride}
           onDensityChange={handleDensityChange}
+          onColumnCountChange={handleColumnCountChange}
         />
 
         <section className="rounded-none border p-4">

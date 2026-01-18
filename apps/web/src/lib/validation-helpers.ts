@@ -225,3 +225,27 @@ export async function validateColumnCountChange(
 
   return { isValid: true }
 }
+
+export function validateColumnForScreen(count: number, screenWidth: number): ValidationResult {
+  if (count < 2) {
+    return { isValid: false, error: 'Column count must be at least 2' }
+  }
+
+  if (count > 8) {
+    return { isValid: false, error: 'Column count must be at most 8' }
+  }
+
+  const itemSize = 60
+  const gap = 12
+  const minItemWidth = itemSize + gap
+  const maxColumns = Math.floor(screenWidth / minItemWidth)
+
+  if (count > maxColumns && maxColumns >= 2) {
+    return {
+      isValid: false,
+      error: `${count} columns may not fit on your screen. Maximum recommended: ${maxColumns} columns`,
+    }
+  }
+
+  return { isValid: true }
+}
