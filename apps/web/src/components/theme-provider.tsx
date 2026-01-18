@@ -1,11 +1,21 @@
-import { ThemeProvider as NextThemesProvider } from "next-themes";
-import * as React from "react";
+import * as React from "react"
 
-export function ThemeProvider({
-  children,
-  ...props
-}: React.ComponentProps<typeof NextThemesProvider>) {
-  return <NextThemesProvider {...props}>{children}</NextThemesProvider>;
+import { useTheme, useSystemThemeSync } from "@/stores/theme-store"
+
+export interface ThemeProviderProps {
+  children: React.ReactNode
 }
 
-export { useTheme } from "next-themes";
+export function ThemeProvider({ children }: ThemeProviderProps) {
+  const { isHydrated } = useTheme()
+
+  useSystemThemeSync()
+
+  if (!isHydrated) {
+    return null
+  }
+
+  return <>{children}</>
+}
+
+export { useTheme } from "@/stores/theme-store"

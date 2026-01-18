@@ -1,19 +1,17 @@
 import { create } from 'zustand'
 import { devtools, persist } from 'zustand/middleware'
 
-import type { Theme, GridDensity, ColumnCount, Currency, Locale } from '@tiny-till/types'
+import type { GridDensity, ColumnCount, Currency, Locale } from '@tiny-till/types'
 import { STORAGE_KEYS } from '@/lib/storage-keys'
 import { withHydrationTracking } from '@/lib/persist-middleware'
 import { checkSettingsIntegrity } from '@/lib/data-integrity'
 import {
   validateSettingsUpdate,
-  validateThemeChange,
   validateGridDensityChange,
   validateColumnCountChange,
 } from '@/lib/validation-helpers'
 
 interface SettingsState {
-  theme: Theme
   gridDensity: GridDensity
   columnCountOverride: ColumnCount | undefined
   backupReminder: number | undefined
@@ -23,7 +21,6 @@ interface SettingsState {
 }
 
 interface SettingsActions {
-  setTheme: (theme: Theme) => void
   setGridDensity: (density: GridDensity) => void
   setColumnCountOverride: (count: ColumnCount | undefined) => void
   setBackupReminder: (days: number | undefined) => void
@@ -35,7 +32,6 @@ interface SettingsActions {
 type SettingsStore = SettingsState & SettingsActions
 
 const initialState: Omit<SettingsState, 'hasHydrated'> = {
-  theme: 'system',
   gridDensity: 'normal',
   columnCountOverride: undefined,
   backupReminder: 168,
@@ -49,16 +45,6 @@ export const useSettingsStore = create<SettingsStore>()(
       (set) => ({
         ...initialState,
         hasHydrated: false,
-
-        setTheme: async (theme: Theme) => {
-          const validation = await validateThemeChange(theme)
-          if (!validation.isValid) {
-            console.warn('[SettingsStore] Validation failed:', validation.error)
-            throw new Error(validation.error || 'Invalid theme')
-          }
-          set({ theme })
-          console.log('[SettingsStore] setTheme', { theme })
-        },
 
         setGridDensity: async (density: GridDensity) => {
           const validation = await validateGridDensityChange(density)
