@@ -1,26 +1,104 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import * as React from 'react'
 
-export const Route = createFileRoute("/settings/catalog")({
+import { createFileRoute, Link } from '@tanstack/react-router'
+
+import { Button } from '@/components/ui/button'
+import { ConfirmationDialog } from '@/components/confirmation-dialog'
+import { ProductForm } from '@/components/product-form'
+import { ProductList } from '@/components/product-list'
+import { useCatalogStore } from '@/stores/catalog-store'
+import type { Product } from '@tiny-till/types'
+
+export const Route = createFileRoute('/settings/catalog')({
   component: CatalogPage,
-});
+})
 
 function CatalogPage() {
+  const { products, getProduct } = useCatalogStore()
+
+  const [showAddDialog, setShowAddDialog] = React.useState(false)
+  const [editingProductId, setEditingProductId] = React.useState<string | null>(null)
+  const [showDeleteDialog, setShowDeleteDialog] = React.useState<string | null>(null)
+
+  const editingProduct = editingProductId ? getProduct(editingProductId) : undefined
+
+  const handleAddProduct = () => {
+    setShowAddDialog(true)
+  }
+
+  const handleEditProduct = (id: string) => {
+    setEditingProductId(id)
+  }
+
+  const handleDeleteProduct = (id: string) => {
+    setShowDeleteDialog(id)
+  }
+
+  const handleConfirmDelete = async () => {
+    if (showDeleteDialog) {
+      const { deleteProduct } = useCatalogStore.getState()
+      await deleteProduct(showDeleteDialog, true)
+      setShowDeleteDialog(null)
+    }
+  }
+
+  const handleFormSuccess = () => {
+    setEditingProductId(null)
+    setShowAddDialog(false)
+  }
+
+  const handleFormCancel = () => {
+    setEditingProductId(null)
+    setShowAddDialog(false)
+  }
+
+  const deletingProduct = showDeleteDialog
+    ? getProduct(showDeleteDialog)
+    : undefined
+
   return (
-    <div className="container mx-auto max-w-3xl px-4 py-2">
-      <Link to="/settings" className="text-blue-500 hover:underline">
-        ← Back to Settings
-      </Link>
-      <h1 className="text-2xl font-bold mb-4 mt-2">Catalog Management</h1>
-      <div className="grid gap-6">
-        <section className="rounded-lg border p-4">
-          <h2 className="mb-2 font-medium">Product List</h2>
-          <p className="text-muted-foreground">Products will be displayed here.</p>
-        </section>
-        <section className="rounded-lg border p-4">
-          <h2 className="mb-2 font-medium">Add Product</h2>
-          <p className="text-muted-foreground">Add product form will be displayed here.</p>
-        </section>
+    <div className="container mx-auto max-w-6xl px-4 py-2">
+      <div className="mb-4 flex items-center justify-between">
+        <Link to="/settings" className="text-primary hover:underline">
+          ← Back to Settings
+        </Link>
+        <Button onClick={handleAddProduct}>Add Product</Button>
       </div>
+
+      <h1 className="mb-6 text-2xl font-bold">Catalog Management</h1>
+
+      <ProductList
+        onEdit={handleEditProduct}
+        onDelete={handleDeleteProduct}
+      />
+
+      <ProductForm
+        open={showAddDialog}
+        onOpenChange={setShowAddDialog}
+        mode="add"
+        onSuccess={handleFormSuccess}
+        onCancel={handleFormCancel}
+      />
+
+      <ProductForm
+        open={!!editingProductId}
+        onOpenChange={(open) => !open && setEditingProductId(null)}
+        mode="edit"
+        product={editingProduct}
+        onSuccess={handleFormSuccess}
+        onCancel={handleFormCancel}
+      />
+
+      <ConfirmationDialog
+        open={!!showDeleteDialog}
+        onOpenChange={(open) => !open && setShowDeleteDialog(null)}
+        title="Delete Product"
+        description={`Are you sure you want to delete "${deletingProduct?.name}"? This action cannot be undone.`}
+        confirmLabel="Delete"
+        cancelLabel="Cancel"
+        onConfirm={handleConfirmDelete}
+        isDestructive
+      />
     </div>
-  );
+  )
 }

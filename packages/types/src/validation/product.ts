@@ -72,4 +72,28 @@ export const productInputSchema: z.ZodType<ProductInput> = z.object({
     .optional(),
 })
 
+export const productUpdateSchema = z.object({
+  name: z
+    .string()
+    .min(1, { message: 'Product name is required' })
+    .max(50, { message: 'Product name cannot exceed 50 characters' })
+    .trim()
+    .optional(),
+  price: z
+    .number()
+    .int({ message: 'Price must be a whole number of cents' })
+    .min(1, { message: 'Price must be at least 1 cent' })
+    .max(MAX_PRICE_CENTS, {
+      message: `Price cannot exceed $${(MAX_PRICE_CENTS / 100).toLocaleString()}`,
+    })
+    .optional(),
+  imageData: z
+    .string()
+    .refine(imageDataRefine, {
+      message:
+        'Image must be a valid data URL (PNG, JPEG, or WebP) or blob URL, and cannot exceed 128×128 pixels',
+    })
+    .optional(),
+})
+
 export const productListSchema: z.ZodType<Product[]> = z.array(productSchema)
