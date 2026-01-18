@@ -3,12 +3,15 @@ import type {
   CatalogImport,
   ImportValidationResult,
   ImportResult,
+  DetailedValidationResult,
 } from '@tiny-till/types'
 import {
   checkFileExtension,
   checkFileSize,
   checkMimeType,
   validateImportFile,
+  validateImportFileDetailed,
+  validateJSONFileDetailed,
   processImportFile,
 } from '@tiny-till/types'
 import { toast } from 'sonner'
@@ -17,6 +20,7 @@ export interface UseCatalogImportReturn {
   isImporting: boolean
   importError: string | null
   validateImport: (file: File) => Promise<ImportValidationResult>
+  validateImportDetailed: (file: File) => Promise<DetailedValidationResult>
   parseImportFile: (file: File) => Promise<ImportResult>
   clearError: () => void
 }
@@ -176,6 +180,103 @@ export function useCatalogImport(): UseCatalogImportReturn {
     []
   )
 
+  const validateImportDetailed = React.useCallback(
+    async (file: File): Promise<DetailedValidationResult> => {
+      setIsImporting(true)
+      setImportError(null)
+
+      try {
+        const extensionCheck = checkFileExtension(file)
+        if (!extensionCheck.isValid) {
+          setIsImporting(false)
+          return {
+            isValid: false,
+            canAutoFix: false,
+            issues: [
+              {
+                code: 'INVALID_FILE_EXTENSION',
+                message: extensionCheck.error || 'Invalid file extension',
+                severity: { level: 'critical', impact: 'blocks_import' },
+              },
+            ],
+            summary: { total: 1, errors: 1, warnings: 0, info: 0, critical: 1 },
+          }
+        }
+
+        const sizeCheck = checkFileSize(file)
+        if (!sizeCheck.isValid) {
+          setIsImporting(false)
+          return {
+            isValid: false,
+            canAutoFix: false,
+            issues: [
+              {
+                code: 'FILE_TOO_LARGE',
+                message: sizeCheck.error || 'File too large',
+                severity: { level: 'critical', impact: 'blocks_import' },
+              },
+            ],
+            summary: { total: 1, errors: 1, warnings: 0, info: 0, critical: 1 },
+          }
+        }
+
+        const jsonCheck = await validateJSONFileDetailed(file)
+        if (!jsonCheck.isValid) {
+          setIsImporting(false)
+          return {
+            isValid: false,
+            canAutoFix: false,
+            issues: [
+              {
+                code: 'INVALID_JSON',
+                message: jsonCheck.error || 'Invalid JSON syntax',
+                severity: { level: 'critical', impact: 'blocks_import' },
+                line: jsonCheck.line,
+                column: jsonCheck.column,
+                context: jsonCheck.context,
+                recoverySuggestions: [
+                  {
+                    id: 'fix-json',
+                    action: 'Fix JSON syntax',
+                    description: 'Review and correct the JSON syntax errors',
+                    autoFixable: false,
+                    severity: 'required',
+                  },
+                ],
+              },
+            ],
+            summary: { total: 1, errors: 1, warnings: 0, info: 0, critical: 1 },
+          }
+        }
+
+        const fileContent = await file.text()
+        const data = JSON.parse(fileContent)
+
+        const detailedResult = await validateImportFileDetailed(data)
+
+        setIsImporting(false)
+        return detailedResult
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred'
+        setImportError(errorMessage)
+        setIsImporting(false)
+        return {
+          isValid: false,
+          canAutoFix: false,
+          issues: [
+            {
+              code: 'VALIDATION_ERROR',
+              message: errorMessage,
+              severity: { level: 'critical', impact: 'blocks_import' },
+            },
+          ],
+          summary: { total: 1, errors: 1, warnings: 0, info: 0, critical: 1 },
+        }
+      }
+    },
+    []
+  )
+
   const parseImportFile = React.useCallback(
     async (file: File): Promise<ImportResult> => {
       setIsImporting(true)
@@ -219,6 +320,7 @@ export function useCatalogImport(): UseCatalogImportReturn {
     isImporting,
     importError,
     validateImport,
+    validateImportDetailed,
     parseImportFile,
     clearError,
   }

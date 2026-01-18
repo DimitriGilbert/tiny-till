@@ -3,17 +3,63 @@ import type {
   ImportValidationResult,
   ImportResult,
   ImportMetadata,
+  DetailedValidationResult,
 } from '../entities/import'
 import {
   validateCatalogImport,
   validateJSONSyntax,
   checkFileStructure,
+  validateCatalogImportDetailed,
+  validateJSONSyntaxWithLocation,
 } from '../validation/import'
 import {
   MAX_FILE_SIZE,
   ALLOWED_FILE_EXTENSIONS,
   ALLOWED_MIME_TYPES,
 } from '../entities/import'
+
+export async function validateImportFileDetailed(
+  data: unknown
+): Promise<DetailedValidationResult> {
+  return validateCatalogImportDetailed(data)
+}
+
+export async function validateJSONFileDetailed(
+  file: File
+): Promise<{
+  isValid: boolean
+  error?: string
+  line?: number
+  column?: number
+  context?: string
+}> {
+  const fileContent = await file.text()
+  return validateJSONSyntaxWithLocation(fileContent)
+}
+
+function mapDetailedToSimpleResult(
+  detailed: DetailedValidationResult
+): ImportValidationResult {
+  return {
+    isValid: detailed.isValid,
+    data: detailed.data,
+    errors: detailed.issues.map((issue) => ({
+      code: issue.code as ImportValidationError['code'],
+      field: issue.field,
+      message: issue.message,
+    })),
+    warnings: detailed.issues
+      .filter((i) => i.severity.level === 'warning')
+      .map((i) => i.message),
+  }
+}
+
+export async function validateImportFileAsync(
+  data: unknown
+): Promise<ImportValidationResult> {
+  const detailed = await validateCatalogImportDetailed(data)
+  return mapDetailedToSimpleResult(detailed)
+}
 
 export async function parseJSONFile(file: File): Promise<unknown> {
   return new Promise((resolve, reject) => {
