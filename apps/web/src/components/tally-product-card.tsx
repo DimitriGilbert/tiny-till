@@ -10,6 +10,7 @@ import {
   CardTitle,
   CardContent,
 } from '@/components/ui/card'
+import { useGestures } from '@/hooks/use-gestures'
 import { cn } from '@/lib/utils'
 import { getFocusVisibleClassName } from '@/lib/focus-styles'
 import type { Product } from '@tiny-till/types'
@@ -37,6 +38,11 @@ export const TallyProductCard = React.memo(function TallyProductCard({
   const [prevQuantity, setPrevQuantity] = React.useState(quantity)
   const cardRef = React.useRef<HTMLButtonElement>(null)
 
+  const { isLongPressing, shouldPreventClick, eventHandlers } = useGestures({
+    onLongPress: () => onEditQuantity?.(product.id),
+    onDoubleTap: () => onEditQuantity?.(product.id),
+  })
+
   React.useEffect(() => {
     if (quantity !== prevQuantity && quantity > 0) {
       setIsPulsing(true)
@@ -47,7 +53,9 @@ export const TallyProductCard = React.memo(function TallyProductCard({
   }, [quantity, prevQuantity])
 
   const handleIncrement = () => {
-    onIncrement(product.id)
+    if (!shouldPreventClick) {
+      onIncrement(product.id)
+    }
   }
 
   const handleDecrement = (e: React.MouseEvent) => {
@@ -87,12 +95,14 @@ export const TallyProductCard = React.memo(function TallyProductCard({
         'group relative flex flex-col text-left transition-all duration-200 touch-manipulation',
         'hover:shadow-lg hover:shadow-primary/10',
         'active:scale-[0.98] hover:scale-[1.02] focus-visible:scale-[1.02]',
+        isLongPressing && 'opacity-80 scale-[0.97]',
         touchTargetSize,
         className
       )}
       aria-label={`${product.name}, ${formatPrice(product.price)}, quantity: ${quantity}`}
       onKeyDown={handleKeyDown}
       onClick={handleIncrement}
+      {...eventHandlers}
     >
       <Card size={density === 'compact' ? 'sm' : 'sm'} className="transition-colors group-hover:border-primary/20">
         {quantity > 0 && (
