@@ -1,0 +1,622 @@
+{
+  "tasks": [
+    {
+      "id": "1",
+      "title": "Core Application Foundation & State Management",
+      "description": "Initialize the complete application structure within Turborepo, configure TanStack Router with file-based routing for all required routes (Tally, Settings, Catalog), and set up Tailwind CSS with Shadcn UI theme system. Implement core Zustand stores for Catalog, Tally, and Settings with proper TypeScript interfaces and strict type safety. Set up IndexedDB persistence using Zustand's persist middleware with idb-keyval wrapper and proper error handling. Implement navigation guards to prevent accidental route changes with active tally and ensure root route redirection. Establish base TypeScript interfaces for all core data structures with UUID generation for product IDs and timestamp tracking.",
+      "contentFile": "tasks/1.md",
+      "status": "todo",
+      "dependencies": [],
+      "tags": [],
+      "subtasks": [
+        {
+          "id": "1.1",
+          "title": "Initialize Turborepo structure and configure base tooling",
+          "description": "Set up Turborepo monorepo with workspace configuration, install and configure TypeScript with strict mode, ESLint, and Prettier. Initialize the application package structure with proper imports and workspace aliases. Configure build pipelines and CI scripts. Create initial workspace directories and commit the scaffold.",
+          "contentFile": "tasks/1.1.md",
+          "status": "todo",
+          "subtasks": [],
+          "createdAt": 1768730817011,
+          "updatedAt": 1768730817011
+        },
+        {
+          "id": "1.2",
+          "title": "Configure Tailwind CSS with Shadcn UI theme system",
+          "description": "Install Tailwind CSS, PostCSS, and Autoprefixer. Configure Shadcn UI with custom theme variables, set up CSS variables for colors, spacing, and typography. Implement dark/light mode support, install foundational UI components, and ensure responsive design utilities are properly configured across the monorepo. Create root application layout shell and verify component rendering.",
+          "contentFile": "tasks/1.2.md",
+          "status": "todo",
+          "subtasks": [],
+          "createdAt": 1768730817012,
+          "updatedAt": 1768730817012
+        },
+        {
+          "id": "1.3",
+          "title": "Establish core TypeScript interfaces and data structures",
+          "description": "Create comprehensive TypeScript interfaces for Catalog products, Tally sessions, Settings configuration, and base entities with UUID generation utilities using crypto.randomUUID. Implement strict type guards, utility types for timestamps, and validation schemas. Set up shared types package in the monorepo for cross-package type safety and export types across packages.",
+          "contentFile": "tasks/1.3.md",
+          "status": "todo",
+          "subtasks": [],
+          "createdAt": 1768730817013,
+          "updatedAt": 1768730817013
+        },
+        {
+          "id": "1.4",
+          "title": "Implement core Zustand stores with strict typing",
+          "description": "Create three Zustand stores: Catalog store for product management, Tally store for active counting sessions, and Settings store for user preferences. Implement with TypeScript interfaces, export typed hooks, add placeholder reducers and actions, and validate store logic and state updates independently. Include middleware for logging and proper error boundaries.",
+          "contentFile": "tasks/1.4.md",
+          "status": "todo",
+          "subtasks": [],
+          "createdAt": 1768730817014,
+          "updatedAt": 1768730817014
+        },
+        {
+          "id": "1.5",
+          "title": "Set up IndexedDB persistence layer with idb-keyval",
+          "description": "Install idb-keyval wrapper and configure IndexedDB connection handling. Integrate Zustand's persist middleware for all stores using idb-keyval. Implement proper error handling for storage operations, quota management, retry logic, fallback mechanisms for browser compatibility, and hydration logic to ensure state survives application reloads. Test data saving/loading across browser sessions.",
+          "contentFile": "tasks/1.5.md",
+          "status": "todo",
+          "subtasks": [],
+          "createdAt": 1768730817014,
+          "updatedAt": 1768730817014
+        },
+        {
+          "id": "1.6",
+          "title": "Implement TanStack Router with file-based routing",
+          "description": "Configure TanStack Router with file-based routing for all required routes: root, Tally, Settings, and Catalog. Create route files under appropriate directories, define layout routes, set up route guards, lazy loading, and navigation utilities. Implement root route redirection logic, type-safe route parameter handling, and integrate routing with the application layout. Create basic navigation links.",
+          "contentFile": "tasks/1.6.md",
+          "status": "todo",
+          "subtasks": [],
+          "createdAt": 1768730817015,
+          "updatedAt": 1768730817015
+        },
+        {
+          "id": "1.7",
+          "title": "Implement navigation guards and route protection",
+          "description": "Create navigation guard hooks to prevent accidental route changes during active tally sessions. Implement confirmation modals for navigation away from active counting. Set up global navigation utilities that respect the active tally state, integrate with TanStack Router navigation events, ensure proper cleanup on route changes, and redirect to root if needed when guards are triggered.",
+          "contentFile": "tasks/1.7.md",
+          "status": "todo",
+          "subtasks": [],
+          "createdAt": 1768730817016,
+          "updatedAt": 1768730817016
+        },
+        {
+          "id": "1.8",
+          "title": "Integrate and test complete application foundation",
+          "description": "Combine all configured systems and run integration tests for routing, state management, and persistence. Verify TypeScript compilation, test navigation guards, validate IndexedDB operations with quota scenarios, and ensure the Shadcn UI theme applies correctly across all routes and in both light/dark modes. Create initial documentation for the architecture and developer setup guide.",
+          "contentFile": "tasks/1.8.md",
+          "status": "todo",
+          "subtasks": [],
+          "createdAt": 1768730817017,
+          "updatedAt": 1768730817017
+        }
+      ],
+      "createdAt": 1768729943871,
+      "updatedAt": 1768729943871,
+      "prdFile": "prd/prd-corrected.md"
+    },
+    {
+      "id": "2",
+      "title": "Catalog Management System",
+      "description": "Implement complete catalog management system with inline add/edit/delete functionality for products including proper validation. Build comprehensive image handling with client-side validation (128x128px limit), MIME type checking (PNG, JPEG, WebP), base64 encoding, and storage optimization with detailed error messages. Store all prices as integers (cents) to prevent floating-point math errors. Create JSON export functionality that generates properly formatted, timestamped catalog files with version metadata and data integrity checks. Implement full CRUD operations with proper data integrity checks and UUID-based product identification.",
+      "contentFile": "tasks/2.md",
+      "status": "todo",
+      "dependencies": [
+        "1"
+      ],
+      "tags": [],
+      "subtasks": [
+        {
+          "id": "2.1",
+          "title": "Product Data Model and State Management Infrastructure",
+          "description": "Define TypeScript interfaces for products with UUID identification, integer price storage (cents), and base64 image fields. Implement state management using TanStack Store or React Context. Create persistence layer with IndexedDB/LocalStorage. Build utility functions for UUID generation and currency formatting (cents ↔ display strings). Establish data integrity validation rules.",
+          "contentFile": "tasks/2.1.md",
+          "status": "todo",
+          "estimatedEffort": "medium",
+          "subtasks": [],
+          "createdAt": 1768731003594,
+          "updatedAt": 1768731003594
+        },
+        {
+          "id": "2.2",
+          "title": "Core CRUD Operations and API Integration",
+          "description": "Implement complete create, read, update, delete operations for products. Build RESTful endpoints (or frontend state mutations) with UUID handling. Add optimistic UI updates and reactivity. Implement basic field validation, error handling, and data integrity checks. Ensure proper state synchronization between UI and storage layer.",
+          "contentFile": "tasks/2.2.md",
+          "status": "todo",
+          "estimatedEffort": "large",
+          "subtasks": [],
+          "createdAt": 1768731003595,
+          "updatedAt": 1768731003595
+        },
+        {
+          "id": "2.3",
+          "title": "Product List UI with Inline CRUD Interface",
+          "description": "Develop main product catalog list view component with responsive design. Implement inline 'Add', 'Edit', and 'Delete' functionality with modal overlays or inline forms. Connect to state management layer for real-time updates. Add keyboard navigation, focus management, and ARIA labels for accessibility. Include loading states and empty state handling.",
+          "contentFile": "tasks/2.3.md",
+          "status": "todo",
+          "estimatedEffort": "large",
+          "subtasks": [],
+          "createdAt": 1768731003597,
+          "updatedAt": 1768731003597
+        },
+        {
+          "id": "2.4",
+          "title": "Image Upload System with Client-Side Validation",
+          "description": "Create image upload component with drag-and-drop support. Implement strict validation: MIME type checking (PNG, JPEG, WebP only), dimension enforcement (max 128x128px), and file size limits. Handle Base64 encoding/decoding with storage optimization. Generate detailed error messages for validation failures. Integrate with product CRUD to associate images with products.",
+          "contentFile": "tasks/2.4.md",
+          "status": "todo",
+          "estimatedEffort": "large",
+          "subtasks": [],
+          "createdAt": 1768731003598,
+          "updatedAt": 1768731003598
+        },
+        {
+          "id": "2.5",
+          "title": "Price Management and Validation System",
+          "description": "Build comprehensive price handling system storing all prices as integer cents. Implement validation for price ranges and format conversions. Create input components that accept user-friendly currency formats ($10.50) and convert to cents (1050) for storage. Add display formatting utilities. Include safeguards against invalid price data and floating-point errors.",
+          "contentFile": "tasks/2.5.md",
+          "status": "todo",
+          "estimatedEffort": "medium",
+          "subtasks": [],
+          "createdAt": 1768731003599,
+          "updatedAt": 1768731003599
+        },
+        {
+          "id": "2.6",
+          "title": "Comprehensive Validation Framework and Error Handling",
+          "description": "Build unified validation framework covering field-level, image, price, and business logic validation. Implement centralized error state management with user-friendly messaging. Add toast notifications for operation feedback. Create validation helpers for all CRUD operations. Ensure data integrity checks throughout the application with detailed error recovery flows.",
+          "contentFile": "tasks/2.6.md",
+          "status": "todo",
+          "estimatedEffort": "medium",
+          "subtasks": [],
+          "createdAt": 1768731003599,
+          "updatedAt": 1768731003599
+        },
+        {
+          "id": "2.7",
+          "title": "JSON Export with Versioning and Data Integrity",
+          "description": "Create export system generating timestamped JSON catalog files. Include version metadata, complete product data with base64 images, price conversions, and data integrity checksums. Implement proper file naming conventions with timestamps. Build browser download mechanism. Add validation to ensure export data integrity and format compliance.",
+          "contentFile": "tasks/2.7.md",
+          "status": "todo",
+          "estimatedEffort": "medium",
+          "subtasks": [],
+          "createdAt": 1768731003600,
+          "updatedAt": 1768731003600
+        },
+        {
+          "id": "2.8",
+          "title": "UI Polish, Responsive Design, and Final Integration",
+          "description": "Refine catalog management UI for mobile and desktop responsiveness. Implement global error handling and loading states. Perform end-to-end testing of complete CRUD workflow including image handling and export. Add final accessibility improvements. Optimize performance for large catalogs. Conduct cross-browser testing and fix any integration issues.",
+          "contentFile": "tasks/2.8.md",
+          "status": "todo",
+          "estimatedEffort": "medium",
+          "subtasks": [],
+          "createdAt": 1768731003601,
+          "updatedAt": 1768731003601
+        }
+      ],
+      "createdAt": 1768729943872,
+      "updatedAt": 1768729943872,
+      "prdFile": "prd/prd-corrected.md"
+    },
+    {
+      "id": "3",
+      "title": "Catalog Import System & Validation",
+      "description": "Build comprehensive catalog import functionality with file picker interface and JSON schema validation using TypeScript interfaces. Create preview modal showing number of products to be updated/added before import confirmation with detailed breakdown. Implement conflict resolution logic that matches products by ID with intelligent overwrite strategy. Add comprehensive error handling for corrupt files, version mismatches, schema violations, and invalid data with user-friendly error messages. Ensure import maintains local data integrity and provides clear feedback throughout the process. Add backup reminder tracking with last backup date indicator prominently displayed in settings.",
+      "contentFile": "tasks/3.md",
+      "status": "todo",
+      "dependencies": [
+        "2"
+      ],
+      "tags": [],
+      "subtasks": [
+        {
+          "id": "3.1",
+          "title": "File Upload Interface with TypeScript Schema Definition",
+          "description": "Build complete file picker component with drag-and-drop support, file type validation (.json only), and basic file structure checks. Define comprehensive TypeScript interfaces for catalog data structure using Zod for runtime validation. Implement file reading, parsing, and initial syntax error handling with user-friendly feedback.",
+          "contentFile": "tasks/3.1.md",
+          "status": "todo",
+          "estimatedEffort": "medium",
+          "subtasks": [],
+          "createdAt": 1768731087211,
+          "updatedAt": 1768731087211
+        },
+        {
+          "id": "3.2",
+          "title": "JSON Schema Validation Engine with Detailed Error Reporting",
+          "description": "Implement comprehensive validation engine using Zod schemas that checks data types, required fields, format constraints, and business rules. Build detailed error reporting system that provides actionable messages for schema violations, version mismatches, and corrupt files. Create validation result objects with line-level error tracking and recovery suggestions.",
+          "contentFile": "tasks/3.2.md",
+          "status": "todo",
+          "estimatedEffort": "medium",
+          "subtasks": [],
+          "createdAt": 1768731087212,
+          "updatedAt": 1768731087212
+        },
+        {
+          "id": "3.3",
+          "title": "Import Preview Modal with Data Analysis and Breakdown",
+          "description": "Create responsive preview modal that displays detailed import analysis: count of products to be added vs updated, side-by-side comparison of changes, and conflict indicators. Implement data comparison logic that matches products by ID and categorizes changes. Add user confirmation flow with clear visual indicators and ability to review all changes before proceeding.",
+          "contentFile": "tasks/3.3.md",
+          "status": "todo",
+          "estimatedEffort": "medium",
+          "subtasks": [],
+          "createdAt": 1768731087213,
+          "updatedAt": 1768731087213
+        },
+        {
+          "id": "3.4",
+          "title": "Conflict Resolution Logic and Import Execution Engine",
+          "description": "Develop intelligent conflict resolution system with configurable strategies (merge, replace, skip). Implement ID-based matching algorithm that identifies existing records and applies appropriate update logic. Build atomic import execution that maintains data integrity, handles transaction rollback on errors, and updates local store with proper state management. Include progress tracking for large imports.",
+          "contentFile": "tasks/3.4.md",
+          "status": "todo",
+          "estimatedEffort": "large",
+          "subtasks": [],
+          "createdAt": 1768731087214,
+          "updatedAt": 1768731087214
+        },
+        {
+          "id": "3.5",
+          "title": "Comprehensive Error Handling and User Feedback System",
+          "description": "Implement robust error handling covering all edge cases: file read errors, parse failures, validation errors, import conflicts, and storage failures. Create user-friendly error message library with actionable guidance and recovery steps. Build toast notification system, detailed error logs, and progress indicators. Add retry logic for recoverable errors and clear success/failure status reporting.",
+          "contentFile": "tasks/3.5.md",
+          "status": "todo",
+          "estimatedEffort": "medium",
+          "subtasks": [],
+          "createdAt": 1768731087216,
+          "updatedAt": 1768731087216
+        },
+        {
+          "id": "3.6",
+          "title": "Backup Reminder System with Settings Integration",
+          "description": "Implement backup reminder tracking system that stores last backup timestamp in local storage. Create prominent UI indicator in settings panel showing last backup date with visual warnings for outdated backups. Build pre-import backup check that warns users if no recent backup exists. Add user-configurable reminder frequency settings and automatic reminder dismissal after successful backups.",
+          "contentFile": "tasks/3.6.md",
+          "status": "todo",
+          "estimatedEffort": "small",
+          "subtasks": [],
+          "createdAt": 1768731087217,
+          "updatedAt": 1768731087217
+        }
+      ],
+      "createdAt": 1768729943873,
+      "updatedAt": 1768729943873,
+      "prdFile": "prd/prd-corrected.md"
+    },
+    {
+      "id": "4",
+      "title": "Tally Interface & Interactive Grid System",
+      "description": "Build the main tally page with fully responsive grid layout using Tailwind CSS and CSS Grid. Implement auto-column calculation algorithm that dynamically adjusts based on screen width (2-3 columns mobile, 4-6 tablet, 6-8 desktop) and density settings. Create Product Card components with large touch targets optimized for one-handed operation (80x80px normal, 60x60px compact), tap-to-increment functionality with visual pulse animations, quantity badges for items > 0, and manual input overlay featuring large numeric keypad. Implement comprehensive input validation for quantity entries (non-negative integers only, 0 removes item, decimals rejected with clear feedback). Build live total calculation using integer arithmetic (cents-based math) with Intl.NumberFormat for proper currency formatting and locale support. Add sticky footer displaying grand total and item count with clear cart functionality including confirmation dialog. Implement visual feedback animations (pulse, highlight, smooth transitions) for all user interactions.",
+      "contentFile": "tasks/4.md",
+      "status": "todo",
+      "dependencies": [
+        "1"
+      ],
+      "tags": [],
+      "subtasks": [
+        {
+          "id": "4.1",
+          "title": "Responsive Grid Layout with Auto-Column Algorithm",
+          "description": "Implement the main tally page layout using Tailwind CSS and CSS Grid. Build the auto-column calculation algorithm that dynamically adjusts column count based on screen width: 2-3 columns for mobile (320px-768px), 4-6 columns for tablet (768px-1024px), and 6-8 columns for desktop (1024px+). Integrate density settings (normal vs compact) that affect both column count and spacing. Include resize event handling, proper grid gap spacing, and smooth responsive behavior updates in real-time.",
+          "contentFile": "tasks/4.1.md",
+          "status": "todo",
+          "subtasks": [],
+          "createdAt": 1768731146359,
+          "updatedAt": 1768731146359
+        },
+        {
+          "id": "4.2",
+          "title": "Product Card Component with Touch-Optimized Interactions",
+          "description": "Create reusable Product Card components with large touch targets optimized for one-handed operation (80x80px normal mode, 60x60px compact mode). Implement tap-to-increment/decrement functionality with immediate visual feedback. Add quantity badges that display count for items > 0, positioned prominently on cards. Include visual pulse animations on quantity changes. Ensure proper accessibility attributes (ARIA labels) and keyboard navigation support.",
+          "contentFile": "tasks/4.2.md",
+          "status": "todo",
+          "subtasks": [],
+          "createdAt": 1768731146360,
+          "updatedAt": 1768731146360
+        },
+        {
+          "id": "4.3",
+          "title": "Manual Input Overlay with Large Numeric Keypad",
+          "description": "Build a modal/overlay component featuring a large, touch-friendly numeric keypad for manual quantity entry. Implement overlay that appears when user long-presses or double-taps a product card. Create numeric keypad with large buttons (min 44x44px touch targets), clear/confirm actions, and input display area. Style for high visibility and easy thumb reach on mobile devices. Ensure proper state management and closes on backdrop click or cancel action.",
+          "contentFile": "tasks/4.3.md",
+          "status": "todo",
+          "subtasks": [],
+          "createdAt": 1768731146361,
+          "updatedAt": 1768731146361
+        },
+        {
+          "id": "4.4",
+          "title": "Input Validation and Error Handling System",
+          "description": "Implement comprehensive validation for all quantity inputs including manual keypad and tap interactions. Enforce non-negative integer rules only, reject decimals with immediate feedback, and automatically remove items when quantity reaches 0. Build clear error messaging system with visual indicators (red borders, error messages, shake animations). Validate on-the-fly and prevent invalid entries from being submitted. Include helpful feedback for rejected inputs with specific guidance.",
+          "contentFile": "tasks/4.4.md",
+          "status": "todo",
+          "subtasks": [],
+          "createdAt": 1768731146363,
+          "updatedAt": 1768731146363
+        },
+        {
+          "id": "4.5",
+          "title": "Live Total Calculation with Currency Formatting",
+          "description": "Implement real-time total calculation system using integer arithmetic (cents-based math to avoid floating point errors). Calculate grand total by summing all item quantities multiplied by their unit prices, maintaining all calculations in integer cents. Integrate Intl.NumberFormat for proper currency formatting with locale support (USD, EUR, etc.). Ensure calculation updates instantly on any quantity change. Display subtotal and grand total with proper formatting. Write unit tests for rounding and calculation accuracy.",
+          "contentFile": "tasks/4.5.md",
+          "status": "todo",
+          "subtasks": [],
+          "createdAt": 1768731146364,
+          "updatedAt": 1768731146364
+        },
+        {
+          "id": "4.6",
+          "title": "Sticky Footer with Cart Management and Confirmation Dialog",
+          "description": "Build sticky footer component that displays grand total and total item count, always visible during scrolling. Implement clear cart functionality with button that triggers a confirmation dialog before clearing all items. Create dialog component with proper messaging, confirm/cancel actions, and visual styling that matches the app theme. Ensure footer remains accessible and doesn't overlap with content. Handle edge cases like empty cart state (disabled clear button, zero total display). Add smooth transition animations for footer updates.",
+          "contentFile": "tasks/4.6.md",
+          "status": "todo",
+          "subtasks": [],
+          "createdAt": 1768731146365,
+          "updatedAt": 1768731146365
+        },
+        {
+          "id": "4.7",
+          "title": "Visual Feedback Animations System",
+          "description": "Implement comprehensive animation system for all user interactions: pulse animations on quantity changes, highlight effects on active cards, smooth transitions for modal appearances, and feedback for validation states. Use CSS transitions and transforms for performance. Include hover states for desktop, active states for mobile, and loading indicators for async operations. Ensure animations are subtle, performant (60fps), and enhance UX without being distracting. Add spring-like animations for satisfying interaction feedback on all touch targets.",
+          "contentFile": "tasks/4.7.md",
+          "status": "todo",
+          "subtasks": [],
+          "createdAt": 1768731146366,
+          "updatedAt": 1768731146366
+        }
+      ],
+      "createdAt": 1768729943874,
+      "updatedAt": 1768729943874,
+      "prdFile": "prd/prd-corrected.md"
+    },
+    {
+      "id": "5",
+      "title": "Settings & Display Customization",
+      "description": "Implement comprehensive settings page with full theme management supporting light, dark, and system modes with automatic OS preference detection using matchMedia and seamless theme switching. Build grid density toggle between normal and compact views with automatic column adjustment using the multiplier algorithm. Create manual column count override slider (2-8 columns) with live preview that immediately shows grid changes and responsive behavior indicator displaying current auto-calculated columns based on screen width. Implement display preference persistence using localStorage with automatic detection of system preference changes. Ensure all settings apply immediately without page refresh using reactive Zustand state updates. Add visual indicators and previews for all settings changes.",
+      "contentFile": "tasks/5.md",
+      "status": "todo",
+      "dependencies": [
+        "1"
+      ],
+      "tags": [],
+      "subtasks": [
+        {
+          "id": "5.1",
+          "title": "Core theme management system with OS preference detection",
+          "description": "Create comprehensive Zustand store for theme state management supporting light, dark, and system modes. Implement matchMedia listeners for automatic OS preference detection with real-time updates. Add seamless theme switching with CSS variables and smooth transitions. Configure localStorage persistence for theme preferences with automatic migration from system mode to detected OS preference. Ensure reactive state updates apply theme changes instantly without page refresh.",
+          "contentFile": "tasks/5.1.md",
+          "status": "todo",
+          "subtasks": [],
+          "createdAt": 1768731204911,
+          "updatedAt": 1768731204911
+        },
+        {
+          "id": "5.2",
+          "title": "Grid density system with multiplier algorithm",
+          "description": "Implement grid density toggle between normal and compact views with UI controls. Develop comprehensive multiplier algorithm that calculates optimal column counts based on container width, item size, and density setting. Create automatic column adjustment logic that updates grid layout in real-time. Add visual density preview cards showing example grids in both modes. Connect to Zustand state for reactive updates across components.",
+          "contentFile": "tasks/5.2.md",
+          "status": "todo",
+          "subtasks": [],
+          "createdAt": 1768731204912,
+          "updatedAt": 1768731204912
+        },
+        {
+          "id": "5.3",
+          "title": "Manual column override with live preview and responsive indicators",
+          "description": "Build manual column count slider component (2-8 columns) with live preview functionality. Implement immediate grid changes when slider moves using reactive state updates. Create responsive behavior indicator showing current auto-calculated columns vs manual overrides. Add live preview section demonstrating grid layout with actual content. Ensure responsive limits based on screen size and add visual indicators showing override status.",
+          "contentFile": "tasks/5.3.md",
+          "status": "todo",
+          "subtasks": [],
+          "createdAt": 1768731204913,
+          "updatedAt": 1768731204913
+        },
+        {
+          "id": "5.4",
+          "title": "Settings page UI with comprehensive persistence and testing",
+          "description": "Create settings page component with TanStack Router routing and responsive layout structure. Implement comprehensive localStorage persistence for all display preferences (theme, grid density, column count). Add preference change detection handlers and sync mechanisms for system preference changes. Build settings reset functionality with confirmation. Add visual indicators for all settings changes including status badges, preview animations, and success feedback. Implement accessibility features with keyboard navigation and screen reader support.",
+          "contentFile": "tasks/5.4.md",
+          "status": "todo",
+          "subtasks": [],
+          "createdAt": 1768731204914,
+          "updatedAt": 1768731204914
+        }
+      ],
+      "createdAt": 1768729943874,
+      "updatedAt": 1768729943874,
+      "prdFile": "prd/prd-corrected.md"
+    },
+    {
+      "id": "6",
+      "title": "Performance Optimization & PWA Implementation",
+      "description": "Optimize application performance for smooth operation with large catalogs (100+ products) by implementing virtual scrolling using @tanstack/react-virtual for catalog views. Configure PWA manifest file with appropriate app metadata, icons (multiple sizes), and display settings for Add to Home Screen capability. Implement service worker with offline app shell caching strategy using workbox for reliable offline functionality. Add comprehensive touch optimization including passive event listeners and gesture conflict prevention. Implement storage quota warnings and image format compatibility checks. Add comprehensive input validation, error boundaries with recovery mechanisms, and browser beforeunload warning for active tally. Enhance accessibility with keyboard navigation, proper focus indicators, screen reader support (ARIA labels), and reduced motion preference support. Conduct thorough performance profiling and bundle optimization to achieve <200KB gzipped target.",
+      "contentFile": "tasks/6.md",
+      "status": "todo",
+      "dependencies": [
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "tags": [],
+      "subtasks": [
+        {
+          "id": "6.1",
+          "title": "Implement Virtual Scrolling for Large Catalogs",
+          "description": "Integrate @tanstack/react-virtual for catalog views to handle 100+ products smoothly. Set up virtual scrolling container with dynamic window resizing, item measurement, dynamic height calculations, and windowing optimizations. Create virtualized list components for product catalogs with proper loading states, scroll restoration, item recycling logic, and seamless user experience to eliminate jank.",
+          "contentFile": "tasks/6.1.md",
+          "status": "todo",
+          "subtasks": [],
+          "createdAt": 1768731390440,
+          "updatedAt": 1768731390440
+        },
+        {
+          "id": "6.2",
+          "title": "Configure PWA Manifest and Generate App Icons",
+          "description": "Create and populate PWA manifest file with comprehensive app metadata including name, short_name, start_url, display mode (standalone), theme_color, background_color, and scope configuration. Generate multiple icon sizes (48x48, 96x96, 192x192, 512x512) for proper Add to Home Screen support. Include splash screens, maskable icons for adaptive display, and install prompt optimization.",
+          "contentFile": "tasks/6.2.md",
+          "status": "todo",
+          "subtasks": [],
+          "createdAt": 1768731390441,
+          "updatedAt": 1768731390441
+        },
+        {
+          "id": "6.3",
+          "title": "Implement Service Worker with Workbox Offline Strategy",
+          "description": "Set up service worker registration and implement comprehensive offline functionality using Workbox. Configure cache-first strategy for app shell (HTML, CSS, JS), runtime caching for dynamic content, stale-while-revalidate for API responses, and proper asset precaching. Implement background sync capabilities, cache versioning, proper cache management and cleanup mechanisms, and offline fallback pages for reliable offline operation.",
+          "contentFile": "tasks/6.3.md",
+          "status": "todo",
+          "subtasks": [],
+          "createdAt": 1768731390443,
+          "updatedAt": 1768731390443
+        },
+        {
+          "id": "6.4",
+          "title": "Optimize Touch Interactions and Gesture Handling",
+          "description": "Implement comprehensive touch optimization including passive event listeners for scroll containers to improve frame rates and performance. Add touch-action CSS properties for gesture conflict prevention, especially between browser navigation (swipe back) and application interactions (horizontal scroll lists). Implement proper touch hit areas meeting minimum size requirements (44x44px), touch feedback improvements, prevent double-tap zoom issues, and optimize touch response times across all interactive elements.",
+          "contentFile": "tasks/6.4.md",
+          "status": "todo",
+          "subtasks": [],
+          "createdAt": 1768731390444,
+          "updatedAt": 1768731390444
+        },
+        {
+          "id": "6.5",
+          "title": "Implement Storage Management and Image Compatibility Checks",
+          "description": "Develop comprehensive storage monitoring using Navigator.storage.estimate() API to detect browser storage limits for both localStorage and IndexedDB. Implement storage quota warnings with user-friendly messages when approaching limits, and provide graceful degradation strategies. Add image format compatibility checks and feature detection for WebP, AVIF, and JPEG support. Implement fallback mechanisms for older browsers and proper MIME type validation before upload or display. Include storage usage monitoring and cleanup strategies.",
+          "contentFile": "tasks/6.5.md",
+          "status": "todo",
+          "subtasks": [],
+          "createdAt": 1768731390445,
+          "updatedAt": 1768731390445
+        },
+        {
+          "id": "6.6",
+          "title": "Implement Comprehensive Input Validation and Error Boundaries",
+          "description": "Create robust form validation system with proper error messages, validation states, and real-time feedback across all input forms. Implement global React Error Boundaries that catch runtime errors and provide user-friendly recovery UI with fallback components and error logging. Add browser beforeunload event handler to display warnings when users attempt to navigate away with an active tally containing unsaved changes to prevent data loss.",
+          "contentFile": "tasks/6.6.md",
+          "status": "todo",
+          "subtasks": [],
+          "createdAt": 1768731390446,
+          "updatedAt": 1768731390446
+        },
+        {
+          "id": "6.7",
+          "title": "Enhance Accessibility with Keyboard Navigation and ARIA",
+          "description": "Conduct full accessibility audit and implement comprehensive keyboard navigation support for all interactive elements with proper focus management. Add visible focus indicators (outline styles) that meet WCAG contrast requirements. Implement comprehensive ARIA labels, roles, landmarks, and live regions for screen reader compatibility. Add support for reduced motion preferences using prefers-reduced-motion media query. Ensure proper semantic HTML structure and accessible component patterns throughout the application.",
+          "contentFile": "tasks/6.7.md",
+          "status": "todo",
+          "subtasks": [],
+          "createdAt": 1768731390447,
+          "updatedAt": 1768731390447
+        },
+        {
+          "id": "6.8",
+          "title": "Performance Profiling and Bundle Optimization",
+          "description": "Conduct comprehensive performance analysis using Chrome DevTools, Lighthouse, WebPageTest, and Web Vitals metrics. Implement aggressive bundle optimization through code splitting, tree shaking, lazy loading, and dynamic imports. Optimize critical rendering path, reduce unused JavaScript, and implement progressive enhancement strategies. Address CLS (Cumulative Layout Shift) and LCP (Largest Contentful Paint) issues. Target strict <200KB gzipped final bundle size through minification, asset optimization, and dependency analysis. Verify all features work correctly after optimization.",
+          "contentFile": "tasks/6.8.md",
+          "status": "todo",
+          "subtasks": [],
+          "createdAt": 1768731390448,
+          "updatedAt": 1768731390448
+        }
+      ],
+      "createdAt": 1768729943875,
+      "updatedAt": 1768729943875,
+      "prdFile": "prd/prd-corrected.md"
+    },
+    {
+      "id": "7",
+      "title": "Testing, Deployment & Documentation",
+      "description": "Perform comprehensive cross-browser and device testing on iOS Safari, Chrome Android, Firefox, and desktop browsers to ensure consistent behavior and appearance. Test all edge cases including storage quota limits, corrupted import files, network failures, and concurrent user actions. Configure production Vite build with CSP headers, proper asset optimization, and compression. Deploy to GitHub Pages (or chosen static hosting) with proper routing configuration and HTTPS setup. Create comprehensive user documentation including getting started guide, feature explanations, troubleshooting section, and backup/restore instructions. Implement onboarding experience for first-time users with tooltips and guided tour. Add in-app help and feedback mechanisms. Final QA testing and bug fixes before production release.",
+      "contentFile": "tasks/7.md",
+      "status": "todo",
+      "dependencies": [
+        "6"
+      ],
+      "tags": [],
+      "subtasks": [
+        {
+          "id": "7.1",
+          "title": "Cross-Browser Testing Framework and Strategy",
+          "description": "Set up comprehensive testing framework for cross-browser/device compatibility. Create testing matrix for iOS Safari, Chrome Android, Firefox, and desktop browsers. Configure required browsers, establish test case templates, and set up environment configurations. Document browser-specific issues and create detailed testing checklist covering core features, responsive design, touch interactions, and performance across all target platforms.",
+          "contentFile": "tasks/7.1.md",
+          "status": "todo",
+          "subtasks": [],
+          "createdAt": 1768731509164,
+          "updatedAt": 1768731509164
+        },
+        {
+          "id": "7.2",
+          "title": "Edge Case Testing and Error Handling Implementation",
+          "description": "Execute comprehensive testing of edge cases including storage quota limits, corrupted import files, network failures, and concurrent user actions across all configured browsers. Implement proper error boundaries, retry mechanisms, and user-friendly error messages. Create automated tests for critical failure scenarios and recovery flows. Document all findings, categorize issues for remediation, and implement fixes with regression testing.",
+          "contentFile": "tasks/7.2.md",
+          "status": "todo",
+          "subtasks": [],
+          "createdAt": 1768731509166,
+          "updatedAt": 1768731509166
+        },
+        {
+          "id": "7.3",
+          "title": "Production Build Configuration and Optimization",
+          "description": "Configure production Vite build with Content Security Policy headers, asset optimization including code splitting and tree shaking, and compression (gzip/Brotli). Set up caching strategies, service worker configuration, and performance monitoring. Validate build output, ensure security headers are properly configured, and generate optimized assets ready for deployment.",
+          "contentFile": "tasks/7.3.md",
+          "status": "todo",
+          "subtasks": [],
+          "createdAt": 1768731509167,
+          "updatedAt": 1768731509167
+        },
+        {
+          "id": "7.4",
+          "title": "GitHub Pages Deployment and Routing Configuration",
+          "description": "Deploy application to GitHub Pages with proper TanStack Router configuration for static hosting, including SPA routing and 404 handling. Configure custom routing, enforce HTTPS, and set up custom domain if applicable. Establish GitHub Actions for automated deployment on merge to main. Test deployment with various network conditions and verify all routes and live site functionality work correctly.",
+          "contentFile": "tasks/7.4.md",
+          "status": "todo",
+          "subtasks": [],
+          "createdAt": 1768731509168,
+          "updatedAt": 1768731509168
+        },
+        {
+          "id": "7.5",
+          "title": "Comprehensive User Documentation Portal",
+          "description": "Create complete user documentation including getting started guide, detailed feature explanations, backup and restore instructions, and troubleshooting section for common errors and edge cases. Build documentation portal with search functionality, version management, and mobile-responsive layout. Include screenshots, video tutorials, and code examples where appropriate. Link documentation from repository and deployed application for easy access.",
+          "contentFile": "tasks/7.5.md",
+          "status": "todo",
+          "subtasks": [],
+          "createdAt": 1768731509170,
+          "updatedAt": 1768731509170
+        },
+        {
+          "id": "7.6",
+          "title": "User Onboarding Experience Implementation",
+          "description": "Develop first-time user onboarding experience with interactive tooltips, guided tour, and feature highlights. Implement local storage tracking to persist onboarding status and provide option to skip or replay tour. Create context-aware hints based on user actions and track onboarding completion metrics. Ensure onboarding flow integrates seamlessly with the application's UX and provides analytics on user engagement.",
+          "contentFile": "tasks/7.6.md",
+          "status": "todo",
+          "subtasks": [],
+          "createdAt": 1768731509171,
+          "updatedAt": 1768731509171
+        },
+        {
+          "id": "7.7",
+          "title": "In-App Help System and Feedback Mechanisms",
+          "description": "Add comprehensive in-app help system with contextual help bubbles, searchable help center, and integrated feedback collection forms. Implement bug reporting tool with automatic environment data capture, feature request submission, and support ticket creation. Ensure help content is easily accessible and integrates with external communication channels if needed. Validate help system functionality across all browsers and devices.",
+          "contentFile": "tasks/7.7.md",
+          "status": "todo",
+          "subtasks": [],
+          "createdAt": 1768731509172,
+          "updatedAt": 1768731509172
+        },
+        {
+          "id": "7.8",
+          "title": "Final QA Testing and Production Release",
+          "description": "Conduct comprehensive final QA testing of production build covering all features, edge cases, and user flows. Verify onboarding experience, documentation accessibility, deployment configuration, and in-app help functionality. Create detailed test reports, identify and prioritize remaining bugs, implement fixes, and perform regression testing. Validate production readiness, update release notes, obtain sign-off, tag the release, and execute final production deployment.",
+          "contentFile": "tasks/7.8.md",
+          "status": "todo",
+          "subtasks": [],
+          "createdAt": 1768731509175,
+          "updatedAt": 1768731509175
+        }
+      ],
+      "createdAt": 1768729943876,
+      "updatedAt": 1768729943876,
+      "prdFile": "prd/prd-corrected.md"
+    }
+  ],
+  "nextId": 1
+}

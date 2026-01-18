@@ -1,0 +1,115 @@
+[
+  {
+    "id": "1",
+    "title": "Core Application Foundation & Routing",
+    "description": "Initialize the complete application structure within Turborepo, configure TanStack Router with file-based routing for all required routes (Tally, Settings, Catalog), set up Tailwind CSS with Shadcn UI theme system, and establish base TypeScript interfaces and Zustand stores for all core data structures. Implement navigation guards to prevent accidental route changes with active tally and ensure root route redirection.",
+    "contentFile": "tasks/1.md",
+    "status": "todo",
+    "estimatedEffort": "medium",
+    "dependencies": [],
+    "tags": [],
+    "subtasks": [],
+    "createdAt": 1768729797059,
+    "updatedAt": 1768729797059,
+    "prdFile": "prd/prd-corrected.md"
+  },
+  {
+    "id": "2",
+    "title": "Catalog Management & IndexedDB Persistence",
+    "description": "Implement complete catalog management system with inline add/edit/delete functionality for products. Configure Zustand's persist middleware with IndexedDB storage for catalog data. Build robust image handling with client-side validation (128x128px limit), base64 encoding, and storage optimization. Create JSON export functionality that generates properly formatted catalog files with version metadata and data integrity checks.",
+    "contentFile": "tasks/2.md",
+    "status": "todo",
+    "estimatedEffort": "large",
+    "dependencies": [
+      "1"
+    ],
+    "tags": [],
+    "subtasks": [],
+    "createdAt": 1768729797060,
+    "updatedAt": 1768729797060,
+    "prdFile": "prd/prd-corrected.md"
+  },
+  {
+    "id": "3",
+    "title": "Robust Import System & Validation",
+    "description": "Build comprehensive catalog import functionality with file picker, JSON schema validation, and conflict resolution logic. Create preview modal showing what will be updated/added before import confirmation. Implement detailed error handling for corrupt files, version mismatches, and invalid data with user-friendly messages. Ensure import maintains local data integrity and provides clear feedback.",
+    "contentFile": "tasks/3.md",
+    "status": "todo",
+    "estimatedEffort": "medium",
+    "dependencies": [
+      "2"
+    ],
+    "tags": [],
+    "subtasks": [],
+    "createdAt": 1768729797062,
+    "updatedAt": 1768729797062,
+    "prdFile": "prd/prd-corrected.md"
+  },
+  {
+    "id": "4",
+    "title": "Tally Interface & Interactive Grid",
+    "description": "Build the main Tally page with responsive grid layout that auto-adjusts column count based on screen width and density settings. Implement product cards with large touch targets for one-handed operation. Create tap-to-increment functionality with visual feedback (pulse animations) and quantity badge with manual input overlay. Build sticky footer with real-time total calculation using cents-based math and Intl.NumberFormat for currency display.",
+    "contentFile": "tasks/4.md",
+    "status": "todo",
+    "estimatedEffort": "large",
+    "dependencies": [
+      "1"
+    ],
+    "tags": [],
+    "subtasks": [],
+    "createdAt": 1768729797063,
+    "updatedAt": 1768729797063,
+    "prdFile": "prd/prd-corrected.md"
+  },
+  {
+    "id": "5",
+    "title": "Display Preferences & Settings",
+    "description": "Implement settings page with theme management (Light/Dark/System), display density toggle (Normal/Compact), and manual column count override slider. Build persistent settings store using localStorage. Implement auto-column calculation algorithm that adjusts based on screen width and density. Add visual indicators and previews for settings changes.",
+    "contentFile": "tasks/5.md",
+    "status": "todo",
+    "estimatedEffort": "medium",
+    "dependencies": [
+      "1"
+    ],
+    "tags": [],
+    "subtasks": [],
+    "createdAt": 1768729797063,
+    "updatedAt": 1768729797063,
+    "prdFile": "prd/prd-corrected.md"
+  },
+  {
+    "id": "6",
+    "title": "Performance Optimization & Edge Case Handling",
+    "description": "Optimize application performance for smooth operation with large catalogs (100+ products). Implement virtual scrolling using @tanstack/react-virtual for catalog views. Add comprehensive input validation, error boundaries, and recovery mechanisms. Test and fix edge cases including storage quota warnings, image format compatibility, and touch gesture conflicts. Implement accessibility improvements including keyboard navigation, screen reader support, and reduced motion preferences.",
+    "contentFile": "tasks/6.md",
+    "status": "todo",
+    "estimatedEffort": "medium",
+    "dependencies": [
+      "2",
+      "3",
+      "4",
+      "5"
+    ],
+    "tags": [],
+    "subtasks": [],
+    "createdAt": 1768729797064,
+    "updatedAt": 1768729797064,
+    "prdFile": "prd/prd-corrected.md"
+  },
+  {
+    "id": "7",
+    "title": "Testing, Deployment & Documentation",
+    "description": "Perform comprehensive cross-browser and device testing (iOS Safari, Chrome Android, desktop browsers). Configure production Vite build with CSP headers and optimization. Deploy to GitHub Pages with proper configuration. Create user documentation and onboarding experience. Add backup reminder UI and implement browser beforeunload warning for active tally.",
+    "contentFile": "tasks/7.md",
+    "status": "todo",
+    "estimatedEffort": "medium",
+    "dependencies": [
+      "6"
+    ],
+    "tags": [],
+    "subtasks": [],
+    "createdAt": 1768729797065,
+    "updatedAt": 1768729797065,
+    "prdFile": "prd/prd-corrected.md"
+  }
+]

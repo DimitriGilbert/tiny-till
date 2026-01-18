@@ -1,0 +1,65 @@
+[
+  {
+    "id": "1",
+    "title": "State Management & Catalog System",
+    "description": "Implement core Zustand stores for Catalog, Tally, and Settings with proper TypeScript interfaces and strict type safety. Set up IndexedDB persistence wrapper using idb-keyval and configure persist middleware for Catalog store with proper error handling. Implement full CRUD operations for products including inline add, edit, and delete functionality with proper validation. Build comprehensive image upload handling with 128x128px size validation, MIME type checking (PNG, JPEG, WebP), base64 encoding, and client-side error messages. Store all prices as integers (cents) to prevent floating-point math errors. Ensure data integrity with proper UUID generation for product IDs and timestamp tracking.",
+    "contentFile": "tasks/1.md",
+    "status": "todo",
+    "estimatedEffort": "medium",
+    "dependencies": [],
+    "tags": [],
+    "subtasks": [],
+    "createdAt": 1768729914109,
+    "updatedAt": 1768729914109,
+    "prdFile": "prd/prd-corrected.md"
+  },
+  {
+    "id": "2",
+    "title": "Tally Interface & Grid System",
+    "description": "Build the main tally page with fully responsive grid layout using Tailwind CSS and CSS Grid. Implement auto-column calculation algorithm that dynamically adjusts based on screen width (2-3 columns mobile, 4-6 tablet, 6-8 desktop) and density settings with configurable multiplier for compact mode. Create Product Card components with large touch targets optimized for one-handed use, tap-to-add functionality with visual pulse animations, quantity badges for items > 0, and manual input overlay featuring large numeric keypad. Implement comprehensive input validation for quantity entries (non-negative integers only, 0 removes item, decimals rejected). Build live total calculation using integer arithmetic with Intl.NumberFormat for proper currency formatting and locale support. Add sticky footer displaying grand total and item count with clear cart functionality and confirmation dialog. Implement visual feedback animations (pulse, highlight, transitions) for all user interactions.",
+    "contentFile": "tasks/2.md",
+    "status": "todo",
+    "estimatedEffort": "medium",
+    "dependencies": [
+      "1"
+    ],
+    "tags": [],
+    "subtasks": [],
+    "createdAt": 1768729914110,
+    "updatedAt": 1768729914110,
+    "prdFile": "prd/prd-corrected.md"
+  },
+  {
+    "id": "3",
+    "title": "Settings & Display Customization",
+    "description": "Implement comprehensive settings page with full theme management supporting light, dark, and system modes with automatic OS preference detection and seamless theme switching. Build grid density toggle between normal view (80x80px minimum touch targets) and compact view (60x60px minimum targets) with automatic column adjustment using the multiplier algorithm. Create manual column count override slider (2-8 columns) with live preview that immediately shows grid changes. Implement responsive behavior indicator that displays current auto-calculated columns based on screen width. Add display preference persistence across browser sessions. Implement theme persistence with automatic detection of system preference changes. Ensure all settings apply immediately without page refresh.",
+    "contentFile": "tasks/3.md",
+    "status": "todo",
+    "estimatedEffort": "medium",
+    "dependencies": [
+      "1"
+    ],
+    "tags": [],
+    "subtasks": [],
+    "createdAt": 1768729914111,
+    "updatedAt": 1768729914111,
+    "prdFile": "prd/prd-corrected.md"
+  },
+  {
+    "id": "4",
+    "title": "Data Portability & PWA Implementation",
+    "description": "Implement complete data portability system with JSON export functionality that generates timestamped catalog files including version metadata for future compatibility. Build file picker interface for importing JSON catalogs with comprehensive schema validation using TypeScript interfaces and detailed error messages for corrupt or incompatible files. Create conflict resolution logic that matches products by ID with intelligent overwrite strategy and import preview modal showing number of products to be updated and added. Add backup reminder tracking with last backup date indicator prominently displayed in settings. Configure PWA manifest file with appropriate app metadata, icons, and display settings for Add to Home Screen capability. Implement service worker with offline app shell caching strategy using workbox or custom implementation. Add comprehensive touch optimization including passive event listeners and gesture conflict prevention. Implement virtual scrolling using @tanstack/react-virtual for catalogs exceeding 100 products to maintain performance. Conduct thorough cross-browser testing on iOS Safari, Chrome Android, and desktop browsers. Enhance accessibility with keyboard navigation, focus indicators, and screen reader support. Final performance profiling and bundle optimization to achieve <200KB gzipped target.",
+    "contentFile": "tasks/4.md",
+    "status": "todo",
+    "estimatedEffort": "medium",
+    "dependencies": [
+      "2",
+      "3"
+    ],
+    "tags": [],
+    "subtasks": [],
+    "createdAt": 1768729914111,
+    "updatedAt": 1768729914111,
+    "prdFile": "prd/prd-corrected.md"
+  }
+]
