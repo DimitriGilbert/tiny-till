@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { focusVisibleStyles } from '@/lib/focus-styles'
+import { saveFocus, restoreFocus } from '@/lib/accessibility-utils'
 
 interface ConfirmationDialogProps {
   open: boolean
@@ -37,7 +38,7 @@ export function ConfirmationDialog({
   children,
 }: ConfirmationDialogProps) {
   const confirmButtonRef = React.useRef<HTMLButtonElement>(null)
-  const previousFocusRef = React.useRef<HTMLElement | null>(null)
+  const contentRef = React.useRef<HTMLDivElement>(null)
   const [isProcessing, setIsProcessing] = React.useState(false)
 
   const handleConfirm = async () => {
@@ -53,20 +54,20 @@ export function ConfirmationDialog({
   }
 
   React.useEffect(() => {
-    if (open) {
-      previousFocusRef.current = document.activeElement as HTMLElement
+    if (open && contentRef.current) {
+      saveFocus()
       setTimeout(() => {
         confirmButtonRef.current?.focus()
       }, 100)
-    } else if (previousFocusRef.current) {
-      previousFocusRef.current.focus()
-      previousFocusRef.current = null
+    } else if (!open) {
+      restoreFocus()
     }
   }, [open])
 
   React.useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && open && !isProcessing) {
+        e.preventDefault()
         onOpenChange(false)
       }
     }
@@ -77,9 +78,11 @@ export function ConfirmationDialog({
   return (
     <Dialog open={open} onOpenChange={isProcessing ? undefined : onOpenChange}>
       <DialogContent
+        ref={contentRef}
         role={isDestructive ? 'alertdialog' : 'dialog'}
         aria-labelledby="dialog-title"
         aria-describedby={description ? 'dialog-description' : undefined}
+        aria-modal="true"
       >
         <DialogHeader>
           <DialogTitle id="dialog-title">{title}</DialogTitle>

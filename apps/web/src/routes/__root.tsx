@@ -115,7 +115,9 @@ function RootComponent() {
           <StorageWarningAlert />
           <div className="grid grid-rows-[auto_1fr] h-svh">
             <Header navigateWithCheck={navigateWithCheck} />
-            <Outlet />
+            <main id="main-content" className="overflow-auto">
+              <Outlet />
+            </main>
           </div>
           <Toaster richColors />
           <LoadingOverlay />

@@ -1,27 +1,32 @@
 import type { NavigateOptions } from "@tanstack/react-router"
+import { useLocation } from "@tanstack/react-router"
 import { ModeToggle } from "./mode-toggle"
+import { focusVisibleStyles } from "@/lib/focus-styles"
 
 interface HeaderProps {
   navigateWithCheck: (to: string, options?: NavigateOptions) => void
 }
 
 export default function Header({ navigateWithCheck }: HeaderProps) {
+  const location = useLocation()
   const links = [
     { to: "/", label: "Tally" },
     { to: "/settings", label: "Settings" },
   ] as const
 
   return (
-    <div>
+    <header>
       <div className="flex flex-row items-center justify-between px-2 py-1">
-        <nav className="flex gap-4 text-lg">
+        <nav aria-label="Main navigation" className="flex gap-4 text-lg">
           {links.map(({ to, label }) => {
+            const isActive = location.pathname === to
             return (
               <button
                 key={to}
                 type="button"
                 onClick={() => navigateWithCheck(to)}
-                className="hover:text-foreground/80 transition-colors"
+                aria-current={isActive ? "page" : undefined}
+                className={focusVisibleStyles}
               >
                 {label}
               </button>
@@ -33,6 +38,6 @@ export default function Header({ navigateWithCheck }: HeaderProps) {
         </div>
       </div>
       <hr />
-    </div>
+    </header>
   )
 }

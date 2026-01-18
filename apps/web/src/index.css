@@ -159,9 +159,31 @@
 
 button:focus-visible,
 a:focus-visible,
-[role="button"]:focus-visible {
+[role="button"]:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
   outline: 2px solid var(--ring);
   outline-offset: 2px;
+}
+
+@media (prefers-contrast: more) {
+  :focus-visible,
+  button:focus-visible,
+  a:focus-visible,
+  [role="button"]:focus-visible,
+  input:focus-visible,
+  textarea:focus-visible,
+  select:focus-visible {
+    outline: 3px solid var(--ring);
+    outline-offset: 2px;
+  }
+
+  button,
+  a,
+  [role="button"] {
+    border: 2px solid currentColor;
+  }
 }
 
 @media (prefers-contrast: more) {

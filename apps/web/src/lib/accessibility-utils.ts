@@ -197,3 +197,62 @@ export function manageFocus(
     element.blur()
   }
 }
+
+let previousFocusElement: HTMLElement | null = null
+
+export function saveFocus(): void {
+  previousFocusElement = document.activeElement as HTMLElement
+}
+
+export function restoreFocus(): void {
+  if (previousFocusElement && document.contains(previousFocusElement)) {
+    previousFocusElement.focus()
+    previousFocusElement = null
+  }
+}
+
+export function announceStatus(
+  message: string,
+  priority: LiveRegionPriority = 'polite'
+): void {
+  announceToScreenReader(message, priority)
+}
+
+let announcementQueue: Array<{ message: string; priority: LiveRegionPriority }> = []
+let isAnnouncing = false
+
+export function queueAnnouncement(
+  message: string,
+  priority: LiveRegionPriority = 'polite'
+): void {
+  announcementQueue.push({ message, priority })
+  processQueue()
+}
+
+function processQueue(): void {
+  if (isAnnouncing || announcementQueue.length === 0) return
+
+  isAnnouncing = true
+  const { message, priority } = announcementQueue.shift()!
+
+  announceToScreenReader(message, priority)
+
+  setTimeout(() => {
+    isAnnouncing = false
+    processQueue()
+  }, 300)
+}
+
+export function getKeyboardShortcutHint(
+  keys: string[],
+  description: string
+): string {
+  const keyDisplay = keys
+    .map((key) => {
+      if (key === 'Control' || key === 'Ctrl') return 'Ctrl'
+      if (key === 'Meta') return 'Cmd'
+      return key
+    })
+    .join(' + ')
+  return `${description} (${keyDisplay})`
+}

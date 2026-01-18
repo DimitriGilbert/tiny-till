@@ -2,6 +2,7 @@ import { RouterProvider, createRouter } from "@tanstack/react-router";
 import ReactDOM from "react-dom/client";
 
 import Loader from "./components/loader";
+import { SkipLink } from "./components/skip-link";
 import { routeTree } from "./routeTree.gen";
 import { StorageErrorBoundary } from "./components/storage-error-boundary";
 import { HydrateLoader } from "./components/hydrate-loader";
@@ -24,7 +25,10 @@ function App() {
   useServiceWorker();
 
   return (
-    <RouterProvider router={router} />
+    <>
+      <SkipLink targetId="main-content" />
+      <RouterProvider router={router} />
+    </>
   );
 }
 
