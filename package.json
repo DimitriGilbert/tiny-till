@@ -21,6 +21,7 @@
   },
   "devDependencies": {
     "@tiny-till/config": "*",
+    "gh-pages": "^6.3.0",
     "turbo": "^2.6.3",
     "typescript": "^5",
     "vite-plugin-compression": "^0.5.1"

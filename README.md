@@ -167,6 +167,73 @@ npm run build
 
 ---
 
+## 🚀 Deployment
+
+### GitHub Pages
+
+This application is automatically deployed to GitHub Pages when changes are pushed to the `main` branch.
+
+- **Workflow**: `.github/workflows/deploy.yml`
+- **Trigger**: Push to `main` branch
+- **Output**: `apps/web/dist/`
+
+#### Manual Deployment
+
+To deploy manually (for testing or alternative workflows):
+
+```bash
+cd apps/web
+npm run deploy:manual
+```
+
+#### Configuration
+
+The GitHub Pages deployment is configured via:
+
+1. **GitHub Actions Workflow** (`.github/workflows/deploy.yml`)
+   - Triggers on push to `main`
+   - Builds the application using `npm run build`
+   - Deploys to GitHub Pages using the official Pages action
+
+2. **404 Handler** (`apps/web/404.html`)
+   - Enables SPA routing on GitHub Pages
+   - Redirects all routes to the app's entry point
+
+3. **Environment Variables** (`apps/web/.env.production`)
+   - `VITE_BASE_PATH`: Set to `/` for user/site deployment
+   - Set to `/repo-name/` for project site deployment
+
+#### Setup Instructions
+
+1. **Enable GitHub Pages in Repository Settings**
+   - Navigate to `Settings` → `Pages`
+   - Set Source to `GitHub Actions`
+
+2. **Verify GitHub Actions Permissions**
+   - Navigate to `Settings` → `Actions` → `General`
+   - Ensure "Read and write permissions" is enabled under Workflow permissions
+
+3. **Push to Main**
+   - The workflow will automatically build and deploy on the next push
+
+#### Custom Domain
+
+To use a custom domain:
+
+1. Navigate to repository `Settings` → `Pages`
+2. Add your custom domain
+3. Configure DNS records (CNAME or A record)
+4. Enable HTTPS (automatic after DNS propagation)
+
+#### Troubleshooting
+
+- **404 errors on refresh**: Ensure `404.html` is properly deployed
+- **Broken assets**: Check `VITE_BASE_PATH` in `.env.production`
+- **Service worker issues**: Clear browser cache and reload
+- **Deployment failures**: Check GitHub Actions logs for detailed error messages
+
+---
+
 ## 📚 Documentation
 
 ### Developer Documentation
