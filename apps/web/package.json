@@ -9,7 +9,20 @@
     "serve": "vite preview",
     "start": "vite",
     "check-types": "tsc --noEmit",
-    "generate-icons": "tsx scripts/generate-icons.ts"
+    "generate-icons": "tsx scripts/generate-icons.ts",
+    "test": "playwright test",
+    "test:component": "playwright test tests/examples/product-card.spec.ts",
+    "test:integration": "playwright test tests/examples/catalog-flow.spec.ts tests/examples/tally-flow.spec.ts",
+    "test:e2e": "playwright test tests/examples/user-onboarding.spec.ts",
+    "test:all": "playwright test",
+    "test:visual": "playwright test --grep @visual",
+    "test:mobile": "playwright test --project=chrome-mobile-portrait --project=chrome-iphone-se --project=chrome-iphone-14 --project=firefox-android",
+    "test:desktop": "playwright test --project=chromium-desktop --project=firefox-desktop --project=webkit-desktop",
+    "test:ui": "playwright test --ui",
+    "test:debug": "playwright test --debug",
+    "test:headed": "playwright test --headed",
+    "test:report": "tsx scripts/generate-report.ts",
+    "test:aggregate": "tsx scripts/aggregate-results.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.0.0",
@@ -34,6 +47,7 @@
     "zod": "^4.1.13"
   },
   "devDependencies": {
+    "@playwright/test": "^1.57.0",
     "@tanstack/react-router-devtools": "^1.141.1",
     "@tanstack/router-plugin": "^1.141.1",
     "@tiny-till/config": "*",
