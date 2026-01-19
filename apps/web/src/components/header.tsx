@@ -12,6 +12,7 @@ export default function Header({ navigateWithCheck }: HeaderProps) {
   const links = [
     { to: "/", label: "Tally" },
     { to: "/settings", label: "Settings" },
+    { to: "/docs", label: "Docs" },
   ] as const
 
   return (
