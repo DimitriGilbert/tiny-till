@@ -11,10 +11,8 @@ export interface UseResponsiveGridReturn {
 }
 
 export function useResponsiveGrid(): UseResponsiveGridReturn {
-  const { gridDensity, columnCountOverride } = useSettingsStore((state) => ({
-    gridDensity: state.gridDensity,
-    columnCountOverride: state.columnCountOverride,
-  }))
+  const gridDensity = useSettingsStore((state) => state.gridDensity)
+  const columnCountOverride = useSettingsStore((state) => state.columnCountOverride)
 
   const [columnCount, setColumnCount] = React.useState<number>(6)
 

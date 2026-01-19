@@ -2,7 +2,6 @@ import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
 
 import type { TallyItem, TallyState, TallySummary } from '@tiny-till/types'
-import { checkTallyIntegrity } from '@/lib/data-integrity'
 import {
   validateTallyAddItem,
   validateTallyUpdateQuantity,
@@ -15,6 +14,7 @@ interface TallyStoreState {
   items: TallyState
   isActive: boolean
   lastModified: number | null
+  summary: TallySummary
 }
 
 interface TallyActions {
@@ -23,17 +23,37 @@ interface TallyActions {
   updateQuantity: (productId: string, quantity: number | string) => void
   incrementItem: (productId: string) => void
   clearTally: () => void
-  getSummary: () => TallySummary
   hasActiveItems: () => boolean
   validateQuantityInput: (value: string | number) => ValidationResult
 }
 
 type TallyStore = TallyStoreState & TallyActions
 
+function calculateSummary(items: TallyState): TallySummary {
+  let total = 0
+  let itemCount = 0
+
+  items.forEach((item: TallyItem) => {
+    total += item.price * item.quantity
+    itemCount += item.quantity
+  })
+
+  return {
+    total,
+    itemCount,
+    productCount: items.size,
+  }
+}
+
 const initialState: TallyStoreState = {
   items: new Map(),
   isActive: false,
   lastModified: null,
+  summary: {
+    total: 0,
+    itemCount: 0,
+    productCount: 0,
+  },
 }
 
 export const useTallyStore = create<TallyStore>()(
@@ -92,10 +112,12 @@ export const useTallyStore = create<TallyStore>()(
           })
         }
 
+        const summary = calculateSummary(newItems)
         const newState = {
           items: newItems,
           isActive: true,
           lastModified: Date.now(),
+          summary,
         }
 
         console.log('[TallyStore] addItem', newState)
@@ -108,10 +130,12 @@ export const useTallyStore = create<TallyStore>()(
         const newItems = new Map<string, TallyItem>(state.items)
         newItems.delete(productId)
 
+        const summary = calculateSummary(newItems)
         const newState = {
           items: newItems,
           isActive: newItems.size > 0,
           lastModified: Date.now(),
+          summary,
         }
 
         console.log('[TallyStore] removeItem', newState)
@@ -156,10 +180,12 @@ export const useTallyStore = create<TallyStore>()(
           }
         }
 
+        const summary = calculateSummary(newItems)
         const newState = {
           items: newItems,
           isActive: newItems.size > 0,
           lastModified: Date.now(),
+          summary,
         }
 
         console.log('[TallyStore] updateQuantity', newState)
@@ -179,10 +205,12 @@ export const useTallyStore = create<TallyStore>()(
           })
         }
 
+        const summary = calculateSummary(newItems)
         const newState = {
           items: newItems,
           isActive: true,
           lastModified: Date.now(),
+          summary,
         }
 
         console.log('[TallyStore] incrementItem', newState)
@@ -195,27 +223,15 @@ export const useTallyStore = create<TallyStore>()(
         items: new Map<string, TallyItem>(),
         isActive: false,
         lastModified: null,
+        summary: {
+          total: 0,
+          itemCount: 0,
+          productCount: 0,
+        },
       }
 
       set(newState)
       console.log('[TallyStore] clearTally', newState)
-    },
-
-    getSummary: () => {
-      const items = get().items
-      let total = 0
-      let itemCount = 0
-
-      items.forEach((item: TallyItem) => {
-        total += item.price * item.quantity
-        itemCount += item.quantity
-      })
-
-      return {
-        total,
-        itemCount,
-        productCount: items.size,
-      }
     },
 
     hasActiveItems: () => {

@@ -4,14 +4,13 @@ import { devtools, persist } from 'zustand/middleware'
 import type { GridDensity, ColumnCount, Currency, Locale } from '@tiny-till/types'
 import { STORAGE_KEYS } from '@/lib/storage-keys'
 import { withHydrationTracking } from '@/lib/persist-middleware'
-import { checkSettingsIntegrity } from '@/lib/data-integrity'
 import {
   validateSettingsUpdate,
   validateGridDensityChange,
   validateColumnCountChange,
 } from '@/lib/validation-helpers'
 
-interface SettingsState {
+export interface SettingsState {
   gridDensity: GridDensity
   columnCountOverride: ColumnCount | undefined
   backupReminder: number | undefined
@@ -33,7 +32,7 @@ interface SettingsActions {
   getChangedSettings: () => Array<keyof Omit<SettingsState, 'hasHydrated' | 'hasUnsavedChanges' | 'changedSettings'>>
 }
 
-type SettingsStore = SettingsState & SettingsActions
+export type SettingsStore = SettingsState & SettingsActions
 
 const initialState: Omit<SettingsState, 'hasHydrated' | 'hasUnsavedChanges' | 'changedSettings'> = {
   gridDensity: 'normal',
@@ -168,7 +167,7 @@ export const useSettingsStore = create<SettingsStore>()(
       }),
       {
         name: STORAGE_KEYS.SETTINGS,
-        onRehydrateStorage: () => async (state: SettingsStore | undefined, error?: unknown) => {
+        onRehydrateStorage: () => (state: SettingsStore | undefined, error?: unknown) => {
           if (error) {
             console.error('[SettingsStore] Rehydration failed:', error)
             return
@@ -176,15 +175,6 @@ export const useSettingsStore = create<SettingsStore>()(
           if (state) {
             state.hasHydrated = true
             console.log('[SettingsStore] Hydration complete')
-
-            try {
-              const integrityReport = await checkSettingsIntegrity()
-              if (!integrityReport.isValid) {
-                console.warn('[SettingsStore] Integrity issues:', integrityReport.issues)
-              }
-            } catch (integrityError) {
-              console.error('[SettingsStore] Integrity check failed:', integrityError)
-            }
           }
         },
       }

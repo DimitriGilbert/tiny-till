@@ -54,21 +54,12 @@ function RootComponent() {
   const { isOffline } = useServiceWorker()
   const { checkStorage, checkImageSupport } = useStorageStore()
 
-  useEffect(() => {
-    const hasReloaded = sessionStorage.getItem("has-reloaded")
-    if (!hasReloaded) {
-      sessionStorage.setItem("has-reloaded", "true")
-    } else {
-      if (location.pathname !== "/") {
-        navigate({ to: "/" })
-      }
-    }
-  }, [navigate, location.pathname])
+
 
   useEffect(() => {
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {
       if (hasActiveItems()) {
-        const summary = useTallyStore.getState().getSummary()
+        const summary = useTallyStore.getState().summary
         const formattedTotal = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(summary.total / 100)
 
         const message = `You have ${summary.itemCount} item${summary.itemCount !== 1 ? 's' : ''} (${formattedTotal}) in your tally. Are you sure you want to leave? Your changes will be lost.`

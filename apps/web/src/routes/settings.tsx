@@ -32,7 +32,11 @@ const defaultSettings = {
 }
 
 function SettingsPage() {
-  const settings = useSettingsStore((state) => state)
+  const gridDensity = useSettingsStore((state) => state.gridDensity)
+  const columnCountOverride = useSettingsStore((state) => state.columnCountOverride)
+  const backupReminder = useSettingsStore((state) => state.backupReminder)
+  const currency = useSettingsStore((state) => state.currency)
+  const locale = useSettingsStore((state) => state.locale)
   const hasUnsavedChanges = useSettingsStore((state) => state.hasUnsavedChanges)
   const changedSettings = useSettingsStore((state) => state.changedSettings)
   const markAsSaved = useSettingsStore((state) => state.markAsSaved)
@@ -172,11 +176,11 @@ function SettingsPage() {
 
   const currentSettings = {
     theme,
-    gridDensity: settings.gridDensity,
-    columnCountOverride: settings.columnCountOverride,
-    backupReminder: settings.backupReminder,
-    currency: settings.currency,
-    locale: settings.locale,
+    gridDensity,
+    columnCountOverride,
+    backupReminder,
+    currency,
+    locale,
   }
 
   return (
@@ -225,7 +229,7 @@ function SettingsPage() {
         <section className="rounded-none border p-4">
           <h2 className="mb-4 font-medium">Backup Reminders</h2>
           <BackupFrequencySelect
-            value={settings.backupReminder ?? 168}
+            value={backupReminder ?? 168}
             onChange={handleBackupReminderChange}
           />
         </section>
@@ -237,8 +241,8 @@ function SettingsPage() {
         />
 
         <DensitySettingsSection
-          currentDensity={settings.gridDensity}
-          columnCountOverride={settings.columnCountOverride}
+          currentDensity={gridDensity}
+          columnCountOverride={columnCountOverride}
           onDensityChange={handleDensityChange}
           onColumnCountChange={handleColumnCountChange}
         />

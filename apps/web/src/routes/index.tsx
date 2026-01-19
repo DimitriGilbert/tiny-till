@@ -21,7 +21,7 @@ export const Route = createFileRoute('/')({
 function TallyPage() {
   const router = useRouter()
   const { products, hasHydrated } = useCatalogStore()
-  const { items, updateQuantity, incrementItem, clearTally, getSummary } = useTallyStore()
+  const { items, updateQuantity, incrementItem, clearTally, summary } = useTallyStore()
   const { columnCount, gridGap, isCompact } = useResponsiveGrid()
   const { isActive, startOnboarding, isCompleted } = useOnboarding()
 
@@ -37,7 +37,6 @@ function TallyPage() {
   const [clearDialogOpen, setClearDialogOpen] = React.useState(false)
   const [showTourHint, setShowTourHint] = React.useState(false)
 
-  const summary = getSummary()
   const isCartEmpty = items.size === 0
 
   React.useEffect(() => {

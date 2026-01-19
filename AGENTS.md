@@ -8,6 +8,7 @@ This guide is for agentic coding assistants working in the tiny-till repository.
 - **NEVER run the dev server** (do not use `npm run dev`, `npm run dev:web`, or any dev commands)
 - **NEVER start background or long-running processes**
 - **NEVER use `:any`, `as any`, or `any` as type** - this is a typesafe codebase, always use proper types
+- **NEVER use `await import()` or dynamic imports** - EVER - NO EXCEPTIONS - DO NOT USE THEM AT ALL
 
 ### REQUIRED Before Claiming Success
 - **MUST run** `npm run check-types` and ensure it succeeds
@@ -50,6 +51,7 @@ tiny-till/
 - **Stay DRY** - prefer creating reusable custom components and utilities over repeating code
 - **Use adapted skills when available** - frontend-design skill is MANDATORY when working on the frontend
 - **Type safety is mandatory** - never use `any` type, always use proper TypeScript types
+- **NO dynamic imports** - NEVER use `await import()` under ANY circumstances
 
 ### TypeScript Configuration
 - Strict mode enabled: `strict: true`
@@ -64,6 +66,7 @@ tiny-till/
 - Use type-only imports for types: `import type { ClassValue } from "clsx"`
 - Local imports grouped at top, external libraries first
 - Use `@/` alias for src directory imports: `import { cn } from "@/lib/utils"`
+- **ALL imports must be static** - NEVER use `await import()` or dynamic imports
 
 ### Component Conventions
 - Named exports preferred: `export function ComponentName() { ... }`

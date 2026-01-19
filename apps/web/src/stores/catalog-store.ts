@@ -24,7 +24,6 @@ import {
 import { STORAGE_KEYS } from '@/lib/storage-keys'
 import { createIndexedDBStorage } from '@/lib/persist-middleware'
 import { toast } from 'sonner'
-import { checkAllDataIntegrity } from '@/lib/data-integrity'
 import {
   validateProductAdd,
   validateProductUpdate,
@@ -524,7 +523,7 @@ export const useCatalogStore = create<CatalogStore>()(
       {
         name: STORAGE_KEYS.CATALOG,
         storage: createIndexedDBStorage<CatalogStore>(),
-        onRehydrateStorage: () => async (state: CatalogStore | undefined, error?: unknown) => {
+        onRehydrateStorage: () => (state: CatalogStore | undefined, error?: unknown) => {
           if (error) {
             console.error('[CatalogStore] Rehydration failed:', error)
             toast.error('Storage Error', {
@@ -535,20 +534,6 @@ export const useCatalogStore = create<CatalogStore>()(
           if (state) {
             state.hasHydrated = true
             console.log('[CatalogStore] Hydration complete')
-
-            const validation = validateProductList(state.products)
-            if (!validation.isValid) {
-              console.warn('[CatalogStore] Data integrity issues:', validation.errors)
-              toast.warning('Data Integrity Warning', {
-                description: `Found ${validation.invalidIndices.length} products with issues`,
-              })
-            }
-
-            try {
-              await checkAllDataIntegrity()
-            } catch (integrityError) {
-              console.error('[CatalogStore] Integrity check failed:', integrityError)
-            }
           }
         },
       }

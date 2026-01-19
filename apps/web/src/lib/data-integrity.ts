@@ -2,9 +2,9 @@ import type { Product } from '@tiny-till/types'
 import { validateProductList, checkProductIntegrity } from '@tiny-till/types'
 import { useCatalogStore } from '@/stores/catalog-store'
 import { useTallyStore } from '@/stores/tally-store'
-import { useSettingsStore } from '@/stores/settings-store'
 import { useErrorStore } from '@/stores/error-store'
 import { showDataIntegrityWarning } from './toast-helpers'
+import type { SettingsState } from '@/stores/settings-store'
 
 export interface IntegrityIssue {
   id: string
@@ -98,7 +98,7 @@ export async function checkCatalogIntegrity(): Promise<IntegrityReport> {
 export async function checkTallyIntegrity(): Promise<IntegrityReport> {
   const issues: IntegrityIssue[] = []
   const warnings: string[] = []
-  const { items, getSummary } = useTallyStore.getState()
+  const { items, summary } = useTallyStore.getState()
 
   const products = useCatalogStore.getState().products
   const productIds = new Set(products.map((p) => p.id))
@@ -139,7 +139,6 @@ export async function checkTallyIntegrity(): Promise<IntegrityReport> {
     warnings.push(`Found ${orphanedItems} orphaned tally items`)
   }
 
-  const summary = getSummary()
   if (summary.total > Number.MAX_SAFE_INTEGER / 2) {
     warnings.push('Tally total is approaching safe number limit')
   }
@@ -156,10 +155,9 @@ export async function checkTallyIntegrity(): Promise<IntegrityReport> {
   }
 }
 
-export async function checkSettingsIntegrity(): Promise<IntegrityReport> {
+export async function checkSettingsIntegrity(settings: SettingsState): Promise<IntegrityReport> {
   const issues: IntegrityIssue[] = []
   const warnings: string[] = []
-  const settings = useSettingsStore.getState()
 
   if (settings.columnCountOverride && settings.gridDensity === 'compact') {
     if (settings.columnCountOverride < 3) {
@@ -168,10 +166,7 @@ export async function checkSettingsIntegrity(): Promise<IntegrityReport> {
         severity: 'medium',
         type: 'invalid_column_count',
         message: 'Compact view requires at least 3 columns',
-        repairable: true,
-        repairAction: async () => {
-          useSettingsStore.getState().setColumnCountOverride(3)
-        },
+        repairable: false,
       })
     }
   }
@@ -182,10 +177,7 @@ export async function checkSettingsIntegrity(): Promise<IntegrityReport> {
       severity: 'low',
       type: 'invalid_backup_reminder',
       message: 'Backup reminder days cannot be negative',
-      repairable: true,
-      repairAction: async () => {
-        useSettingsStore.getState().setBackupReminder(undefined)
-      },
+      repairable: false,
     })
   }
 
@@ -197,7 +189,7 @@ export async function checkSettingsIntegrity(): Promise<IntegrityReport> {
   }
 }
 
-export async function checkAllDataIntegrity(): Promise<IntegrityReport[]> {
+export async function checkAllDataIntegrity(settings?: SettingsState): Promise<IntegrityReport[]> {
   const reports: IntegrityReport[] = []
 
   try {
@@ -213,7 +205,9 @@ export async function checkAllDataIntegrity(): Promise<IntegrityReport[]> {
   }
 
   try {
-    reports.push(await checkSettingsIntegrity())
+    if (settings) {
+      reports.push(await checkSettingsIntegrity(settings))
+    }
   } catch (error) {
     console.error('[DataIntegrity] Failed to check settings:', error)
   }

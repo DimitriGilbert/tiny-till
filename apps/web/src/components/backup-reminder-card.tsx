@@ -29,7 +29,7 @@ export interface BackupReminderCardProps {
 export function BackupReminderCard({
   className,
 }: BackupReminderCardProps) {
-  const settings = useSettingsStore((state) => state)
+  const backupReminder = useSettingsStore((state) => state.backupReminder)
   const { exportCatalog, isExporting } = useCatalogExport()
   const [backupConfig, setBackupConfig] =
     React.useState<BackupReminderConfig | null>(null)
@@ -39,13 +39,13 @@ export function BackupReminderCard({
     async function loadConfig() {
       setIsLoading(true)
       const config = await getBackupReminderConfig(
-        settings.backupReminder ?? 168
+        backupReminder ?? 168
       )
       setBackupConfig(config)
       setIsLoading(false)
     }
     loadConfig()
-  }, [settings.backupReminder])
+  }, [backupReminder])
 
   const handleCreateBackup = async () => {
     await exportCatalog()
