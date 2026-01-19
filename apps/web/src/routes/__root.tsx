@@ -1,7 +1,7 @@
 import { HeadContent, Outlet, createRootRouteWithContext, useNavigate, useLocation, useRouter } from "@tanstack/react-router"
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools"
 import { useEffect } from "react"
-
+ 
 import Header from "@/components/header"
 import { ThemeProvider } from "@/components/theme-provider"
 import { NavigationConfirmationDialog } from "@/components/navigation-confirmation-dialog"
@@ -11,11 +11,12 @@ import { OfflineBanner, OnlineBanner } from "@/components/offline-banner"
 import { StorageWarningAlert } from "@/components/storage-warning-alert"
 import { AppErrorBoundary } from "@/components/app-error-boundary"
 import { OnboardingProvider } from "@/components/onboarding-provider"
+import { HelpCenterTrigger } from "@/components/help/help-center-trigger"
 import { useServiceWorker } from "@/hooks/useServiceWorker"
 import { useTallyStore } from "@/stores/tally-store"
 import { useTallyNavigationGuard } from "@/lib/route-guards"
 import { useStorageStore } from "@/stores/storage-store"
-
+ 
 import "../index.css"
 
 export type RouterAppContext = Record<string, unknown>
@@ -129,6 +130,7 @@ function RootComponent() {
               onConfirm={handleConfirm}
               onCancel={handleCancel}
             />
+            <HelpCenterTrigger />
           </ThemeProvider>
         </OnboardingProvider>
       </AppErrorBoundary>

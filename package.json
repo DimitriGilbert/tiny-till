@@ -16,11 +16,15 @@
   "dependencies": {
     "@tiny-till/env": "*",
     "dotenv": "^17.2.2",
+    "fuse.js": "^7.1.0",
+    "html2canvas": "^1.4.1",
+    "lru-cache": "^11.2.4",
     "zod": "^4.1.13",
     "zustand": "^5.0.10"
   },
   "devDependencies": {
     "@tiny-till/config": "*",
+    "@types/html2canvas": "^0.5.35",
     "gh-pages": "^6.3.0",
     "turbo": "^2.6.3",
     "typescript": "^5",

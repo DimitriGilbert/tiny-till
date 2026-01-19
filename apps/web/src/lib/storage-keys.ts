@@ -11,6 +11,10 @@ export const STORAGE_KEYS = {
   ONBOARDING_SKIPPED: 'tiny-till-onboarding-skipped',
   ONBOARDING_ANALYTICS: 'tiny-till-onboarding-analytics',
   ONBOARDING_VERSION: 'tiny-till-onboarding-version',
+  HELP: 'tiny-till-help',
+  FEEDBACK: 'tiny-till-feedback',
+  FEATURE_VOTES: 'tiny-till-feature-votes',
+  SUPPORT_TICKETS: 'tiny-till-support-tickets',
 } as const
 
 export type StorageKey = typeof STORAGE_KEYS[keyof typeof STORAGE_KEYS]
