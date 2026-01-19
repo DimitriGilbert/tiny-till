@@ -1,6 +1,6 @@
 import * as React from 'react'
 
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { Link, createFileRoute } from '@tanstack/react-router'
 import { useTheme } from '@/components/theme-provider'
 import { BackupReminderCard } from '@/components/backup-reminder-card'
 import { BackupFrequencySelect } from '@/components/backup-frequency-select'

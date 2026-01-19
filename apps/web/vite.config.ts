@@ -57,4 +57,40 @@ export default defineConfig({
   server: {
     port: 3001,
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom'],
+          'tanstack-vendor': ['@tanstack/react-router', '@tanstack/react-virtual'],
+          'ui-vendor': ['@base-ui/react'],
+          'utils': ['clsx', 'class-variance-authority', 'tailwind-merge'],
+          'form-vendor': ['@tanstack/react-form', '@hookform/resolvers'],
+          'validation': ['zod'],
+          'theme': ['next-themes'],
+          'toast': ['sonner'],
+          'idb': ['idb-keyval']
+        },
+        chunkFileNames: 'assets/[name]-[hash].js',
+        entryFileNames: 'assets/[name]-[hash].js',
+        assetFileNames: 'assets/[name]-[hash][extname]'
+      }
+    },
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        pure_funcs: ['console.log']
+      },
+      mangle: {
+        safari10: true
+      }
+    },
+    chunkSizeWarningLimit: 200,
+    reportCompressedSize: true,
+    cssCodeSplit: true
+  },
+  optimizeDeps: {
+    include: ['react', 'react-dom', '@tanstack/react-router']
+  }
 });

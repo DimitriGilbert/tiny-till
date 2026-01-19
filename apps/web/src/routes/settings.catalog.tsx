@@ -1,6 +1,6 @@
 import * as React from 'react'
 
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { Link, createFileRoute } from '@tanstack/react-router'
 import { Download, Loader2, Upload } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
