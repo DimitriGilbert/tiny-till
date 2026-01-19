@@ -11,7 +11,13 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as DocsIndexRouteImport } from './routes/docs.index'
 import { Route as SettingsCatalogRouteImport } from './routes/settings.catalog'
+import { Route as DocsTroubleshootingRouteImport } from './routes/docs.troubleshooting'
+import { Route as DocsGettingStartedRouteImport } from './routes/docs.getting-started'
+import { Route as DocsFeaturesRouteImport } from './routes/docs.features'
+import { Route as DocsBackupRestoreRouteImport } from './routes/docs.backup-restore'
+import { Route as DocsLayoutRouteImport } from './routes/docs._layout'
 
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
@@ -23,39 +29,119 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DocsIndexRoute = DocsIndexRouteImport.update({
+  id: '/docs/',
+  path: '/docs/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SettingsCatalogRoute = SettingsCatalogRouteImport.update({
   id: '/catalog',
   path: '/catalog',
   getParentRoute: () => SettingsRoute,
 } as any)
+const DocsTroubleshootingRoute = DocsTroubleshootingRouteImport.update({
+  id: '/docs/troubleshooting',
+  path: '/docs/troubleshooting',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DocsGettingStartedRoute = DocsGettingStartedRouteImport.update({
+  id: '/docs/getting-started',
+  path: '/docs/getting-started',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DocsFeaturesRoute = DocsFeaturesRouteImport.update({
+  id: '/docs/features',
+  path: '/docs/features',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DocsBackupRestoreRoute = DocsBackupRestoreRouteImport.update({
+  id: '/docs/backup-restore',
+  path: '/docs/backup-restore',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DocsLayoutRoute = DocsLayoutRouteImport.update({
+  id: '/docs/_layout',
+  path: '/docs',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/settings': typeof SettingsRouteWithChildren
+  '/docs': typeof DocsLayoutRoute
+  '/docs/backup-restore': typeof DocsBackupRestoreRoute
+  '/docs/features': typeof DocsFeaturesRoute
+  '/docs/getting-started': typeof DocsGettingStartedRoute
+  '/docs/troubleshooting': typeof DocsTroubleshootingRoute
   '/settings/catalog': typeof SettingsCatalogRoute
+  '/docs/': typeof DocsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/settings': typeof SettingsRouteWithChildren
+  '/docs': typeof DocsIndexRoute
+  '/docs/backup-restore': typeof DocsBackupRestoreRoute
+  '/docs/features': typeof DocsFeaturesRoute
+  '/docs/getting-started': typeof DocsGettingStartedRoute
+  '/docs/troubleshooting': typeof DocsTroubleshootingRoute
   '/settings/catalog': typeof SettingsCatalogRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/settings': typeof SettingsRouteWithChildren
+  '/docs/_layout': typeof DocsLayoutRoute
+  '/docs/backup-restore': typeof DocsBackupRestoreRoute
+  '/docs/features': typeof DocsFeaturesRoute
+  '/docs/getting-started': typeof DocsGettingStartedRoute
+  '/docs/troubleshooting': typeof DocsTroubleshootingRoute
   '/settings/catalog': typeof SettingsCatalogRoute
+  '/docs/': typeof DocsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/settings' | '/settings/catalog'
+  fullPaths:
+    | '/'
+    | '/settings'
+    | '/docs'
+    | '/docs/backup-restore'
+    | '/docs/features'
+    | '/docs/getting-started'
+    | '/docs/troubleshooting'
+    | '/settings/catalog'
+    | '/docs/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/settings' | '/settings/catalog'
-  id: '__root__' | '/' | '/settings' | '/settings/catalog'
+  to:
+    | '/'
+    | '/settings'
+    | '/docs'
+    | '/docs/backup-restore'
+    | '/docs/features'
+    | '/docs/getting-started'
+    | '/docs/troubleshooting'
+    | '/settings/catalog'
+  id:
+    | '__root__'
+    | '/'
+    | '/settings'
+    | '/docs/_layout'
+    | '/docs/backup-restore'
+    | '/docs/features'
+    | '/docs/getting-started'
+    | '/docs/troubleshooting'
+    | '/settings/catalog'
+    | '/docs/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   SettingsRoute: typeof SettingsRouteWithChildren
+  DocsLayoutRoute: typeof DocsLayoutRoute
+  DocsBackupRestoreRoute: typeof DocsBackupRestoreRoute
+  DocsFeaturesRoute: typeof DocsFeaturesRoute
+  DocsGettingStartedRoute: typeof DocsGettingStartedRoute
+  DocsTroubleshootingRoute: typeof DocsTroubleshootingRoute
+  DocsIndexRoute: typeof DocsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -74,12 +160,54 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/docs/': {
+      id: '/docs/'
+      path: '/docs'
+      fullPath: '/docs/'
+      preLoaderRoute: typeof DocsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/settings/catalog': {
       id: '/settings/catalog'
       path: '/catalog'
       fullPath: '/settings/catalog'
       preLoaderRoute: typeof SettingsCatalogRouteImport
       parentRoute: typeof SettingsRoute
+    }
+    '/docs/troubleshooting': {
+      id: '/docs/troubleshooting'
+      path: '/docs/troubleshooting'
+      fullPath: '/docs/troubleshooting'
+      preLoaderRoute: typeof DocsTroubleshootingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/docs/getting-started': {
+      id: '/docs/getting-started'
+      path: '/docs/getting-started'
+      fullPath: '/docs/getting-started'
+      preLoaderRoute: typeof DocsGettingStartedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/docs/features': {
+      id: '/docs/features'
+      path: '/docs/features'
+      fullPath: '/docs/features'
+      preLoaderRoute: typeof DocsFeaturesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/docs/backup-restore': {
+      id: '/docs/backup-restore'
+      path: '/docs/backup-restore'
+      fullPath: '/docs/backup-restore'
+      preLoaderRoute: typeof DocsBackupRestoreRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/docs/_layout': {
+      id: '/docs/_layout'
+      path: '/docs'
+      fullPath: '/docs'
+      preLoaderRoute: typeof DocsLayoutRouteImport
+      parentRoute: typeof rootRouteImport
     }
   }
 }
@@ -99,6 +227,12 @@ const SettingsRouteWithChildren = SettingsRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   SettingsRoute: SettingsRouteWithChildren,
+  DocsLayoutRoute: DocsLayoutRoute,
+  DocsBackupRestoreRoute: DocsBackupRestoreRoute,
+  DocsFeaturesRoute: DocsFeaturesRoute,
+  DocsGettingStartedRoute: DocsGettingStartedRoute,
+  DocsTroubleshootingRoute: DocsTroubleshootingRoute,
+  DocsIndexRoute: DocsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

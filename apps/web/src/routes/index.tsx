@@ -1,16 +1,18 @@
-import { createFileRoute, useRouter } from '@tanstack/react-router'
+import { createFileRoute, useRouter, Link } from '@tanstack/react-router'
 import * as React from 'react'
 
 import { TallyProductCard } from '@/components/tally-product-card'
 import { QuantityInputDialog } from '@/components/quantity-input-dialog'
 import { StickyTallyFooter } from '@/components/sticky-tally-footer'
 import { ClearCartDialog } from '@/components/clear-cart-dialog'
+import { useOnboarding } from '@/components/onboarding-provider'
 import { useCatalogStore } from '@/stores/catalog-store'
 import { useTallyStore } from '@/stores/tally-store'
 import { useResponsiveGrid } from '@/hooks/useResponsiveGrid'
 import { EmptyState } from '@/components/empty-state'
 import { LoadingState } from '@/components/loading-state'
 import { cn } from '@/lib/utils'
+import { Button } from '@/components/ui/button'
 
 export const Route = createFileRoute('/')({
   component: TallyPage,
@@ -21,6 +23,7 @@ function TallyPage() {
   const { products, hasHydrated } = useCatalogStore()
   const { items, updateQuantity, incrementItem, clearTally, getSummary } = useTallyStore()
   const { columnCount, gridGap, isCompact } = useResponsiveGrid()
+  const { isActive, startOnboarding, isCompleted } = useOnboarding()
 
   const [dialogState, setDialogState] = React.useState({
     open: false,
@@ -32,9 +35,19 @@ function TallyPage() {
   })
 
   const [clearDialogOpen, setClearDialogOpen] = React.useState(false)
+  const [showTourHint, setShowTourHint] = React.useState(false)
 
   const summary = getSummary()
   const isCartEmpty = items.size === 0
+
+  React.useEffect(() => {
+    if (hasHydrated && !isCompleted && products.length > 0) {
+      const hasSeenTour = localStorage.getItem('tiny-till-has-seen-tour')
+      if (!hasSeenTour) {
+        setShowTourHint(true)
+      }
+    }
+  }, [hasHydrated, isCompleted, products.length])
 
   const handleClearCart = React.useCallback(() => {
     clearTally()
@@ -72,15 +85,34 @@ function TallyPage() {
     }
   }, [items, updateQuantity])
 
+  const handleStartTour = React.useCallback(() => {
+    setShowTourHint(false)
+    localStorage.setItem('tiny-till-has-seen-tour', 'true')
+    startOnboarding()
+  }, [startOnboarding])
+
   const isLoading = !hasHydrated
 
   return (
-    <div className="container mx-auto max-w-7xl px-4 py-6 pb-24 sm:px-6 lg:px-8 sm:pb-28">
-      <header className="mb-6">
-        <h1 className="text-3xl font-bold tracking-tight">Tally</h1>
-        <p className="text-muted-foreground mt-1">
-          Select products to add to your tally
-        </p>
+    <div className="container mx-auto max-w-7xl px-4 py-6 pb-24 sm:px-6 lg:px-8 sm:pb-28" data-onboarding="tally-page">
+      <header className="mb-6 flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Tally</h1>
+          <p className="text-muted-foreground mt-1">
+            Select products to add to your tally
+          </p>
+        </div>
+        {showTourHint && products.length > 0 && !isActive && (
+          <Button
+            type="button"
+            onClick={handleStartTour}
+            variant="outline"
+            size="sm"
+            className="shrink-0"
+          >
+            Take a tour
+          </Button>
+        )}
       </header>
 
       {isLoading ? (
@@ -95,7 +127,7 @@ function TallyPage() {
         />
       ) : (
         <div className={cn('grid touch-pan-y', gridGap, `grid-cols-${columnCount}`)}>
-          {products.map((product) => {
+          {products.map((product, index) => {
             const item = items.get(product.id)
             const quantity = item?.quantity || 0
             return (
@@ -107,6 +139,7 @@ function TallyPage() {
                 onIncrement={handleIncrement}
                 onDecrement={handleDecrement}
                 onEditQuantity={handleEditQuantity}
+                dataOnboarding={index === 0 ? 'product-card' : undefined}
               />
             )
           })}

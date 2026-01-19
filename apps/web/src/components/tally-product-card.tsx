@@ -25,6 +25,7 @@ interface TallyProductCardProps {
   onDecrement: (productId: string) => void
   onEditQuantity?: (productId: string) => void
   className?: string
+  dataOnboarding?: string
 }
 
 export const TallyProductCard = React.memo(function TallyProductCard({
@@ -35,6 +36,7 @@ export const TallyProductCard = React.memo(function TallyProductCard({
   onDecrement,
   onEditQuantity,
   className,
+  dataOnboarding,
 }: TallyProductCardProps) {
   const [isPulsing, setIsPulsing] = React.useState(false)
   const [isShaking, setIsShaking] = React.useState(false)
@@ -139,6 +141,7 @@ export const TallyProductCard = React.memo(function TallyProductCard({
       onMouseDown={() => setIsPressed(true)}
       onMouseUp={() => setIsPressed(false)}
       {...eventHandlers}
+      data-onboarding={dataOnboarding}
     >
       <HighlightRing show={showHighlight} />
       <Card size={density === 'compact' ? 'sm' : 'sm'} className="transition-colors group-hover:border-primary/20">

@@ -10,6 +10,7 @@ import { SettingsPreviewSection } from '@/components/settings-preview-section'
 import { SettingsActionSection } from '@/components/settings-action-section'
 import { ResetSettingsDialog } from '@/components/reset-settings-dialog'
 import { showSettingsSuccess, showSettingsResetSuccess } from '@/components/settings-success-toast'
+import { useOnboarding } from '@/components/onboarding-provider'
 import { useSettingsStore } from '@/stores/settings-store'
 import { useStorageStore } from '@/stores/storage-store'
 import { StorageUsageDisplay } from '@/components/storage-usage-display'
@@ -40,11 +41,24 @@ function SettingsPage() {
   const setColumnCountOverride = useSettingsStore((state) => state.setColumnCountOverride)
   const resetSettings = useSettingsStore((state) => state.resetSettings)
   const { imageSupport } = useStorageStore()
+  const { isCompleted, isSkipped, startOnboarding, resetOnboarding } = useOnboarding()
   const [cleanupDialogOpen, setCleanupDialogOpen] = React.useState(false)
 
   const { theme, resolvedTheme, setTheme } = useTheme()
   const [resetDialogOpen, setResetDialogOpen] = React.useState(false)
   const [isResetting, setIsResetting] = React.useState(false)
+
+  const handleReplayOnboarding = React.useCallback(() => {
+    resetOnboarding()
+    startOnboarding()
+    toast.success('Onboarding tour started')
+  }, [resetOnboarding, startOnboarding])
+
+  const getOnboardingStatus = React.useCallback((): string => {
+    if (isSkipped) return 'Skipped'
+    if (isCompleted) return 'Completed'
+    return 'Not started'
+  }, [isCompleted, isSkipped])
 
   const handleDensityChange = (density: 'normal' | 'compact') => {
     try {
@@ -186,6 +200,27 @@ function SettingsPage() {
 
       <div className="grid gap-6">
         <BackupReminderCard />
+
+        <section className="rounded-none border p-4">
+          <h2 className="mb-4 font-medium">Onboarding</h2>
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="space-y-1">
+                <div className="text-sm font-medium">Status</div>
+                <div className="text-xs text-muted-foreground">
+                  {getOnboardingStatus()}
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={handleReplayOnboarding}
+                className="px-4 py-2 text-sm rounded-none border border-input bg-transparent hover:bg-accent hover:text-accent-foreground transition-colors"
+              >
+                Replay Tour
+              </button>
+            </div>
+          </div>
+        </section>
 
         <section className="rounded-none border p-4">
           <h2 className="mb-4 font-medium">Backup Reminders</h2>

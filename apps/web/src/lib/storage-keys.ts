@@ -6,6 +6,11 @@ export const STORAGE_KEYS = {
   VERSION: 'tiny-till-version',
   LAST_BACKUP_TIMESTAMP: 'tiny-till-last-backup-timestamp',
   LEGACY_THEME: 'vite-ui-theme',
+  ONBOARDING_COMPLETED: 'tiny-till-onboarding-completed',
+  ONBOARDING_CURRENT_STEP: 'tiny-till-onboarding-current-step',
+  ONBOARDING_SKIPPED: 'tiny-till-onboarding-skipped',
+  ONBOARDING_ANALYTICS: 'tiny-till-onboarding-analytics',
+  ONBOARDING_VERSION: 'tiny-till-onboarding-version',
 } as const
 
 export type StorageKey = typeof STORAGE_KEYS[keyof typeof STORAGE_KEYS]

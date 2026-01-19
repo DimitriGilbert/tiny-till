@@ -21,6 +21,7 @@ export default function Header({ navigateWithCheck }: HeaderProps) {
         <nav aria-label="Main navigation" className="flex gap-4 text-lg">
           {links.map(({ to, label }) => {
             const isActive = location.pathname === to
+            const dataOnboarding = to === '/settings' ? 'settings-link' : undefined
             return (
               <button
                 key={to}
@@ -28,6 +29,7 @@ export default function Header({ navigateWithCheck }: HeaderProps) {
                 onClick={() => navigateWithCheck(to)}
                 aria-current={isActive ? "page" : undefined}
                 className={focusVisibleStyles}
+                data-onboarding={dataOnboarding}
               >
                 {label}
               </button>

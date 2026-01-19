@@ -43,6 +43,7 @@ export const StickyTallyFooter = React.memo(function StickyTallyFooter({
         'fixed bottom-0 left-0 right-0 z-40 border-t bg-background shadow-lg animate-slide-up',
         'h-auto min-h-[80px]'
       )}
+      data-onboarding="tally-footer"
     >
       <div className="container mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">

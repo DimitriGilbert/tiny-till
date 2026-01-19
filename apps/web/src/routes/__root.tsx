@@ -10,6 +10,7 @@ import { Toaster } from "@/components/ui/sonner"
 import { OfflineBanner, OnlineBanner } from "@/components/offline-banner"
 import { StorageWarningAlert } from "@/components/storage-warning-alert"
 import { AppErrorBoundary } from "@/components/app-error-boundary"
+import { OnboardingProvider } from "@/components/onboarding-provider"
 import { useServiceWorker } from "@/hooks/useServiceWorker"
 import { useTallyStore } from "@/stores/tally-store"
 import { useTallyNavigationGuard } from "@/lib/route-guards"
@@ -109,25 +110,27 @@ function RootComponent() {
     <>
       <HeadContent />
       <AppErrorBoundary>
-        <ThemeProvider>
-          <OfflineBanner isOffline={isOffline} />
-          <OnlineBanner isOnline={!isOffline} />
-          <StorageWarningAlert />
-          <div className="grid grid-rows-[auto_1fr] h-svh">
-            <Header navigateWithCheck={navigateWithCheck} />
-            <main id="main-content" className="overflow-auto">
-              <Outlet />
-            </main>
-          </div>
-          <Toaster richColors />
-          <LoadingOverlay />
-          <NavigationConfirmationDialog
-            open={isModalOpen}
-            onOpenChange={handleCancel}
-            onConfirm={handleConfirm}
-            onCancel={handleCancel}
-          />
-        </ThemeProvider>
+        <OnboardingProvider>
+          <ThemeProvider>
+            <OfflineBanner isOffline={isOffline} />
+            <OnlineBanner isOnline={!isOffline} />
+            <StorageWarningAlert />
+            <div className="grid grid-rows-[auto_1fr] h-svh">
+              <Header navigateWithCheck={navigateWithCheck} />
+              <main id="main-content" className="overflow-auto">
+                <Outlet />
+              </main>
+            </div>
+            <Toaster richColors />
+            <LoadingOverlay />
+            <NavigationConfirmationDialog
+              open={isModalOpen}
+              onOpenChange={handleCancel}
+              onConfirm={handleConfirm}
+              onCancel={handleCancel}
+            />
+          </ThemeProvider>
+        </OnboardingProvider>
       </AppErrorBoundary>
       <TanStackRouterDevtools position="bottom-left" />
     </>
