@@ -4,18 +4,23 @@ import react from "@vitejs/plugin-react";
 import path from "node:path";
 import { defineConfig } from "vite";
 import { VitePWA } from "vite-plugin-pwa";
+import compression from "vite-plugin-compression";
 
 export default defineConfig({
+  base: process.env.VITE_BASE_PATH || "/",
   plugins: [
     tailwindcss(),
     tanstackRouter({}),
     react(),
     VitePWA({
       registerType: "autoUpdate",
-      includeAssets: ["favicon.ico", "icons/*.png", "icons/*.svg"],
+      includeAssets: ["favicon.ico", "icons/*.png", "icons/*.svg", "offline.html"],
       manifest: false,
       workbox: {
         globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2}"],
+        cleanupOutdatedCaches: true,
+        clientsClaim: true,
+        skipWaiting: true,
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
@@ -48,6 +53,18 @@ export default defineConfig({
         enabled: false,
       },
     }),
+    compression({
+      algorithm: "gzip",
+      ext: ".gz",
+      threshold: 10240,
+      deleteOriginFile: false,
+    }),
+    compression({
+      algorithm: "brotliCompress",
+      ext: ".br",
+      threshold: 10240,
+      deleteOriginFile: false,
+    }),
   ],
   resolve: {
     alias: {
@@ -58,6 +75,9 @@ export default defineConfig({
     port: 3001,
   },
   build: {
+    target: "es2020",
+    cssMinify: true,
+    sourcemap: false,
     rollupOptions: {
       output: {
         manualChunks: {
@@ -74,19 +94,30 @@ export default defineConfig({
         chunkFileNames: 'assets/[name]-[hash].js',
         entryFileNames: 'assets/[name]-[hash].js',
         assetFileNames: 'assets/[name]-[hash][extname]'
+      },
+      treeshake: {
+        moduleSideEffects: false,
+        propertyReadSideEffects: false,
+        tryCatchDeoptimization: false
       }
     },
     minify: 'terser',
     terserOptions: {
       compress: {
         drop_console: true,
-        pure_funcs: ['console.log']
+        pure_funcs: ['console.log'],
+        ecma: 2020,
+        comparisons: false,
+        inline: 2,
+        reduce_funcs: true,
+        reduce_vars: true,
+        unused: true
       },
       mangle: {
         safari10: true
       }
     },
-    chunkSizeWarningLimit: 200,
+    chunkSizeWarningLimit: 150,
     reportCompressedSize: true,
     cssCodeSplit: true
   },

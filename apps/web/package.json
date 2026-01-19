@@ -9,6 +9,7 @@
     "serve": "vite preview",
     "start": "vite",
     "check-types": "tsc --noEmit",
+    "validate:build": "tsx scripts/validate-build.ts",
     "generate-icons": "tsx scripts/generate-icons.ts",
     "test": "playwright test",
     "test:component": "playwright test tests/examples/product-card.spec.ts",

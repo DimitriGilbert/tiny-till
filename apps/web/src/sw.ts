@@ -15,10 +15,14 @@ const CACHE_NAMES = {
   DYNAMIC_CONTENT: `dynamic-content-v${CACHE_VERSION}`,
   API_RESPONSES: `api-responses-v${CACHE_VERSION}`,
   STATIC_ASSETS: `static-assets-v${CACHE_VERSION}`,
+  FONTS: `fonts-cache-v${CACHE_VERSION}`,
 }
 
-self.addEventListener("install", () => {
+self.addEventListener("install", (event) => {
   self.skipWaiting()
+  event.waitUntil(
+    caches.open(CACHE_NAMES.APP_SHELL).then((cache) => cache.addAll(["/", "/offline.html"]))
+  )
 })
 
 self.addEventListener("activate", (event) => {
@@ -33,7 +37,7 @@ self.addEventListener("activate", (event) => {
           return Promise.resolve()
         })
       )
-    )
+    ).then(() => self.clients.claim())
   )
 })
 
@@ -67,10 +71,7 @@ const cacheStrategyOptions = {
 }
 
 registerRoute(
-  ({ request }) =>
-    request.destination === "script" ||
-    request.destination === "style" ||
-    request.mode === "cors",
+  ({ request }) => request.destination === "script" || request.destination === "style",
   new CacheFirst({
     cacheName: CACHE_NAMES.APP_SHELL,
     ...cacheStrategyOptions,
@@ -78,7 +79,7 @@ registerRoute(
       ...cacheStrategyOptions.plugins,
       new ExpirationPlugin({
         maxEntries: 50,
-        maxAgeSeconds: 60 * 60 * 24 * 7,
+        maxAgeSeconds: 60 * 60 * 24 * 365,
       }),
     ],
   })
@@ -93,7 +94,22 @@ registerRoute(
       ...cacheStrategyOptions.plugins,
       new ExpirationPlugin({
         maxEntries: 200,
-        maxAgeSeconds: 60 * 60 * 24 * 30,
+        maxAgeSeconds: 60 * 60 * 24 * 365,
+      }),
+    ],
+  })
+)
+
+registerRoute(
+  ({ request }) => request.destination === "font",
+  new CacheFirst({
+    cacheName: CACHE_NAMES.FONTS,
+    ...cacheStrategyOptions,
+    plugins: [
+      ...cacheStrategyOptions.plugins,
+      new ExpirationPlugin({
+        maxEntries: 10,
+        maxAgeSeconds: 60 * 60 * 24 * 365,
       }),
     ],
   })
@@ -157,6 +173,14 @@ registerRoute(offlineFallbackRoute)
 self.addEventListener("message", (event) => {
   if (event.data && event.data.type === "SKIP_WAITING") {
     self.skipWaiting()
+  }
+})
+
+self.addEventListener("fetch", (event) => {
+  if (event.request.url.includes("/sw.js")) {
+    event.respondWith(
+      fetch(event.request).catch(() => new Response("Service Worker Not Available", { status: 503 }))
+    )
   }
 })
 
