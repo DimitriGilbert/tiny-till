@@ -81,7 +81,7 @@ function RootComponent() {
             total: summary.total,
           }))
         } catch (e) {
-          console.error('[BeforeUnload] Failed to save tally:', e)
+          // Silent fail - no need to log in production
         }
 
         event.preventDefault()
@@ -134,7 +134,7 @@ function RootComponent() {
           </ThemeProvider>
         </OnboardingProvider>
       </AppErrorBoundary>
-      <TanStackRouterDevtools position="bottom-left" />
+      {import.meta.env.DEV && <TanStackRouterDevtools position="bottom-left" />}
     </>
   )
 }
