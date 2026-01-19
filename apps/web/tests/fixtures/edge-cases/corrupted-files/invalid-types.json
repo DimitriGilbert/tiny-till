@@ -1,0 +1,13 @@
+{
+  "version": "1.0.0",
+  "exportDate": "2024-01-01T00:00:00.000Z",
+  "products": [
+    {
+      "id": "invalid-type-1",
+      "name": "Test Product",
+      "price": "not-a-number",
+      "createdAt": 1704067200000,
+      "updatedAt": 1704067200000
+    }
+  ]
+}

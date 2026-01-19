@@ -22,7 +22,14 @@
     "test:debug": "playwright test --debug",
     "test:headed": "playwright test --headed",
     "test:report": "tsx scripts/generate-report.ts",
-    "test:aggregate": "tsx scripts/aggregate-results.ts"
+    "test:aggregate": "tsx scripts/aggregate-results.ts",
+    "test:edge-cases": "playwright test tests/edge-cases",
+    "test:edge:storage": "playwright test tests/edge-cases/storage-quota.spec.ts",
+    "test:edge:corrupted": "playwright test tests/edge-cases/corrupted-files.spec.ts",
+    "test:edge:network": "playwright test tests/edge-cases/network-failures.spec.ts",
+    "test:edge:concurrent": "playwright test tests/edge-cases/concurrent-actions.spec.ts",
+    "test:edge:recovery": "playwright test tests/edge-cases/recovery-flows.spec.ts",
+    "test:regression": "playwright test tests/regression/edge-case-regression.spec.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.0.0",

@@ -1,0 +1,5 @@
+{
+  "version": "1.0.0",
+  "exportDate": "2024-01-01T00:00:00.000Z",
+  "products": [ 
+    { "id": "1", "name": "Test", "price": 1000 } 
