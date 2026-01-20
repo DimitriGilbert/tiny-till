@@ -13,7 +13,7 @@ import { useCatalogStore } from '@/stores/catalog-store'
 import { useCatalogExport } from '@/hooks/useCatalogExport'
 import type { CatalogImport as CatalogImportType } from '@tiny-till/types'
 
-export const Route = createFileRoute('/settings/catalog')({
+export const Route = createFileRoute('/catalog')({
   component: CatalogPage,
 })
 

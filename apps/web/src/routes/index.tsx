@@ -6,6 +6,7 @@ import { QuantityInputDialog } from '@/components/quantity-input-dialog'
 import { StickyTallyFooter } from '@/components/sticky-tally-footer'
 import { ClearCartDialog } from '@/components/clear-cart-dialog'
 import { useOnboarding } from '@/components/onboarding-provider'
+import { KawaiiSparkle, PlayfulButton } from '@/components/kawaii'
 import { useCatalogStore } from '@/stores/catalog-store'
 import { useTallyStore } from '@/stores/tally-store'
 import { useResponsiveGrid } from '@/hooks/useResponsiveGrid'
@@ -93,25 +94,39 @@ function TallyPage() {
   const isLoading = !hasHydrated
 
   return (
-    <div className="container mx-auto max-w-7xl px-4 py-6 pb-24 sm:px-6 lg:px-8 sm:pb-28" data-onboarding="tally-page">
-      <header className="mb-6 flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Tally</h1>
-          <p className="text-muted-foreground mt-1">
-            Select products to add to your tally
-          </p>
+    <div className="container mx-auto max-w-7xl px-4 py-6 pb-28 sm:px-6 lg:px-8" data-onboarding="tally-page">
+      <header className="mb-6 relative">
+        <div className="absolute -top-4 -left-4 opacity-40">
+          <KawaiiSparkle size="lg" color="pink" delay={100} />
         </div>
-        {showTourHint && products.length > 0 && !isActive && (
-          <Button
-            type="button"
-            onClick={handleStartTour}
-            variant="outline"
-            size="sm"
-            className="shrink-0"
-          >
-            Take a tour
-          </Button>
-        )}
+        <div className="absolute top-0 right-8 opacity-40">
+          <KawaiiSparkle size="md" color="acid-green" delay={300} />
+        </div>
+        <div className="absolute -top-2 right-24 opacity-40">
+          <KawaiiSparkle size="sm" color="acid-yellow" delay={500} />
+        </div>
+
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-4xl font-display tracking-tight text-primary animate-kawaii-bloom">
+              Let's Tally! ✨
+            </h1>
+            <p className="text-muted-foreground mt-2 text-lg font-medium">
+              Tap products to add to your tally 🌸
+            </p>
+          </div>
+          {showTourHint && products.length > 0 && !isActive && (
+            <PlayfulButton
+              type="button"
+              onClick={handleStartTour}
+              variant="pink"
+              size="md"
+              wiggle
+            >
+              Take a tour →
+            </PlayfulButton>
+          )}
+        </div>
       </header>
 
       {isLoading ? (

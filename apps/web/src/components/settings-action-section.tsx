@@ -58,7 +58,7 @@ export function SettingsActionSection({
           </Button>
         )}
 
-        <Link to="/settings/catalog">
+        <Link to="/catalog">
           <button
             type="button"
             className={cn(

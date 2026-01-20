@@ -1,6 +1,7 @@
 import * as React from 'react'
 
 import { Button } from '@/components/ui/button'
+import { BouncyNumber, KawaiiSparkle } from '@/components/kawaii'
 import { useCurrencyFormat } from '@/hooks/useCurrencyFormat'
 import { cn } from '@/lib/utils'
 
@@ -40,49 +41,55 @@ export const StickyTallyFooter = React.memo(function StickyTallyFooter({
       role="contentinfo"
       aria-label="Cart summary with total and item count"
       className={cn(
-        'fixed bottom-0 left-0 right-0 z-40 border-t bg-background shadow-lg animate-slide-up',
-        'h-auto min-h-[80px]'
+        'fixed bottom-0 left-0 right-0 z-40 h-auto min-h-[90px] animate-slide-up',
+        'bg-gradient-to-r from-primary via-kawaii-lavender to-primary',
+        'shadow-lg shadow-primary/20 backdrop-blur-md'
       )}
       data-onboarding="tally-footer"
     >
-      <div className="container mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
+      <div className="relative container mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
+        <div className="absolute -top-3 left-8 opacity-50">
+          <KawaiiSparkle size="sm" color="acid-green" />
+        </div>
+        <div className="absolute -top-2 right-16 opacity-50">
+          <KawaiiSparkle size="sm" color="acid-yellow" />
+        </div>
+
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-6 sm:gap-8">
             <div className="flex flex-col gap-1">
-              <span className="text-xs font-medium text-muted-foreground sm:text-sm">
-                Total
+              <span className="text-xs font-medium text-primary-foreground/80 sm:text-sm">
+                Total ✨
               </span>
-              <span
+              <BouncyNumber
+                value={totalCents}
+                formatFn={formatPrice}
                 className={cn(
-                  'text-2xl font-bold tabular-nums sm:text-3xl',
-                  shouldAnimate && 'animate-pulse-once text-primary'
-                )}
-              >
-                {formatPrice(totalCents)}
-              </span>
-            </div>
-            <div className="flex flex-col gap-1">
-              <span className="text-xs font-medium text-muted-foreground sm:text-sm">
-                Items
-              </span>
-              <span
-                className={cn(
-                  'text-xl font-semibold tabular-nums sm:text-2xl',
+                  'text-2xl font-bold tabular-nums sm:text-3xl font-display',
+                  'text-primary-foreground',
                   shouldAnimate && 'animate-pulse-once'
                 )}
-              >
-                {itemCount}
-              </span>
+              />
+            </div>
+            <div className="flex items-center gap-2 rounded-full bg-white/20 px-3 py-1 backdrop-blur-sm">
+              <span className="text-lg">📦</span>
+              <BouncyNumber
+                value={itemCount}
+                className="text-xl font-bold tabular-nums sm:text-2xl font-display text-primary-foreground"
+              />
             </div>
           </div>
           <Button
-            variant="destructive"
+            variant="outline"
             size="lg"
             onClick={onClearCart}
             disabled={isCartEmpty}
             aria-label={isCartEmpty ? 'Cart is empty' : 'Clear all items from cart'}
             className={cn(
-              'w-full sm:w-auto',
+              'w-full sm:w-auto bg-white/90 hover:bg-white text-destructive hover:text-destructive',
+              'hover:scale-105 hover:shadow-lg hover:shadow-destructive/30 active:scale-95',
+              'transition-all duration-200 rounded-full',
+              'border-2 border-destructive/20',
               isCartEmpty && 'cursor-not-allowed opacity-50'
             )}
           >

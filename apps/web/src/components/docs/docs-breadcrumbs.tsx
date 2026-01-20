@@ -37,19 +37,19 @@ function DocsBreadcrumbs() {
     <nav className="flex items-center space-x-2 text-sm mb-6" aria-label="Breadcrumb">
       <Link
         to="/"
-        className={`flex items-center text-muted-foreground hover:text-foreground transition-colors ${focusVisibleStyles}`}
+        className={`flex items-center px-2 py-1 rounded-lg hover:bg-primary/10 text-muted-foreground hover:text-primary transition-all duration-200 hover:scale-105 ${focusVisibleStyles}`}
       >
         <Home className="h-4 w-4" />
       </Link>
       {breadcrumbs.map((crumb, index) => (
         <div key={crumb.href} className="flex items-center">
-          <ChevronRight className="h-4 w-4 text-muted-foreground mx-1" />
+          <ChevronRight className="h-4 w-4 text-kawaii-acid-green mx-1" />
           {index === breadcrumbs.length - 1 ? (
-            <span className="font-medium text-foreground">{crumb.label}</span>
+            <span className="font-display font-medium text-primary px-2 py-1 rounded-lg bg-primary/10">{crumb.label}</span>
           ) : (
             <Link
               to={crumb.href}
-              className={`text-muted-foreground hover:text-foreground transition-colors ${focusVisibleStyles}`}
+              className={`px-2 py-1 rounded-lg hover:bg-primary/10 text-muted-foreground hover:text-primary transition-all duration-200 hover:scale-105 ${focusVisibleStyles}`}
             >
               {crumb.label}
             </Link>

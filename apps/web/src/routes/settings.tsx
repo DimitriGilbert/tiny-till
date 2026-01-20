@@ -259,7 +259,7 @@ function SettingsPage() {
         <section className="rounded-none border p-4">
           <h2 className="mb-2 font-medium">Data Portability</h2>
           <div className="space-y-2">
-            <Link to="/settings/catalog">
+            <Link to="/catalog">
               <button
                 type="button"
                 className="w-full text-left px-4 py-2 rounded-none border border-input bg-transparent hover:bg-accent hover:text-accent-foreground text-sm transition-colors"

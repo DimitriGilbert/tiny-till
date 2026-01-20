@@ -144,16 +144,17 @@ export const TallyProductCard = React.memo(function TallyProductCard({
       data-onboarding={dataOnboarding}
     >
       <HighlightRing show={showHighlight} />
-      <Card size={density === 'compact' ? 'sm' : 'sm'} className="transition-colors group-hover:border-primary/20">
+      <Card size={density === 'compact' ? 'sm' : 'sm'} className="rounded-3xl transition-all duration-200 group-hover:border-primary/30 group-hover:shadow-lg group-hover:shadow-primary/20">
         {quantity > 0 && (
-          <div className="absolute -top-1 -right-1 z-10">
+          <div className="absolute -top-2 -right-2 z-10">
             <Badge
               variant="default"
               className={cn(
-                'flex items-center justify-center font-bold shadow-md cursor-pointer',
+                'flex items-center justify-center font-bold shadow-lg cursor-pointer bg-kawaii-acid-green text-foreground rounded-full',
                 animationPresets.touchFeedback,
                 badgeSize,
-                isPulsing && animationClasses.springPulse
+                isPulsing && animationClasses.springPulse,
+                'animate-acid-glow'
               )}
               onClick={handleBadgeClick}
               aria-live="polite"
@@ -165,23 +166,23 @@ export const TallyProductCard = React.memo(function TallyProductCard({
         )}
         <CardHeader>
           {product.imageData ? (
-            <div className={cn('mb-2 flex justify-center overflow-hidden rounded-none', density === 'compact' ? 'mb-1' : 'mb-2')}>
+            <div className={cn('mb-3 flex justify-center overflow-hidden rounded-2xl border-2 border-dashed border-primary/20 bg-gradient-to-br from-muted/50 to-muted/30', density === 'compact' ? 'mb-2' : 'mb-3')}>
               <img
                 src={product.imageData}
                 alt=""
-                className={cn('w-full aspect-square rounded-none object-cover', animationPresets.hoverLift, imageSize)}
+                className={cn('w-full aspect-square rounded-2xl object-cover', animationPresets.hoverLift, imageSize)}
                 loading="lazy"
               />
             </div>
           ) : (
-            <div className={cn('flex items-center justify-center rounded-none bg-muted transition-colors group-hover:bg-muted/80', placeholderSize, density === 'compact' ? 'mb-1' : 'mb-2')} aria-hidden="true">
-              <span className={cn('transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3', density === 'compact' ? 'text-3xl' : 'text-4xl')}>📦</span>
+            <div className={cn('flex items-center justify-center rounded-2xl bg-gradient-to-br from-muted to-muted/60 border-2 border-dashed border-primary/20 transition-colors group-hover:from-primary/10 group-hover:to-primary/5', placeholderSize, density === 'compact' ? 'mb-2' : 'mb-3')} aria-hidden="true">
+              <span className={cn('transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6', density === 'compact' ? 'text-3xl' : 'text-4xl')}>📦</span>
             </div>
           )}
-          <CardTitle className={cn('line-clamp-2 transition-colors group-hover:text-primary', titleHeight, textSize)}>{product.name}</CardTitle>
+          <CardTitle className={cn('line-clamp-2 transition-colors group-hover:text-primary font-medium text-foreground', titleHeight, textSize)}>{product.name}</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className={cn('text-center font-semibold text-foreground transition-colors group-hover:text-primary', textSize)}>
+          <div className={cn('text-center font-bold text-primary transition-colors group-hover:text-primary font-display', textSize, 'tracking-wide')}>
             <span className="sr-only">Price: </span>
             {formatPrice(product.price)}
           </div>
@@ -192,7 +193,7 @@ export const TallyProductCard = React.memo(function TallyProductCard({
           size="icon"
           variant="destructive"
           className={cn(
-            'absolute bottom-2 right-2 z-10 touch-manipulation shadow-lg no-select',
+            'absolute bottom-3 right-3 z-10 touch-manipulation shadow-lg shadow-destructive/30 no-select rounded-full hover:scale-110 active:scale-95 transition-all duration-200',
             animationPresets.touchFeedback,
             animationPresets.rippleEffect,
             decrementSize

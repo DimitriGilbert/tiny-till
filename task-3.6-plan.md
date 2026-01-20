@@ -268,7 +268,7 @@ function SettingsPage() {
         <section className="rounded-lg border p-4">
           <h2 className="mb-2 font-medium">Data Portability</h2>
           <div className="space-y-2">
-            <Link to="/settings/catalog">
+            <Link to="/catalog">
               <Button variant="outline" className="w-full justify-start">
                 Manage Catalog & Backups
               </Button>

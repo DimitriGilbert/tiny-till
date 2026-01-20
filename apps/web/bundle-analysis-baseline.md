@@ -56,7 +56,7 @@ dist/index.html                   1.07 kB │ gzip:   0.45 kB
 
 - `/` - Tally Page (root, default)
 - `/settings` - Settings Page
-- `/settings/catalog` - Catalog Management (nested route)
+- `/catalog` - Catalog Management (nested route)
 
 ## Next Steps
 

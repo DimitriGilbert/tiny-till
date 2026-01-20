@@ -15,7 +15,7 @@ export interface LoadingStateProps {
 }
 
 export function LoadingState({
-  message = 'Loading...',
+  message = 'Getting things ready ✨',
   fullscreen = false,
   variant = 'spinner',
   progress = 0,
@@ -32,7 +32,7 @@ export function LoadingState({
       aria-busy="true"
     >
       <LoadingSpinner variant={variant} progress={progress} />
-      <p className="text-muted-foreground text-sm mt-4">
+      <p className="text-muted-foreground text-base mt-6 font-medium">
         {message}
       </p>
     </div>
@@ -62,7 +62,7 @@ export function SpringSpinner({ className }: { className?: string }) {
   return (
     <Loader2
       className={cn(
-        'h-12 w-12 text-primary',
+        'h-16 w-16 text-primary',
         'gpu-accelerated',
         className
       )}
@@ -72,13 +72,17 @@ export function SpringSpinner({ className }: { className?: string }) {
 }
 
 export function LoadingDots({ className }: { className?: string }) {
+  const colors = ['bg-primary', 'bg-kawaii-lavender', 'bg-kawaii-acid-green']
   return (
-    <div className={cn('flex gap-2', className)} aria-hidden="true">
+    <div className={cn('flex gap-3', className)} aria-hidden="true">
       {[0, 1, 2].map((i) => (
         <div
           key={i}
-          className="h-3 w-3 rounded-full bg-primary animate-loading"
-          style={{ animationDelay: `${i * 0.2}s` }}
+          className={cn(
+            'h-5 w-5 rounded-full animate-loading',
+            colors[i % colors.length]
+          )}
+          style={{ animationDelay: `${i * 0.15}s` }}
         />
       ))}
     </div>
@@ -89,7 +93,7 @@ export function ShimmerEffect({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        'h-12 w-12 rounded-full bg-muted animate-shimmer',
+        'h-14 w-14 rounded-full bg-gradient-to-br from-primary to-kawaii-lavender animate-shimmer',
         'gpu-accelerated',
         className
       )}
@@ -107,7 +111,7 @@ export function ProgressBar({ progress, className }: ProgressBarProps) {
   return (
     <div
       className={cn(
-        'h-2 w-48 rounded-full bg-muted overflow-hidden',
+        'h-3 w-56 rounded-full bg-muted overflow-hidden',
         'gpu-accelerated',
         className
       )}
@@ -117,7 +121,7 @@ export function ProgressBar({ progress, className }: ProgressBarProps) {
       aria-valuemax={100}
     >
       <div
-        className="h-full bg-primary transition-all duration-300 ease-out"
+        className="h-full bg-gradient-to-r from-primary to-kawaii-acid-green transition-all duration-300 ease-out"
         style={{
           width: `${Math.min(Math.max(progress, 0), 100)}%`,
           transform: `translateX(${Math.min(Math.max(progress - 100, 0), 0)}%)`,
@@ -131,7 +135,7 @@ export function SkeletonLoader({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        'h-12 w-12 rounded-lg bg-muted animate-shimmer',
+        'h-14 w-14 rounded-full bg-gradient-to-br from-primary to-kawaii-lavender animate-shimmer',
         'gpu-accelerated',
         className
       )}
@@ -139,3 +143,4 @@ export function SkeletonLoader({ className }: { className?: string }) {
     />
   )
 }
+

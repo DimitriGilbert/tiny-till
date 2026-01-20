@@ -15,7 +15,7 @@ Configure TanStack Router with file-based routing for all required routes: root 
 ```
 /                          -> Tally Page (root route, existing)
 /settings                  -> Settings & Catalog Management (NEW)
-/settings/catalog          -> Dedicated Catalog Edit View (NEW, nested)
+/catalog          -> Dedicated Catalog Edit View (NEW, nested)
 ```
 
 ## Implementation Steps
@@ -57,7 +57,7 @@ function SettingsPage() {
 
 **Actions:**
 1. Import `createFileRoute` from `@tanstack/react-router`
-2. Create route with `createFileRoute("/settings/catalog")`
+2. Create route with `createFileRoute("/catalog")`
 3. Export `Route` constant
 4. Create `CatalogPage` component with placeholder UI
 5. Add basic page structure with:
@@ -71,7 +71,7 @@ function SettingsPage() {
 ```typescript
 import { createFileRoute, Link } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/settings/catalog")({
+export const Route = createFileRoute("/catalog")({
   component: CatalogPage,
 });
 
@@ -301,7 +301,7 @@ const router = createRouter({
 3. Verify that all three routes are included in the generated file:
    - `/` (Tally)
    - `/settings` (Settings)
-   - `/settings/catalog` (Catalog)
+   - `/catalog` (Catalog)
 4. No manual changes needed - file is auto-generated
 
 **Command:**
@@ -332,7 +332,7 @@ After implementation, verify:
 
 - [ ] All routes accessible via navigation links
 - [ ] Settings route loads at `/settings`
-- [ ] Catalog route loads at `/settings/catalog`
+- [ ] Catalog route loads at `/catalog`
 - [ ] Refresh on non-root routes redirects to `/`
 - [ ] Back/forward navigation works correctly
 - [ ] Route tree generation includes all routes
@@ -375,7 +375,7 @@ This task sets up the routing infrastructure for:
 
 ## Success Criteria
 
-1. All three routes (`/`, `/settings`, `/settings/catalog`) are accessible and functional
+1. All three routes (`/`, `/settings`, `/catalog`) are accessible and functional
 2. Navigation works between all routes
 3. Refresh on non-root routes properly redirects to `/`
 4. TypeScript compilation succeeds without errors

@@ -99,7 +99,7 @@ tiny-till/
 
 ### Routing & Navigation
 - **TanStack Router v1**: Type-safe, file-based routing with integrated devtools
-  - File-based route structure (`/`, `/settings`, `/settings/catalog`)
+  - File-based route structure (`/`, `/settings`, `/catalog`)
   - Navigation guards for protecting routes with active tally
   - Type-safe navigation with autocompletion
 

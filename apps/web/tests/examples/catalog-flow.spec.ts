@@ -19,7 +19,9 @@ test.describe("Catalog Flow", () => {
     await page.click('[data-testid="save-product-button"]');
 
     await expect(page.locator('[data-testid="success-message"]')).toBeVisible();
-    await expect(page.locator('[data-testid="product-list-item-New Product"]')).toBeVisible();
+    await expect(
+      page.locator('[data-testid="product-list-item-New Product"]'),
+    ).toBeVisible();
   });
 
   test("edits existing product", async ({ page }) => {
@@ -33,17 +35,23 @@ test.describe("Catalog Flow", () => {
       },
     ]);
 
-    await page.goto("/settings/catalog");
+    await page.goto("/catalog");
 
-    await page.click('[data-testid="product-item-test-1"] [data-testid="edit-button"]');
+    await page.click(
+      '[data-testid="product-item-test-1"] [data-testid="edit-button"]',
+    );
 
     await page.fill('[data-testid="product-name-input"]', "New Name");
     await page.fill('[data-testid="product-price-input"]', "15.99");
 
     await page.click('[data-testid="save-product-button"]');
 
-    await expect(page.locator('[data-testid="product-name"]')).toHaveText("New Name");
-    await expect(page.locator('[data-testid="product-price"]')).toHaveText("$15.99");
+    await expect(page.locator('[data-testid="product-name"]')).toHaveText(
+      "New Name",
+    );
+    await expect(page.locator('[data-testid="product-price"]')).toHaveText(
+      "$15.99",
+    );
   });
 
   test("deletes product from catalog", async ({ page }) => {
@@ -57,31 +65,41 @@ test.describe("Catalog Flow", () => {
       },
     ]);
 
-    await page.goto("/settings/catalog");
+    await page.goto("/catalog");
 
-    await page.click('[data-testid="product-item-test-1"] [data-testid="delete-button"]');
+    await page.click(
+      '[data-testid="product-item-test-1"] [data-testid="delete-button"]',
+    );
     await page.click('[data-testid="confirm-delete-button"]');
 
-    await expect(page.locator('[data-testid="product-item-test-1"]')).not.toBeVisible();
+    await expect(
+      page.locator('[data-testid="product-item-test-1"]'),
+    ).not.toBeVisible();
   });
 
   test("uploads product image", async ({ page }) => {
-    await page.goto("/settings/catalog");
+    await page.goto("/catalog");
 
     await page.click('[data-testid="add-product-button"]');
 
     await page.fill('[data-testid="product-name-input"]', "Product with Image");
     await page.fill('[data-testid="product-price-input"]', "10.00");
 
-    const imageData = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==";
+    const imageData =
+      "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==";
 
-    await page.evaluate((data) => {
-      const input = document.querySelector('[data-testid="product-image-input"]') as HTMLInputElement;
-      const file = new File([data], "test.png", { type: "image/png" });
-      const dataTransfer = new DataTransfer();
-      dataTransfer.items.add(file);
-      input.files = dataTransfer.files;
-    }, Buffer.from(imageData.split(",")[1], "base64"));
+    await page.evaluate(
+      (data) => {
+        const input = document.querySelector(
+          '[data-testid="product-image-input"]',
+        ) as HTMLInputElement;
+        const file = new File([data], "test.png", { type: "image/png" });
+        const dataTransfer = new DataTransfer();
+        dataTransfer.items.add(file);
+        input.files = dataTransfer.files;
+      },
+      Buffer.from(imageData.split(",")[1], "base64"),
+    );
 
     await page.click('[data-testid="save-product-button"]');
 
@@ -127,10 +145,14 @@ test.describe("Catalog Flow", () => {
 
     await page.click('[data-testid="confirm-import-button"]');
 
-    await expect(page.locator('[data-testid="import-success-message"]')).toBeVisible();
+    await expect(
+      page.locator('[data-testid="import-success-message"]'),
+    ).toBeVisible();
 
     await page.goto("/");
-    await expect(page.locator('[data-testid="product-card-Imported Product"]')).toBeVisible();
+    await expect(
+      page.locator('[data-testid="product-card-Imported Product"]'),
+    ).toBeVisible();
   });
 
   test("rejects invalid JSON import", async ({ page }) => {
@@ -144,7 +166,9 @@ test.describe("Catalog Flow", () => {
     });
 
     await expect(page.locator('[data-testid="error-message"]')).toBeVisible();
-    await expect(page.locator('[data-testid="error-message"]')).toHaveText(/invalid/i);
+    await expect(page.locator('[data-testid="error-message"]')).toHaveText(
+      /invalid/i,
+    );
   });
 
   test("handles large catalog import", async ({ page }) => {
@@ -165,7 +189,11 @@ test.describe("Catalog Flow", () => {
 
     await page.click('[data-testid="confirm-import-button"]');
 
-    await expect(page.locator('[data-testid="import-success-message"]')).toBeVisible();
-    await expect(page.locator('[data-testid="import-success-message"]')).toContainText("100 products");
+    await expect(
+      page.locator('[data-testid="import-success-message"]'),
+    ).toBeVisible();
+    await expect(
+      page.locator('[data-testid="import-success-message"]'),
+    ).toContainText("100 products");
   });
 });

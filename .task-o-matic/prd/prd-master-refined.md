@@ -185,7 +185,7 @@ Small-scale vendors operating in environments with spotty or non-existent intern
 ```
 /                          -> Tally Page (root route, default)
 /settings                  -> Settings & Catalog Management
-/settings/catalog          -> Dedicated Catalog Edit View (nested route)
+/catalog          -> Dedicated Catalog Edit View (nested route)
 ```
 
 *   **Default Behavior:** All non-root routes redirect to `/` on refresh to prevent user confusion and data loss.

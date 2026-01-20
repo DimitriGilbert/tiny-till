@@ -10,9 +10,9 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as CatalogRouteImport } from './routes/catalog'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DocsIndexRouteImport } from './routes/docs.index'
-import { Route as SettingsCatalogRouteImport } from './routes/settings.catalog'
 import { Route as DocsTroubleshootingRouteImport } from './routes/docs.troubleshooting'
 import { Route as DocsGettingStartedRouteImport } from './routes/docs.getting-started'
 import { Route as DocsFeaturesRouteImport } from './routes/docs.features'
@@ -24,6 +24,11 @@ const SettingsRoute = SettingsRouteImport.update({
   path: '/settings',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CatalogRoute = CatalogRouteImport.update({
+  id: '/catalog',
+  path: '/catalog',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -33,11 +38,6 @@ const DocsIndexRoute = DocsIndexRouteImport.update({
   id: '/docs/',
   path: '/docs/',
   getParentRoute: () => rootRouteImport,
-} as any)
-const SettingsCatalogRoute = SettingsCatalogRouteImport.update({
-  id: '/catalog',
-  path: '/catalog',
-  getParentRoute: () => SettingsRoute,
 } as any)
 const DocsTroubleshootingRoute = DocsTroubleshootingRouteImport.update({
   id: '/docs/troubleshooting',
@@ -67,75 +67,76 @@ const DocsLayoutRoute = DocsLayoutRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/settings': typeof SettingsRouteWithChildren
+  '/catalog': typeof CatalogRoute
+  '/settings': typeof SettingsRoute
   '/docs': typeof DocsLayoutRoute
   '/docs/backup-restore': typeof DocsBackupRestoreRoute
   '/docs/features': typeof DocsFeaturesRoute
   '/docs/getting-started': typeof DocsGettingStartedRoute
   '/docs/troubleshooting': typeof DocsTroubleshootingRoute
-  '/settings/catalog': typeof SettingsCatalogRoute
   '/docs/': typeof DocsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/settings': typeof SettingsRouteWithChildren
+  '/catalog': typeof CatalogRoute
+  '/settings': typeof SettingsRoute
   '/docs': typeof DocsIndexRoute
   '/docs/backup-restore': typeof DocsBackupRestoreRoute
   '/docs/features': typeof DocsFeaturesRoute
   '/docs/getting-started': typeof DocsGettingStartedRoute
   '/docs/troubleshooting': typeof DocsTroubleshootingRoute
-  '/settings/catalog': typeof SettingsCatalogRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/settings': typeof SettingsRouteWithChildren
+  '/catalog': typeof CatalogRoute
+  '/settings': typeof SettingsRoute
   '/docs/_layout': typeof DocsLayoutRoute
   '/docs/backup-restore': typeof DocsBackupRestoreRoute
   '/docs/features': typeof DocsFeaturesRoute
   '/docs/getting-started': typeof DocsGettingStartedRoute
   '/docs/troubleshooting': typeof DocsTroubleshootingRoute
-  '/settings/catalog': typeof SettingsCatalogRoute
   '/docs/': typeof DocsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/catalog'
     | '/settings'
     | '/docs'
     | '/docs/backup-restore'
     | '/docs/features'
     | '/docs/getting-started'
     | '/docs/troubleshooting'
-    | '/settings/catalog'
     | '/docs/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/catalog'
     | '/settings'
     | '/docs'
     | '/docs/backup-restore'
     | '/docs/features'
     | '/docs/getting-started'
     | '/docs/troubleshooting'
-    | '/settings/catalog'
   id:
     | '__root__'
     | '/'
+    | '/catalog'
     | '/settings'
     | '/docs/_layout'
     | '/docs/backup-restore'
     | '/docs/features'
     | '/docs/getting-started'
     | '/docs/troubleshooting'
-    | '/settings/catalog'
     | '/docs/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  SettingsRoute: typeof SettingsRouteWithChildren
+  CatalogRoute: typeof CatalogRoute
+  SettingsRoute: typeof SettingsRoute
   DocsLayoutRoute: typeof DocsLayoutRoute
   DocsBackupRestoreRoute: typeof DocsBackupRestoreRoute
   DocsFeaturesRoute: typeof DocsFeaturesRoute
@@ -153,6 +154,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/catalog': {
+      id: '/catalog'
+      path: '/catalog'
+      fullPath: '/catalog'
+      preLoaderRoute: typeof CatalogRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -166,13 +174,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/docs/'
       preLoaderRoute: typeof DocsIndexRouteImport
       parentRoute: typeof rootRouteImport
-    }
-    '/settings/catalog': {
-      id: '/settings/catalog'
-      path: '/catalog'
-      fullPath: '/settings/catalog'
-      preLoaderRoute: typeof SettingsCatalogRouteImport
-      parentRoute: typeof SettingsRoute
     }
     '/docs/troubleshooting': {
       id: '/docs/troubleshooting'
@@ -212,21 +213,10 @@ declare module '@tanstack/react-router' {
   }
 }
 
-interface SettingsRouteChildren {
-  SettingsCatalogRoute: typeof SettingsCatalogRoute
-}
-
-const SettingsRouteChildren: SettingsRouteChildren = {
-  SettingsCatalogRoute: SettingsCatalogRoute,
-}
-
-const SettingsRouteWithChildren = SettingsRoute._addFileChildren(
-  SettingsRouteChildren,
-)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  SettingsRoute: SettingsRouteWithChildren,
+  CatalogRoute: CatalogRoute,
+  SettingsRoute: SettingsRoute,
   DocsLayoutRoute: DocsLayoutRoute,
   DocsBackupRestoreRoute: DocsBackupRestoreRoute,
   DocsFeaturesRoute: DocsFeaturesRoute,

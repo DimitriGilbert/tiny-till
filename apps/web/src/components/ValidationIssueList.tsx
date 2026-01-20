@@ -185,10 +185,10 @@ function IssueCard({
                     <div className="flex items-center gap-2">
                       <p className="text-sm font-semibold">{suggestion.action}</p>
                       {suggestion.autoFixable && (
-                        <Badge variant="success">Auto-fixable</Badge>
+                        <Badge variant="default">Auto-fixable</Badge>
                       )}
                       {suggestion.severity === 'required' && (
-                        <Badge variant="critical">Required</Badge>
+                        <Badge variant="destructive">Required</Badge>
                       )}
                     </div>
                     <p className="mt-1 text-xs text-gray-600 dark:text-gray-400">

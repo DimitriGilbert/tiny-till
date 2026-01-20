@@ -177,8 +177,8 @@ export default function DocsSearch() {
 
   return (
     <div className="relative">
-      <div className={`relative transition-all duration-200 ${isFocused ? "ring-2 ring-primary/50 rounded-lg" : ""}`}>
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+      <div className={`relative transition-all duration-300 ${isFocused ? "ring-2 ring-kawaii-acid-green/50 rounded-2xl shadow-lg shadow-kawaii-acid-green/10" : "shadow-sm"}`}>
+        <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <input
           type="text"
           value={query}
@@ -186,8 +186,8 @@ export default function DocsSearch() {
           onFocus={() => setIsFocused(true)}
           onBlur={() => setTimeout(() => setIsFocused(false), 200)}
           onKeyDown={handleKeyDown}
-          placeholder="Search documentation..."
-          className={`w-full pl-10 pr-10 py-2 border bg-background rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 ${focusVisibleStyles}`}
+          placeholder="Search docs ✨"
+          className={`w-full pl-10 pr-10 py-3 border border-kawaii-lavender/20 bg-gradient-to-br from-background to-muted/30 rounded-2xl focus:outline-none focus:ring-2 focus:ring-kawaii-acid-green/50 focus:border-kawaii-acid-green/30 transition-all duration-300 ${focusVisibleStyles}`}
           aria-label="Search documentation"
           autoComplete="off"
         />
@@ -195,16 +195,16 @@ export default function DocsSearch() {
           <button
             type="button"
             onClick={() => setQuery("")}
-            className={`absolute right-3 top-1/2 -translate-y-1/2 p-1 hover:bg-muted rounded transition-colors ${focusVisibleStyles}`}
+            className={`absolute right-3 top-1/2 -translate-y-1/2 p-1.5 hover:bg-kawaii-acid-green/10 rounded-xl transition-all duration-200 hover:scale-110 ${focusVisibleStyles}`}
             aria-label="Clear search"
           >
-            <X className="h-4 w-4 text-muted-foreground" />
+            <X className="h-4 w-4 text-muted-foreground hover:text-kawaii-acid-green" />
           </button>
         )}
       </div>
 
       {isFocused && query && results.length > 0 && (
-        <div className="absolute top-full left-0 right-0 mt-2 bg-background border rounded-lg shadow-lg z-50 max-h-96 overflow-y-auto">
+        <div className="absolute top-full left-0 right-0 mt-2 bg-gradient-to-br from-background to-muted/30 border border-kawaii-lavender/20 rounded-2xl shadow-xl shadow-primary/10 z-50 max-h-96 overflow-y-auto">
           {results.map((result, index) => (
             <a
               key={result.id}
@@ -213,11 +213,11 @@ export default function DocsSearch() {
                 e.preventDefault()
                 handleResultClick(result.path)
               }}
-              className={`block px-4 py-3 hover:bg-muted transition-colors cursor-pointer ${
-                index === selectedIndex ? "bg-muted" : ""
+              className={`block px-4 py-3 hover:bg-gradient-to-r hover:from-kawaii-mint/10 hover:to-kawaii-acid-green/10 transition-all duration-200 cursor-pointer border-b border-kawaii-lavender/10 last:border-b-0 ${
+                index === selectedIndex ? "bg-gradient-to-r from-kawaii-mint/20 to-kawaii-acid-green/20" : ""
               } ${focusVisibleStyles}`}
             >
-              <div className="font-medium text-foreground">{result.title}</div>
+              <div className="font-display font-medium text-foreground">{result.title}</div>
               <div className="text-sm text-muted-foreground mt-1">{result.excerpt}</div>
             </a>
           ))}
@@ -225,10 +225,10 @@ export default function DocsSearch() {
       )}
 
       {isFocused && query && results.length === 0 && (
-        <div className="absolute top-full left-0 right-0 mt-2 bg-background border rounded-lg shadow-lg z-50 px-4 py-3">
+        <div className="absolute top-full left-0 right-0 mt-2 bg-gradient-to-br from-background to-muted/30 border border-kawaii-lavender/20 rounded-2xl shadow-xl shadow-primary/10 z-50 px-6 py-4">
           <div className="text-muted-foreground">No results found for "{query}"</div>
-          <div className="text-sm text-muted-foreground mt-1">
-            Try different keywords or browse the documentation.
+          <div className="text-sm text-muted-foreground mt-2">
+            Try different keywords or browse the documentation. 🌸
           </div>
         </div>
       )}
