@@ -45,27 +45,50 @@
 ### Core Features
 
 - **📦 Product Catalog Management**
-  - Inline add/edit/delete products
-  - Product images (128x128px thumbnails)
-  - JSON export/import for backup
-  - Persisted in IndexedDB
+  - Add, edit, and delete products with inline forms
+  - Product images with automatic resizing (128x128px thumbnails)
+  - JSON export/import with conflict resolution and validation
+  - Persisted in IndexedDB with virtual scrolling for large catalogs (100+ products)
+  - Search and filter functionality
 
 - **🧮 Tally System**
-  - Tap product cards to add quantities
-  - Manual quantity input overlay
-  - Real-time total calculation
-  - Transient state (resets on refresh)
+  - Tap-to-add product cards with large touch targets
+  - Manual quantity input overlay for precise control
+  - Real-time total calculation with live updating footer
+  - Increment/decrement controls on each product
+  - Transient state (resets on refresh) - perfect for privacy
 
 - **⚙️ Settings**
-  - Theme management (light/dark/system)
-  - Grid density (normal/compact)
-  - Column count override
-  - Backup reminders
+  - Theme management (light/dark/system modes)
+  - Grid density control (normal/compact)
+  - Responsive column count with manual override option
+  - Backup reminders with frequency tracking
+  - Storage usage monitoring and cleanup tools
 
-- **🔐 Navigation Guards**
-  - Prevents accidental navigation with active tally
+- **🔐 Navigation & Safety**
+  - Navigation guards prevent losing active tally data
   - Browser beforeunload protection
   - Clear confirmation dialogs
+  - Unsaved tally recovery on unexpected exits
+
+- **📱 PWA Features**
+  - Service worker for offline functionality
+  - Installable as a standalone app
+  - Offline app shell caching
+  - Update notifications when new versions are available
+
+- **🎨 Onboarding & UX**
+  - Interactive product tour for first-time users
+  - Contextual tooltips and hints
+  - Kawaii-inspired playful UI elements
+  - Comprehensive keyboard navigation support
+  - Screen reader optimized with ARIA labels
+
+- **🛡️ Error Handling**
+  - Comprehensive error boundaries with recovery options
+  - Detailed error logging and reporting
+  - Storage recovery dialogs when quota is exceeded
+  - Graceful degradation when features aren't available
 
 ### Technical Highlights
 
@@ -260,36 +283,63 @@ tiny-till/
 │       ├── src/
 │       │   ├── components/      # React components
 │       │   │   ├── ui/          # shadcn/ui components
-│       │   │   ├── header.tsx
-│       │   │   ├── theme-provider.tsx
+│       │   │   ├── bug-report/  # Error reporting components
+│       │   │   ├── docs/        # Documentation page components
+│       │   │   ├── feedback/    # User feedback forms
+│       │   │   ├── help/        # Help and support components
+│       │   │   ├── kawaii/      # Playful UI animations
+│       │   │   ├── product-card.tsx
+│       │   │   ├── tally-product-card.tsx
+│       │   │   ├── quantity-input-dialog.tsx
+│       │   │   ├── sticky-tally-footer.tsx
+│       │   │   ├── product-form.tsx
+│       │   │   ├── CatalogImport.tsx
+│       │   │   ├── ImageUpload.tsx
+│       │   │   ├── virtualized-product-grid.tsx
+│       │   │   ├── backup-reminder-card.tsx
+│       │   │   ├── onboarding-*.tsx
+│       │   │   ├── error-*.tsx
+│       │   │   └── ...
+│       │   ├── hooks/           # Custom React hooks
+│       │   │   ├── useCatalogExport.ts
+│       │   │   ├── useCatalogImport.ts
+│       │   │   ├── useResponsiveGrid.ts
+│       │   │   ├── useServiceWorker.ts
+│       │   │   ├── useVirtualGrid.ts
 │       │   │   └── ...
 │       │   ├── lib/             # Utilities & helpers
 │       │   │   ├── storage.ts
-│       │   │   ├── persist-middleware.ts
-│       │   │   ├── route-guards.ts
+│       │   │   ├── animations.ts
+│       │   │   ├── export/
+│       │   │   ├── validators.ts
 │       │   │   └── ...
 │       │   ├── routes/          # TanStack Router routes
 │       │   │   ├── __root.tsx
-│       │   │   ├── index.tsx
-│       │   │   ├── settings.tsx
-│       │   │   └── settings.catalog.tsx
+│       │   │   ├── index.tsx    # Tally page
+│       │   │   ├── catalog.tsx  # Catalog management
+│       │   │   ├── settings.tsx # Settings page
+│       │   │   ├── docs/        # Documentation routes
+│       │   │   └── ...
 │       │   ├── stores/          # Zustand state management
 │       │   │   ├── catalog-store.ts
 │       │   │   ├── tally-store.ts
 │       │   │   └── settings-store.ts
 │       │   ├── main.tsx
 │       │   └── index.css
+│       ├── public/              # Static assets
+│       ├── tests/               # Integration tests
 │       └── package.json
 ├── packages/
 │   ├── config/                 # Shared TypeScript config
-│   ├── env/                    # Environment validation
+│   ├── env/                    # Environment validation (zod)
 │   └── types/                  # Shared TypeScript types
 │       ├── src/
-│       │   ├── entities/        # Data models
+│       │   ├── entities/        # Data models (Product, Tally, Settings)
 │       │   ├── guards/          # Type guards
-│       │   ├── utils/           # Utility functions
+│       │   ├── utils/           # Grid calculation, price formatting
 │       │   └── validation/      # Zod schemas
 │       └── package.json
+├── .github/workflows/          # CI/CD (GitHub Pages deployment)
 ├── ARCHITECTURE.md             # Architecture documentation
 ├── DEVELOPMENT.md              # Development guide
 ├── turbo.json                 # Turborepo config
@@ -313,6 +363,19 @@ npm run dev                 # Start all apps in dev mode
 npm run dev:web             # Start only web app in dev mode
 ```
 
+**Web app specific scripts** (from `apps/web/`):
+
+```bash
+cd apps/web
+
+# Build and preview
+npm run build               # Build for production
+npx serve dist             # Preview production build locally
+
+# Manual deployment
+npm run deploy:manual       # Deploy to GitHub Pages manually
+```
+
 ---
 
 ## 🌟 Current Status
@@ -322,32 +385,34 @@ npm run dev:web             # Start only web app in dev mode
 - [x] Turborepo monorepo structure with TypeScript
 - [x] Tailwind CSS v4 with Shadcn UI theme system
 - [x] TypeScript interfaces for Product, Tally, Settings
-- [x] Zustand stores with proper typing
+- [x] Zustand stores with proper typing and persistence
 - [x] IndexedDB persistence layer (catalog store)
 - [x] TanStack Router with file-based routing
 - [x] Navigation guards (active tally protection)
 - [x] Theme system (light/dark/system modes)
+- [x] Product catalog UI with full CRUD operations
+- [x] Tally grid interface with tap-to-add
+- [x] Quantity input overlay for manual entry
+- [x] Live total calculation with sticky footer
+- [x] Settings page with grid density, themes, and column control
+- [x] Catalog export/import with JSON and validation
+- [x] Image upload with automatic resizing and optimization
+- [x] PWA support (service worker, offline functionality)
+- [x] Virtual scrolling for large product catalogs
+- [x] Onboarding system with interactive tour
+- [x] Error boundaries and recovery mechanisms
+- [x] Storage management and quota warnings
+- [x] Backup reminders and frequency tracking
+- [x] Comprehensive documentation and help pages
 - [x] Integration testing and validation
-- [x] Comprehensive documentation
-
-### In Progress 🚧
-
-- [ ] Product catalog UI with CRUD operations
-- [ ] Tally grid interface with tap-to-add
-- [ ] Quantity input overlay
-- [ ] Live total calculation footer
-- [ ] Settings page with all options
-- [ ] Catalog export/import functionality
-- [ ] Image upload with size validation
 
 ### Planned 📋
 
-- [ ] PWA support (service worker, manifest)
 - [ ] Tax calculation option
-- [ ] Receipt view mode
-- [ ] Catalog categorization
-- [ ] Image optimization (client-side resize)
-- [ ] Offline analytics (local only)
+- [ ] Receipt view mode for customer display
+- [ ] Product categorization/tags
+- [ ] Local analytics dashboard (usage stats)
+- [ ] Keyboard shortcuts configuration
 
 ---
 
