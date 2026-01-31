@@ -20,8 +20,8 @@ interface TallyStoreState {
 interface TallyActions {
   addItem: (productId: string, price: number, quantity?: number) => void
   removeItem: (productId: string) => void
-  updateQuantity: (productId: string, quantity: number | string) => void
-  incrementItem: (productId: string) => void
+  updateQuantity: (productId: string, quantity: number | string, price?: number) => void
+  incrementItem: (productId: string, price?: number) => void
   clearTally: () => void
   hasActiveItems: () => boolean
   validateQuantityInput: (value: string | number) => ValidationResult
@@ -143,7 +143,7 @@ export const useTallyStore = create<TallyStore>()(
       })
     },
 
-    updateQuantity: (productId: string, quantity: number | string) => {
+    updateQuantity: (productId: string, quantity: number | string, price?: number) => {
       let numQuantity: number
 
       if (typeof quantity === 'string') {
@@ -177,6 +177,12 @@ export const useTallyStore = create<TallyStore>()(
               ...existing,
               quantity: numQuantity,
             })
+          } else if (price !== undefined) {
+            newItems.set(productId, {
+              productId,
+              quantity: numQuantity,
+              price,
+            })
           }
         }
 
@@ -193,7 +199,7 @@ export const useTallyStore = create<TallyStore>()(
       })
     },
 
-    incrementItem: (productId: string) => {
+    incrementItem: (productId: string, price?: number) => {
       set((state) => {
         const newItems = new Map<string, TallyItem>(state.items)
         const existing = newItems.get(productId)
@@ -202,6 +208,12 @@ export const useTallyStore = create<TallyStore>()(
           newItems.set(productId, {
             ...existing,
             quantity: existing.quantity + 1,
+          })
+        } else if (price !== undefined) {
+          newItems.set(productId, {
+            productId,
+            quantity: 1,
+            price,
           })
         }
 

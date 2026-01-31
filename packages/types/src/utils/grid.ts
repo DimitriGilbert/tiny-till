@@ -16,18 +16,18 @@ export function calculateColumns(
   }
 
   if (screenWidth < 1024) {
-    return density === 'compact' ? 6 : 4
+    return density === 'compact' ? 4 : 3
   }
 
   if (screenWidth < 1280) {
-    return density === 'compact' ? 7 : 6
+    return density === 'compact' ? 5 : 4
   }
 
   if (screenWidth < 1536) {
-    return density === 'compact' ? 8 : 7
+    return density === 'compact' ? 6 : 5
   }
 
-  return density === 'compact' ? 8 : 8
+  return density === 'compact' ? 6 : 5
 }
 
 export function calculateOptimalColumns(

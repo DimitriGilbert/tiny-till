@@ -19,7 +19,7 @@ interface VirtualizedProductGridProps {
   onAddProduct?: () => void
 }
 
-export const VirtualizedProductGrid = React.memo(function VirtualizedProductGrid({
+export function VirtualizedProductGrid({
   onEdit,
   onDelete,
   isLoading: externalLoading = false,
@@ -85,6 +85,7 @@ export const VirtualizedProductGrid = React.memo(function VirtualizedProductGrid
           }
         }}
         key={product.id}
+        className="w-full h-full"
       >
         <ProductCard
           product={product}
@@ -93,11 +94,11 @@ export const VirtualizedProductGrid = React.memo(function VirtualizedProductGrid
           isLoading={isLoading}
           isFocused={focusedItemId === product.id}
           onFocus={() => setFocusedItemId(product.id)}
-          density={isCompact ? 'compact' : 'normal'}
+          className="w-full h-full"
         />
       </div>
     ),
-    [onEdit, onDelete, isLoading, focusedItemId, setFocusedItemId, isCompact]
+    [onEdit, onDelete, isLoading, focusedItemId, setFocusedItemId]
   )
 
   return (
@@ -168,7 +169,7 @@ export const VirtualizedProductGrid = React.memo(function VirtualizedProductGrid
       </div>
 
       {isLoadingState ? (
-        <div className={cn('grid', gridGap, `grid-cols-${columnCount}`)}>
+        <div className={cn('grid w-full', gridGap)} style={{ gridTemplateColumns: `repeat(${columnCount}, minmax(0, 1fr))` }}>
           {Array.from({ length: 6 }, (_, i) => (
             <div key={`skeleton-${Date.now()}-${i}`} className="flex flex-col gap-2">
               <Skeleton className="w-full aspect-square" />
@@ -202,4 +203,4 @@ export const VirtualizedProductGrid = React.memo(function VirtualizedProductGrid
       )}
     </div>
   )
-})
+}

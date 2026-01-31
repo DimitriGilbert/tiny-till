@@ -52,6 +52,7 @@ export function useProductForm({ mode, product, onSuccess, onCancel }: UseProduc
           const result = await addProduct(input, true)
           if (result && onSuccess) {
             onSuccess(result)
+            form.reset()
           }
         } else if (mode === 'edit' && product) {
           const updateData: Partial<ProductInput> = {
@@ -66,6 +67,7 @@ export function useProductForm({ mode, product, onSuccess, onCancel }: UseProduc
           const result = await updateProduct(product.id, updateData, true)
           if (result && onSuccess) {
             onSuccess(result)
+            form.reset()
           }
         }
       } catch (error) {

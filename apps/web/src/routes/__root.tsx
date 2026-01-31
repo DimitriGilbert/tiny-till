@@ -107,10 +107,12 @@ function RootComponent() {
             <OfflineBanner isOffline={isOffline} />
             <OnlineBanner isOnline={!isOffline} />
             <StorageWarningAlert />
-            <div className="grid grid-rows-[auto_1fr] h-svh">
+            <div className="grid grid-rows-[auto_1fr] h-svh overflow-hidden">
               <Header navigateWithCheck={navigateWithCheck} />
-              <main id="main-content" className="overflow-auto">
-                <Outlet />
+              <main id="main-content" className="overflow-y-auto overflow-x-hidden relative">
+                <div className="pb-20">
+                  <Outlet />
+                </div>
               </main>
             </div>
             <Toaster richColors />

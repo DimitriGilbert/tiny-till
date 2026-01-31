@@ -21,7 +21,7 @@ interface TallyProductCardProps {
   product: Product
   quantity: number
   density?: 'normal' | 'compact'
-  onIncrement: (productId: string) => void
+  onIncrement: (productId: string, price: number) => void
   onDecrement: (productId: string) => void
   onEditQuantity?: (productId: string) => void
   className?: string
@@ -67,7 +67,7 @@ export const TallyProductCard = React.memo(function TallyProductCard({
   const handleIncrement = () => {
     if (!shouldPreventClick) {
       try {
-        onIncrement(product.id)
+        onIncrement(product.id, product.price)
       } catch (error) {
         if (error instanceof Error) {
           console.warn('[TallyProductCard] Increment error:', error.message)
@@ -107,7 +107,7 @@ export const TallyProductCard = React.memo(function TallyProductCard({
     onEditQuantity?.(product.id)
   }
 
-  const touchTargetSize = density === 'normal' ? 'min-w-[80px] min-h-[80px]' : 'min-w-[60px] min-h-[60px]'
+  const touchTargetSize = density === 'normal' ? 'w-full' : 'w-full'
   const decrementSize = density === 'normal' ? 'h-11 w-11' : 'h-11 w-11'
   const badgeSize = density === 'compact' ? 'h-5 w-5 text-[10px]' : 'h-6 w-6 text-xs'
   const imageSize = density === 'compact' ? 'max-w-[96px]' : 'max-w-[128px]'
@@ -144,7 +144,7 @@ export const TallyProductCard = React.memo(function TallyProductCard({
       data-onboarding={dataOnboarding}
     >
       <HighlightRing show={showHighlight} />
-      <Card size={density === 'compact' ? 'sm' : 'sm'} className="rounded-3xl transition-all duration-200 group-hover:border-primary/30 group-hover:shadow-lg group-hover:shadow-primary/20">
+      <Card size={density === 'compact' ? 'sm' : 'sm'} className="w-full h-full rounded-3xl transition-all duration-200 group-hover:border-primary/30 group-hover:shadow-lg group-hover:shadow-primary/20">
         {quantity > 0 && (
           <div className="absolute -top-2 -right-2 z-10">
             <Badge

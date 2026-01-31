@@ -70,12 +70,12 @@ function TallyPage() {
   }, [products, items])
 
   const handleConfirmQuantity = React.useCallback((quantity: number) => {
-    updateQuantity(dialogState.productId, quantity)
+    updateQuantity(dialogState.productId, quantity, dialogState.productPrice)
     setDialogState((prev) => ({ ...prev, open: false }))
-  }, [dialogState.productId, updateQuantity])
+  }, [dialogState.productId, dialogState.productPrice, updateQuantity])
 
-  const handleIncrement = React.useCallback((productId: string) => {
-    incrementItem(productId)
+  const handleIncrement = React.useCallback((productId: string, price: number) => {
+    incrementItem(productId, price)
   }, [incrementItem])
 
   const handleDecrement = React.useCallback((productId: string) => {
@@ -140,7 +140,12 @@ function TallyPage() {
           onAction={() => router.navigate({ to: '/settings' })}
         />
       ) : (
-        <div className={cn('grid touch-pan-y', gridGap, `grid-cols-${columnCount}`)}>
+        <div 
+          className={cn('grid touch-pan-y w-full', gridGap)}
+          style={{ 
+            gridTemplateColumns: `repeat(${columnCount}, minmax(0, 1fr))`,
+          }}
+        >
           {products.map((product, index) => {
             const item = items.get(product.id)
             const quantity = item?.quantity || 0
@@ -149,7 +154,6 @@ function TallyPage() {
                 key={product.id}
                 product={product}
                 quantity={quantity}
-                density={isCompact ? 'compact' : 'normal'}
                 onIncrement={handleIncrement}
                 onDecrement={handleDecrement}
                 onEditQuantity={handleEditQuantity}

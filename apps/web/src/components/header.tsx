@@ -19,7 +19,7 @@ export default function Header({ navigateWithCheck }: HeaderProps) {
   ] as const
 
   return (
-    <header className="sticky top-0 z-30">
+    <header>
       <div className="mx-auto max-w-7xl px-2 py-3 sm:px-4">
         <div className="relative flex items-center justify-between rounded-full bg-gradient-to-r from-primary via-kawaii-lavender to-primary px-4 py-2 shadow-lg shadow-primary/20 backdrop-blur-sm">
           <div className="absolute -top-2 -left-2">
