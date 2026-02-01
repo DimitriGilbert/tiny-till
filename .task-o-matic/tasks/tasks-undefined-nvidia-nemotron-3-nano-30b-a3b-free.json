@@ -1,0 +1,80 @@
+[
+  {
+    "id": "1",
+    "title": "Catalog Store Implementation and IndexedDB Persistence",
+    "description": "Implement Zustand catalog store with CRUD operations, image upload validation (max 128x128px), and IndexedDB persistence using Zustand middleware",
+    "contentFile": "tasks/1.md",
+    "status": "todo",
+    "estimatedEffort": "medium",
+    "dependencies": [],
+    "tags": [],
+    "subtasks": [],
+    "createdAt": 1768729790359,
+    "updatedAt": 1768729790359,
+    "prdFile": "prd/prd-corrected.md"
+  },
+  {
+    "id": "2",
+    "title": "Catalog Import/Export and Validation Logic",
+    "description": "Build JSON file import/export UI, schema validation, conflict resolution (overwrite by ID), preview, and error handling",
+    "contentFile": "tasks/2.md",
+    "status": "todo",
+    "estimatedEffort": "medium",
+    "dependencies": [
+      "1"
+    ],
+    "tags": [],
+    "subtasks": [],
+    "createdAt": 1768729790361,
+    "updatedAt": 1768729790361,
+    "prdFile": "prd/prd-corrected.md"
+  },
+  {
+    "id": "3",
+    "title": "Responsive Tally Grid and Interaction Engine",
+    "description": "Create responsive grid layout with auto column calculation, compact/normal toggle, tap-to-add product cards, quantity badge with manual input overlay, live total calculation using cents math, and clear cart functionality",
+    "contentFile": "tasks/3.md",
+    "status": "todo",
+    "estimatedEffort": "large",
+    "dependencies": [
+      "2"
+    ],
+    "tags": [],
+    "subtasks": [],
+    "createdAt": 1768729790362,
+    "updatedAt": 1768729790362,
+    "prdFile": "prd/prd-corrected.md"
+  },
+  {
+    "id": "4",
+    "title": "Theme, Settings, and Display Preference Management",
+    "description": "Implement theme toggle (light/dark/system), grid density settings, column count override, persistence in localStorage, and responsive preview with Tailwind classes",
+    "contentFile": "tasks/4.md",
+    "status": "todo",
+    "estimatedEffort": "medium",
+    "dependencies": [
+      "3"
+    ],
+    "tags": [],
+    "subtasks": [],
+    "createdAt": 1768729790364,
+    "updatedAt": 1768729790364,
+    "prdFile": "prd/prd-corrected.md"
+  },
+  {
+    "id": "5",
+    "title": "Performance Optimization and Production Release",
+    "description": "Conduct cross-browser testing, implement virtual scrolling if needed, optimize bundle size, configure production build with CSP, add error boundaries, and deploy to static hosting with PWA manifest preparation",
+    "contentFile": "tasks/5.md",
+    "status": "todo",
+    "estimatedEffort": "small",
+    "dependencies": [
+      "4"
+    ],
+    "tags": [],
+    "subtasks": [],
+    "createdAt": 1768729790365,
+    "updatedAt": 1768729790365,
+    "prdFile": "prd/prd-corrected.md"
+  }
+]

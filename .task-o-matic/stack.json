@@ -1,0 +1,26 @@
+{
+  "projectName": "tiny-till",
+  "frontend": "tanstack-router",
+  "backend": "none",
+  "database": "none",
+  "auth": "none",
+  "addons": [
+    "turborepo"
+  ],
+  "runtime": "none",
+  "api": "none",
+  "payments": "none",
+  "orm": "none",
+  "dbSetup": "none",
+  "packageManager": "npm",
+  "git": true,
+  "webDeploy": "none",
+  "serverDeploy": "none",
+  "install": true,
+  "examples": [
+    "none"
+  ],
+  "manualDb": true,
+  "renderTitle": false,
+  "createdAt": "2026-01-17T17:44:08.673Z"
+}

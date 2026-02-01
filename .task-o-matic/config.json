@@ -1,0 +1,8 @@
+{
+  "ai": {
+    "provider": "openrouter",
+    "model": "z-ai/glm-4.6",
+    "maxTokens": 32768,
+    "temperature": 0.5
+  }
+}

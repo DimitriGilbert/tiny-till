@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Page Not Found - Tiny Till</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+          'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+          sans-serif;
+        background: linear-gradient(135deg, #e0f2fe 0%, #e0e7ff 50%, #fce7f3 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+      
+      .container {
+        text-align: center;
+        max-width: 500px;
+        background: white;
+        padding: 40px;
+        border-radius: 30px;
+        box-shadow: 0 10px 40px rgba(99, 102, 241, 0.2);
+      }
+      
+      .icon {
+        width: 160px;
+        height: 160px;
+        margin: 0 auto 24px;
+        animation: float 3s ease-in-out infinite;
+      }
+      
+      @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-15px); }
+      }
+      
+      .error-code {
+        font-size: 80px;
+        font-weight: 800;
+        background: linear-gradient(135deg, #818cf8 0%, #f472b6 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 16px;
+        text-shadow: 2px 2px 0px rgba(129, 140, 248, 0.1);
+      }
+      
+      h1 {
+        color: #6366f1;
+        font-size: 24px;
+        font-weight: 700;
+        margin-bottom: 12px;
+      }
+      
+      p {
+        color: #6b7280;
+        font-size: 15px;
+        line-height: 1.6;
+        margin-bottom: 28px;
+      }
+      
+      .suggestions {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 12px;
+        margin-bottom: 28px;
+      }
+      
+      @media (min-width: 480px) {
+        .suggestions {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+      
+      .suggestion {
+        background: #f0fdf4;
+        border: 2px solid #bbf7d0;
+        border-radius: 16px;
+        padding: 16px;
+        text-decoration: none;
+        transition: all 0.3s ease;
+      }
+      
+      .suggestion:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(187, 247, 208, 0.4);
+      }
+      
+      .suggestion-icon {
+        font-size: 24px;
+        margin-bottom: 8px;
+      }
+      
+      .suggestion-title {
+        color: #16a34a;
+        font-weight: 600;
+        font-size: 14px;
+      }
+      
+      .button {
+        background: linear-gradient(135deg, #818cf8 0%, #6366f1 100%);
+        color: white;
+        border: none;
+        padding: 14px 32px;
+        font-size: 16px;
+        font-weight: 600;
+        border-radius: 50px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+        display: inline-block;
+        text-decoration: none;
+      }
+      
+      .button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+      }
+      
+      .stars {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        overflow: hidden;
+        z-index: -1;
+      }
+      
+      .star {
+        position: absolute;
+        width: 4px;
+        height: 4px;
+        background: #fbbf24;
+        border-radius: 50%;
+        opacity: 0;
+        animation: twinkle 4s infinite;
+      }
+      
+      @keyframes twinkle {
+        0%, 100% { opacity: 0; transform: scale(0); }
+        50% { opacity: 1; transform: scale(1); }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="stars" id="stars"></div>
+    
+    <div class="container">
+      <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="12" cy="12" r="10" fill="#e0e7ff"/>
+        <path d="M15 9H9V15H15V9Z" fill="#6366f1"/>
+        <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM13 17H11V15H13V17ZM13 13H11V7H13V13Z" fill="#f472b6" fill-opacity="0.3"/>
+        <circle cx="12" cy="12" r="2" fill="#fff"/>
+        <path d="M8 8C8 8 9 7 12 7C15 7 16 8 16 8" stroke="#f472b6" stroke-width="2" stroke-linecap="round"/>
+        <path d="M8 16C8 16 9 17 12 17C15 17 16 16 16 16" stroke="#f472b6" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      
+      <div class="error-code">404</div>
+      <h1>Page Not Found</h1>
+      <p>Oops! The page you're looking for seems to have wandered off into the digital wilderness. Let's get you back on track! 🌟</p>
+      
+      <div class="suggestions">
+        <a href="/" class="suggestion">
+          <div class="suggestion-icon">🏠</div>
+          <div class="suggestion-title">Go Home</div>
+        </a>
+        <a href="/settings" class="suggestion">
+          <div class="suggestion-icon">⚙️</div>
+          <div class="suggestion-title">Settings</div>
+        </a>
+      </div>
+      
+      <a href="/" class="button">Return Home ✨</a>
+    </div>
+    
+    <script>
+      for (let i = 0; i < 30; i++) {
+        const star = document.createElement('div');
+        star.className = 'star';
+        star.style.left = Math.random() * 100 + '%';
+        star.style.top = Math.random() * 100 + '%';
+        star.style.animationDelay = Math.random() * 4 + 's';
+        document.getElementById('stars').appendChild(star);
+      }
+    </script>
+  </body>
+</html>
