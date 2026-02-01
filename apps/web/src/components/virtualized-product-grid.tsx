@@ -25,14 +25,21 @@ export function VirtualizedProductGrid({
   isLoading: externalLoading = false,
   onAddProduct,
 }: VirtualizedProductGridProps) {
-  const { products, searchProducts, isLoading, hasHydrated } = useCatalogStore()
+  const products = useCatalogStore((state) => state.products)
+  const isLoading = useCatalogStore((state) => state.isLoading)
+  const hasHydrated = useCatalogStore((state) => state.hasHydrated)
   const [searchQuery, setSearchQuery] = React.useState('')
   const { columnCount, gridGap, isCompact } = useResponsiveGrid()
 
-  const filteredProducts = React.useMemo(
-    () => searchProducts(searchQuery),
-    [searchQuery, searchProducts]
-  )
+  const filteredProducts = React.useMemo(() => {
+    const normalizedQuery = searchQuery.toLowerCase().trim()
+    if (!normalizedQuery) {
+      return products
+    }
+    return products.filter((product) =>
+      product.name.toLowerCase().includes(normalizedQuery)
+    )
+  }, [searchQuery, products])
 
   const productMap = React.useRef<Map<string, HTMLElement>>(new Map())
 

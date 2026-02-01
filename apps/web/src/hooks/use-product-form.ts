@@ -18,7 +18,8 @@ interface FormValues {
 }
 
 export function useProductForm({ mode, product, onSuccess, onCancel }: UseProductFormProps) {
-  const { addProduct, updateProduct } = useCatalogStore()
+  const addProduct = useCatalogStore((state) => state.addProduct)
+  const updateProduct = useCatalogStore((state) => state.updateProduct)
 
   const processImage = async (
     image: string | null | undefined

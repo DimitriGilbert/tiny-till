@@ -1,7 +1,7 @@
 import * as React from 'react'
 
 import { Button } from '@/components/ui/button'
-import { BouncyNumber, KawaiiSparkle } from '@/components/kawaii'
+import { BouncyNumber } from '@/components/kawaii'
 import { useCurrencyFormat } from '@/hooks/useCurrencyFormat'
 import { cn } from '@/lib/utils'
 
@@ -38,8 +38,6 @@ export const StickyTallyFooter = React.memo(function StickyTallyFooter({
 
   return (
     <footer
-      role="contentinfo"
-      aria-label="Cart summary with total and item count"
       className={cn(
         'fixed bottom-0 left-0 right-0 z-40 h-auto min-h-[90px] animate-slide-up',
         'bg-gradient-to-r from-primary via-kawaii-lavender to-primary',
@@ -48,18 +46,12 @@ export const StickyTallyFooter = React.memo(function StickyTallyFooter({
       data-onboarding="tally-footer"
     >
       <div className="relative container mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
-        <div className="absolute -top-3 left-8 opacity-50">
-          <KawaiiSparkle size="sm" color="acid-green" />
-        </div>
-        <div className="absolute -top-2 right-16 opacity-50">
-          <KawaiiSparkle size="sm" color="acid-yellow" />
-        </div>
 
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-6 sm:gap-8">
             <div className="flex flex-col gap-1">
               <span className="text-xs font-medium text-primary-foreground/80 sm:text-sm">
-                Total ✨
+                Total
               </span>
               <BouncyNumber
                 value={totalCents}
@@ -80,17 +72,17 @@ export const StickyTallyFooter = React.memo(function StickyTallyFooter({
             </div>
           </div>
           <Button
-            variant="outline"
+            variant="secondary"
             size="lg"
             onClick={onClearCart}
             disabled={isCartEmpty}
             aria-label={isCartEmpty ? 'Cart is empty' : 'Clear all items from cart'}
             className={cn(
-              'w-full sm:w-auto bg-white/90 hover:bg-white text-destructive hover:text-destructive',
-              'hover:scale-105 hover:shadow-lg hover:shadow-destructive/30 active:scale-95',
-              'transition-all duration-200 rounded-full',
-              'border-2 border-destructive/20',
-              isCartEmpty && 'cursor-not-allowed opacity-50'
+              'w-full sm:w-auto bg-white text-destructive hover:bg-white/90',
+              'hover:scale-105 hover:shadow-xl hover:shadow-black/20 active:scale-95',
+              'transition-all duration-200 rounded-full font-semibold',
+              'border-0 shadow-lg',
+              isCartEmpty && 'cursor-not-allowed opacity-40'
             )}
           >
             Clear Cart

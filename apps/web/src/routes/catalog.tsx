@@ -18,7 +18,9 @@ export const Route = createFileRoute('/catalog')({
 })
 
 function CatalogPage() {
-  const { products, getProduct } = useCatalogStore()
+  const products = useCatalogStore((state) => state.products)
+  const getProduct = useCatalogStore((state) => state.getProduct)
+  const deleteProduct = useCatalogStore((state) => state.deleteProduct)
   const { exportCatalog, isExporting } = useCatalogExport()
 
   const [showAddDialog, setShowAddDialog] = React.useState(false)
@@ -46,7 +48,6 @@ function CatalogPage() {
 
   const handleConfirmDelete = async () => {
     if (showDeleteDialog) {
-      const { deleteProduct } = useCatalogStore.getState()
       await deleteProduct(showDeleteDialog, true)
       setShowDeleteDialog(null)
     }

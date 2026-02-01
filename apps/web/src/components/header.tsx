@@ -1,5 +1,6 @@
 import type { NavigateOptions } from "@tanstack/react-router"
 import { useLocation } from "@tanstack/react-router"
+import { Github } from "lucide-react"
 import { ModeToggle } from "./mode-toggle"
 import { focusVisibleStyles } from "@/lib/focus-styles"
 import { cn } from "@/lib/utils"
@@ -63,6 +64,21 @@ export default function Header({ navigateWithCheck }: HeaderProps) {
           </nav>
 
           <div className="flex items-center gap-2">
+            <a
+              href="https://github.com/DimitriGilbert/tiny-till"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="View source on GitHub"
+              className={cn(
+                "flex h-9 w-9 items-center justify-center rounded-full",
+                "bg-white/50 text-foreground hover:bg-white/80",
+                "hover:scale-105 hover:shadow-lg hover:shadow-primary/30",
+                "active:scale-95 transition-all duration-200",
+                focusVisibleStyles
+              )}
+            >
+              <Github className="h-5 w-5" />
+            </a>
             <ModeToggle />
           </div>
 
