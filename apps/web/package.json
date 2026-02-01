@@ -11,7 +11,7 @@
     "check-types": "tsc --noEmit",
     "validate:build": "tsx scripts/validate-build.ts",
     "generate-icons": "tsx scripts/generate-icons.ts",
-    "deploy:manual": "npm run build && gh-pages -d dist --dotfiles",
+    "deploy": "npm run build && gh-pages -d dist --cname tiny-till.dbuild.dev --dotfiles",
     "test": "playwright test",
     "test:component": "playwright test tests/examples/product-card.spec.ts",
     "test:integration": "playwright test tests/examples/catalog-flow.spec.ts tests/examples/tally-flow.spec.ts",

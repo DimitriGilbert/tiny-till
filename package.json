@@ -11,7 +11,8 @@
     "build": "turbo build",
     "check-types": "turbo check-types",
     "dev:native": "turbo -F native dev",
-    "dev:web": "turbo -F web dev"
+    "dev:web": "turbo -F web dev",
+    "deploy": "cd apps/web && npm run deploy"
   },
   "dependencies": {
     "@tiny-till/env": "*",
